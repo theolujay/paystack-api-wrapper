@@ -8,7 +8,6 @@ dependencies = [
     "pytest>=8.4.1",
     "python-dotenv>=1.1.1",
     "requests>=2.32.4",
-    "requests-mock>=1.12.1",
     "responses>=0.25.8",
 ]
 
