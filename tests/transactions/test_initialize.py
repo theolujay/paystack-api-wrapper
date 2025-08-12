@@ -4,7 +4,6 @@ import pytest
 import requests
 import responses
 
-from api.transactions import Transaction
 from api.exceptions import APIError
 
 
@@ -14,7 +13,6 @@ def assert_api_error_contains(transaction_client, expected_keyword, **kwargs):
     with pytest.raises(APIError) as excinfo:
         transaction_client.initialize(**kwargs)
     assert str(expected_keyword).lower() in str(excinfo.value).lower()
-
 
 def setup_mock_response(transaction_client, response_data=None, status_code=200):
     """Helper to set up a mock response"""

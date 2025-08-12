@@ -7,7 +7,7 @@ from .utils.helpers import validate_email
 class Transaction(BaseClient):
     def __init__(self, secret_key=None):
         super().__init__(secret_key)
-    def initialize(self, email: str = None, amount: str = None, **kwargs):
+    def initialize(self, email: str = None, amount: str = None, **kwargs) -> dict:
         """
         Initialize a transaction.
 
@@ -45,4 +45,20 @@ class Transaction(BaseClient):
         }
         
         response = self.request("POST", "transaction/initialize", json=payload)
+        return response
+    
+    def verify(self, reference: str) -> dict:
+        """
+        Verify a transaction.
+
+        Args:
+            reference (str): Transaction reference.
+
+        Returns:
+            dict: Response data from the Paystack API.
+        """
+        if not reference:
+            raise APIError("Reference is required")
+        
+        response = self.request("GET", f"transaction/verify/{reference}")
         return response
