@@ -1,11 +1,14 @@
 import os
 import requests
-from requests.exceptions import HTTPError, Timeout
+import json
 from typing import Optional
+from requests.exceptions import JSONDecodeError
+from requests.exceptions import HTTPError, Timeout
 
 from .exceptions import APIError
 
 class BaseClient:
+    """Base client for interacting with the Paystack API."""
     def __init__(self,
                  secret_key: Optional[str] = None,
                  base_url: Optional[str] = None,
@@ -66,8 +69,8 @@ class BaseClient:
             raise APIError(f"Request timed out: {e}") from e
         except HTTPError as e:
             raise APIError(f"HTTP error {response.status_code}: {e}") from e
-        except ValueError:
-            raise APIError(f"Invalid JSON response")
+        except (ValueError, JSONDecodeError, json.JSONDecodeError)as e:
+            raise APIError(f"Invalid JSON response: {e}") from e
     
         # Validate Paystack response format
         if "status" not in resp_json or "message" not in resp_json or "data" not in resp_json:
