@@ -42,3 +42,62 @@ def test_request_timeout(secret_key):
         client.request("GET", "test")
     
     assert "Request timed out" in str(excinfo.value)
+
+@responses.activate
+def test_false_status_response(secret_key):
+    client = BaseClient(secret_key=secret_key)
+    
+    responses.add(
+        responses.POST, f"{BASE}/initiate_payment",
+        json={
+            "status": False,
+            "message": "API error",
+        }, status=200
+    )
+    with pytest.raises(APIError) as excinfo:
+        client.request("POST", "initiate_payment")
+    assert "API error" in str(excinfo.value)
+
+@responses.activate
+def test_invalid_response_structure(secret_key):
+    client = BaseClient(secret_key=secret_key)
+    
+    responses.add(
+        responses.POST, f"{BASE}/initiate_payment",
+        json={
+            "status": True,
+            "message": "Invalid JSON response",
+        }, status=200
+    )
+    with pytest.raises(APIError) as excinfo:
+        client.request("POST", "initiate_payment")
+    assert "Unexpected response structure from Paystack" in str(excinfo.value)
+
+@responses.activate
+def test_error_status_code(secret_key):
+    client = BaseClient(secret_key=secret_key)
+    
+    responses.add(
+        responses.POST, f"{BASE}/initiate_payment",
+        json={
+            "status": False,
+            "message": "API error",
+        }, status=400
+    )
+    with pytest.raises(APIError) as excinfo:
+        client.request("POST", "initiate_payment")
+    assert "HTTP error" in str(excinfo.value)
+    assert "400" in str(excinfo.value)
+    
+@responses.activate
+def test_invalid_json(secret_key):
+    client = BaseClient(secret_key=secret_key)
+    responses.add(
+        responses.GET, f"{BASE}/test",
+        body="not json",
+        status=200,
+        content_type="application/json"
+    )
+    with pytest.raises(APIError) as excinfo:
+        client.request("GET", "test")
+    assert "Invalid JSON response" in str(excinfo.value)
