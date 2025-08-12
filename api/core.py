@@ -79,8 +79,12 @@ class BaseClient:
         if not resp_json["status"]:
             raise APIError(f"API error: {resp_json['message']}")
 
-        # Success: return just the 'data' payload
+        # Success: also handles pagination with 'data' payload
+        if "meta" in resp_json and isinstance(resp_json["data"], list):
+            return resp_json["data"], resp_json["meta"]
+        # Success: return just the 'data' payload if no pagination
         return resp_json["data"]
+
 
     def _full_url(self, endpoint: str) -> str:
         return f"{self.base_url}/{endpoint}"

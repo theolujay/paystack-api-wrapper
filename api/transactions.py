@@ -62,3 +62,13 @@ class Transaction(BaseClient):
         
         response = self.request("GET", f"transaction/verify/{reference}")
         return response
+    
+    def list(self):
+        """
+        List transactions.
+
+        Returns:
+            dict: Response data from the Paystack API.
+        """
+        response = self.request("GET", "transaction")
+        return response
