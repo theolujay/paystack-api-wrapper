@@ -1,0 +1,18 @@
+[project]
+name = "paystack-client"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest>=8.4.1",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+    "requests-mock>=1.12.1",
+    "responses>=0.25.8",
+]
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py", "*_test.py", "tests.py"]
+addopts = ["--tb=short"]
+testpaths = ["tests"]
