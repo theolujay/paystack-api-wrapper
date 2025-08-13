@@ -43,7 +43,7 @@ def test_initialize_transaction(transaction_client):
         },
     }
     setup_mock_response(transaction_client, mock_response)
-    data = {"email": "customer@email.com", "amount": "20000"}
+    data = {"email": "customer@email.com", "amount": 20000}
 
     response = transaction_client.initialize(email=data["email"], amount=data["amount"])
     request = responses.calls[0].request
@@ -56,16 +56,19 @@ def test_initialize_transaction(transaction_client):
     assert payload == data
 
 
-def test_validate_transaction_missing_email(transaction_client):
-    # Missing email
+@pytest.mark.parametrize(
+    "missing_arg, test_kwargs",
+    [
+        ("email", {"amount": 20000}),
+        ("amount", {"email": "customer@email.com"}),
+    ],
+)
+def test_validate_transaction_missing_required_fields(transaction_client, missing_arg, test_kwargs):
+    """Test validation for missing required fields."""
     with pytest.raises(APIError) as excinfo:
-        transaction_client.initialize(amount=20000)
-    assert "email" in str(excinfo.value).lower()
+        transaction_client.initialize(**test_kwargs)
+    assert missing_arg in str(excinfo.value).lower()
 
-
-def test_validate_transaction_missing_amount(transaction_client):
-    """Test validation for mission and empty required fields"""
-    assert_api_error_contains(transaction_client, "amount", email="customer@email.com")
 
 @responses.activate
 def test_initialize_transaction_invalid_api_key(transaction_client):
@@ -82,7 +85,7 @@ def test_initialize_transaction_invalid_api_key(transaction_client):
 def test_initialize_transaction_timeout(transaction_client):
     responses.add(
         responses.POST,
-        re.compile(r".*/transaction/initialize"),
+        f"{transaction_client.base_url}/transaction/initialize",
         body=requests.exceptions.Timeout()
     )
     
@@ -90,10 +93,10 @@ def test_initialize_transaction_timeout(transaction_client):
         transaction_client, "Request timed out", email="customer@email.com", amount=20000
     )
 @responses.activate
-def test_initialize_transaction_malformed_json(transaction_client, base_client):
+def test_initialize_transaction_malformed_json(transaction_client):
     responses.add(
         responses.POST,
-        f"{base_client.base_url}/transaction/initialize",
+        f"{transaction_client.base_url}/transaction/initialize",
         body="Not a JSON",
         status=200
     )
@@ -112,7 +115,7 @@ def test_initialize_transaction_malformed_json(transaction_client, base_client):
 ])
 def test_invalid_email_formats(transaction_client, invalid_email):
     """Test validation for various invalid email formats"""
-    assert_api_error_contains(transaction_client, "email", email=invalid_email, amount="20000")
+    assert_api_error_contains(transaction_client, "email", email=invalid_email, amount=20000)
 
 # === Invalid Amount Tests ===
 @pytest.mark.parametrize("invalid_amount,expected_keyword", [

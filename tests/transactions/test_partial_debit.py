@@ -113,4 +113,3 @@ def test_partial_debit_malformed_json(transaction_client):
         "email": "customer@email.com"
     }
     assert_api_error_contains(transaction_client.partial_debit, "invalid json response", payload)
-

@@ -1,12 +1,13 @@
-
-
 from .core import BaseClient
 from .exceptions import APIError
+from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 from .utils.helpers import validate_email
+
 
 class Transaction(BaseClient):
     def __init__(self, secret_key=None):
         super().__init__(secret_key)
+
     def initialize(self, email: str = None, amount: str = None, **kwargs) -> dict:
         """
         Initialize a transaction.
@@ -19,34 +20,10 @@ class Transaction(BaseClient):
         Returns:
             dict: Response data from the Paystack API.
         """
-        
-        if not email:
-            raise APIError("Email is required")
-        if not amount:
-            raise APIError("Amount is required")
-        if not validate_email(email):
-            raise APIError("Invalid email format")
-        
-        try:
-            amount_int = int(amount)
-            if amount_int <= 0:
-                raise APIError("Amount must be a positive number")
-            elif amount_int < 10000:
-                raise APIError("Amount must be at least 100 naira")
-            elif amount_int > 1000000000:
-                raise APIError("Amount must be less than 10 million naira")
-        except ValueError:
-            raise APIError("Amount must be a valid number string without comma or decimal")
-        
-        payload = {
-            "email": email,
-            "amount": str(amount),
-            **kwargs
-        }
-        
-        response = self.request("POST", "transaction/initialize", json=payload)
-        return response
-    
+        _validate_amount_and_email(email, amount)
+        payload = {"email": email, "amount": amount, **kwargs}
+        return self.request("POST", "transaction/initialize", json=payload)
+
     def verify(self, reference: str) -> dict:
         """
         Verify a transaction.
@@ -59,102 +36,100 @@ class Transaction(BaseClient):
         """
         if not reference:
             raise APIError("Reference is required")
-        
-        response = self.request("GET", f"transaction/verify/{reference}")
-        return response
-    
+        return self.request("GET", f"transaction/verify/{reference}")
+
     def list(self) -> tuple:
         """
         List transactions.
 
         Returns:
-            dict: Response data from the Paystack API.
+            A tuple containing the list of transactions and metadata.
         """
-        response = self.request("GET", "transaction")
-        return response
-    
+        return self.request("GET", "transaction")
+
     def fetch(self, transaction_id: int) -> dict:
         """
-        
+        Fetch a transaction.
+
+        Args:
+            transaction_id: The ID of the transaction.
+
+        Returns:
+            dict: Response data from the Paystack API.
         """
         if not transaction_id:
             raise APIError("Transaction ID is required")
-        
-        response = self.request("GET", f"transaction/{transaction_id}")
-        return response
-        
+        return self.request("GET", f"transaction/{transaction_id}")
+
     def charge_authorization(self, email: str = None, amount: str = None, authorization_code: str = None, **kwargs):
-        if not email:
-            raise APIError("Email is required")
-        if not amount:
-            raise APIError("Amount is required")
-        if not validate_email(email):
-            raise APIError("Invalid email format")
-        if not authorization_code:
-            raise APIError("Authorization code is required")
-        try:
-            amount_int = int(amount)
-            if amount_int <= 0:
-                raise APIError("Amount must be a positive number")
-            elif amount_int < 10000:
-                raise APIError("Amount must be at least 100 naira")
-            elif amount_int > 1000000000:
-                raise APIError("Amount must be less than 10 million naira")
-        except ValueError:
-            raise APIError("Amount must be a valid number string without comma or decimal")
-        
+        """Charge an authorization.
+
+        Args:
+            email: The customer's email address.
+            amount: The amount in kobo.
+            authorization_code: The authorization code.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The response from the API.
+        """
+        _validate_charge_authorization(email, amount, authorization_code)
         payload = {
             "email": email,
             "amount": amount,
-            "authorization_code": authorization_code
+            "authorization_code": authorization_code,
+            **kwargs,
         }
-        return self.request("POST", "transaction/charge_authorization", data=payload)
-    
+        return self.request("POST", "transaction/charge_authorization", json=payload)
+
     def view_timeline(self, id_or_reference: str) -> dict:
+        """View the timeline of a transaction.
+
+        Args:
+            id_or_reference: The ID or reference of the transaction.
+
+        Returns:
+            The response from the API.
+        """
         if not id_or_reference:
             raise APIError("ID or reference is required")
         return self.request("GET", f"transaction/timeline/{id_or_reference}")
-    
+
     def totals(self) -> dict:
+        """Get transaction totals.
+
+        Returns:
+            The response from the API.
+        """
         return self.request("GET", "transaction/totals")
-    
+
     def export(self) -> dict:
+        """Export transactions.
+
+        Returns:
+            The response from the API.
+        """
         return self.request("GET", "transaction/export")
-            
+
     def partial_debit(self, payload=None, **kwargs):
+        """Perform a partial debit on a transaction.
+
+        Args:
+            payload: A dictionary containing the request payload.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The response from the API.
+        """
         if payload is None:
             payload = kwargs
         elif not isinstance(payload, dict):
             raise APIError("Payload must be a dictionary")
 
-        authorization_code = payload.get("authorization_code")
-        currency = payload.get("currency")
-        amount = payload.get("amount")
-        email = payload.get("email")
-
-        if not authorization_code:
-            raise APIError("Authorization code is required")
-        if not currency:
+        _validate_charge_authorization(
+            payload.get("email"), payload.get("amount"), payload.get("authorization_code")
+        )
+        if not payload.get("currency"):
             raise APIError("Currency is required")
-        if not amount:
-            raise APIError("Amount is required")
-        if not email:
-            raise APIError("Email is required")
-        if not validate_email(email):
-            raise APIError("Invalid email format")
-
-        try:
-            amount_int = int(amount)
-        except ValueError:
-            raise APIError("Amount must be a valid number string without comma or decimal")
-
-        if amount_int <= 0:
-            raise APIError("Amount must be a positive number")
-        elif amount_int < 10000:
-            raise APIError("Amount must be at least ₦100 (10000 kobo)")
-        elif amount_int > 1000000000:
-            raise APIError("Amount must be less than ₦10,000,000 (1 billion kobo)")
-
-        payload["amount"] = amount_int
 
         return self.request("POST", "transaction/partial_debit", json=payload)
