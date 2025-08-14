@@ -83,6 +83,9 @@ class BaseClient:
         if "meta" in resp_json and isinstance(resp_json["data"], list):
             return resp_json["data"], resp_json["meta"]
         # Success: return just the 'data' payload if no pagination
+        if not "data" in resp_json:
+            return resp_json["message"]
+        # Success: return just the 'data' payload
         return resp_json["data"]
 
 
