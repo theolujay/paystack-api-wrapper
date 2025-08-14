@@ -1,135 +1,366 @@
-from .core import BaseClient
+from typing import Optional, Dict, Any, Union
+from .core import BaseClient, PaystackResponse
 from .exceptions import APIError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
-from .utils.helpers import validate_email
 
 
 class Transaction(BaseClient):
-    def __init__(self, secret_key=None):
+    """Transaction API client for processing payments and managing transactions."""
+    
+    def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def initialize(self, email: str = None, amount: str = None, **kwargs) -> dict:
-        """
-        Initialize a transaction.
+    def initialize(self, 
+                  email: str, 
+                  amount: Union[int, str], 
+                  currency: str = "NGN",
+                  reference: Optional[str] = None,
+                  callback_url: Optional[str] = None,
+                  plan: Optional[str] = None,
+                  invoice_limit: Optional[int] = None,
+                  metadata: Optional[Dict[str, Any]] = None,
+                  channels: Optional[list] = None,
+                  split_code: Optional[str] = None,
+                  subaccount: Optional[str] = None,
+                  transaction_charge: Optional[int] = None,
+                  bearer: Optional[str] = None) -> PaystackResponse:
+        """Initialize a transaction for payment.
 
         Args:
-            email (str): Customer's email address.
-            amount (str): Amount in kobo.
-            **kwargs: Additional arguments for the API call.
+            email (str): Customer's email address
+            amount (Union[int, str]): Amount in kobo (smallest currency unit)
+            currency (str): Currency code (default: "NGN")
+            reference (Optional[str]): Unique transaction reference
+            callback_url (Optional[str]): URL to redirect after payment
+            plan (Optional[str]): Plan code if this is a subscription payment
+            invoice_limit (Optional[int]): Number of invoices to generate
+            metadata (Optional[Dict]): Stringified JSON object of custom data
+            channels (Optional[list]): Payment channels to enable e.g. ['card', 'bank']
+            split_code (Optional[str]): Split payment configuration code
+            subaccount (Optional[str]): Subaccount code for split payments
+            transaction_charge (Optional[int]): Transaction charge in kobo
+            bearer (Optional[str]): Who bears Paystack charges ('account' or 'subaccount')
 
         Returns:
-            dict: Response data from the Paystack API.
+            PaystackResponse: Contains authorization_url, access_code, and reference
+
+        Raises:
+            APIError: If email or amount is invalid
         """
-        _validate_amount_and_email(email, amount)
-        payload = {"email": email, "amount": amount, **kwargs}
-        return self.request("POST", "transaction/initialize", json=payload)
-
-    def verify(self, reference: str) -> dict:
-        """
-        Verify a transaction.
-
-        Args:
-            reference (str): Transaction reference.
-
-        Returns:
-            dict: Response data from the Paystack API.
-        """
-        if not reference:
-            raise APIError("Reference is required")
-        return self.request("GET", f"transaction/verify/{reference}")
-
-    def list(self) -> tuple:
-        """
-        List transactions.
-
-        Returns:
-            A tuple containing the list of transactions and metadata.
-        """
-        return self.request("GET", "transaction")
-
-    def fetch(self, transaction_id: int) -> dict:
-        """
-        Fetch a transaction.
-
-        Args:
-            transaction_id: The ID of the transaction.
-
-        Returns:
-            dict: Response data from the Paystack API.
-        """
-        if not transaction_id:
-            raise APIError("Transaction ID is required")
-        return self.request("GET", f"transaction/{transaction_id}")
-
-    def charge_authorization(self, email: str = None, amount: str = None, authorization_code: str = None, **kwargs):
-        """Charge an authorization.
-
-        Args:
-            email: The customer's email address.
-            amount: The amount in kobo.
-            authorization_code: The authorization code.
-            **kwargs: Additional keyword arguments.
-
-        Returns:
-            The response from the API.
-        """
-        _validate_charge_authorization(email, amount, authorization_code)
+        _validate_amount_and_email(email, str(amount))
         payload = {
             "email": email,
-            "amount": amount,
-            "authorization_code": authorization_code,
-            **kwargs,
+            "amount": str(amount),
+            "currency": currency
         }
-        return self.request("POST", "transaction/charge_authorization", json=payload)
+        if reference:
+            payload["reference"] = reference
+        if callback_url:
+            payload["callback_url"] = callback_url
+        if plan:
+            payload["plan"] = plan
+        if invoice_limit is not None:
+            payload["invoice_limit"] = invoice_limit
+        if metadata:
+            # Convert metadata dict to JSON string as per API requirements
+            import json
+            payload["metadata"] = json.dumps(metadata)
+        if channels:
+            payload["channels"] = channels
+        if split_code:
+            payload["split_code"] = split_code
+        if subaccount:
+            payload["subaccount"] = subaccount
+        if transaction_charge is not None:
+            payload["transaction_charge"] = transaction_charge
+        if bearer:
+            payload["bearer"] = bearer
+            
+        return self.request("POST", "transaction/initialize", json_data=payload)
 
-    def view_timeline(self, id_or_reference: str) -> dict:
-        """View the timeline of a transaction.
+    def verify(self, reference: str) -> PaystackResponse:
+        """Verify a transaction status.
 
         Args:
-            id_or_reference: The ID or reference of the transaction.
+            reference (str): Transaction reference to verify
 
         Returns:
-            The response from the API.
+            PaystackResponse: Contains complete transaction details and status
+
+        Raises:
+            APIError: If reference is not provided
         """
-        if not id_or_reference:
-            raise APIError("ID or reference is required")
+        self._validate_required_params(reference=reference)
+        return self.request("GET", f"transaction/verify/{reference}")
+
+    def list_transactions(self, 
+                         per_page: Optional[int] = None,
+                         page: Optional[int] = None,
+                         customer: Optional[int] = None,
+                         terminal_id: Optional[str] = None,
+                         status: Optional[str] = None,
+                         from_date: Optional[str] = None,
+                         to_date: Optional[str] = None,
+                         amount: Optional[Union[int, str]] = None) -> PaystackResponse:
+        """List transactions with optional filtering.
+
+        Args:
+            per_page (Optional[int]): Number of records per page (default: 50)
+            page (Optional[int]): Page number to retrieve (default: 1)
+            customer (Optional[int]): Customer ID to filter by
+            terminal_id (Optional[str]): Terminal ID for the transactions you want to retrieve
+            status (Optional[str]): Transaction status ('failed', 'success', 'abandoned')
+            from_date (Optional[str]): Start date filter (e.g. '2016-09-24T00:00:05.000Z')
+            to_date (Optional[str]): End date filter (e.g. '2016-09-24T00:00:05.000Z')
+            amount (Optional[Union[int, str]]): Amount to filter by
+
+        Returns:
+            PaystackResponse: Contains list of transactions and pagination metadata
+        """
+        params = {}
+        
+        if per_page is not None:
+            params["perPage"] = per_page
+        if page is not None:
+            params["page"] = page
+        if customer is not None:
+            params["customer"] = customer
+        if terminal_id:
+            params["terminalid"] = terminal_id
+        if status:
+            if status not in ["failed", "success", "abandoned"]:
+                raise APIError("status must be one of: 'failed', 'success', 'abandoned'")
+            params["status"] = status
+        if from_date:
+            params["from"] = from_date
+        if to_date:
+            params["to"] = to_date
+        if amount is not None:
+            params["amount"] = str(amount)
+            
+        return self.request("GET", "transaction", params=params)
+
+    def fetch(self, transaction_id: Union[int, str]) -> PaystackResponse:
+        """Fetch details of a single transaction.
+
+        Args:
+            transaction_id (Union[int, str]): The ID of the transaction to fetch
+
+        Returns:
+            PaystackResponse: Contains detailed transaction information
+
+        Raises:
+            APIError: If transaction_id is not provided
+        """
+        self._validate_required_params(transaction_id=transaction_id)
+        return self.request("GET", f"transaction/{transaction_id}")
+
+    def charge_authorization(self, 
+                           email: str,
+                           amount: Union[int, str],
+                           authorization_code: str,
+                           currency: str = "NGN",
+                           reference: Optional[str] = None,
+                           channels: Optional[list] = None,
+                           subaccount: Optional[str] = None,
+                           transaction_charge: Optional[int] = None,
+                           bearer: Optional[str] = None,
+                           queue: Optional[bool] = None,
+                           metadata: Optional[Dict[str, Any]] = None) -> PaystackResponse:
+        """Charge a customer's authorization (for recurring payments).
+
+        Args:
+            email (str): Customer's email address
+            amount (Union[int, str]): Amount to charge in kobo
+            authorization_code (str): Authorization code from previous transaction
+            currency (str): Currency code (default: "NGN")
+            reference (Optional[str]): Unique transaction reference
+            channels (Optional[list]): Payment channels to use
+            subaccount (Optional[str]): Subaccount code for split payments
+            transaction_charge (Optional[int]): Transaction charge in kobo
+            bearer (Optional[str]): Who bears Paystack charges
+            queue (Optional[bool]): Whether to queue transaction if auth is unavailable
+            metadata (Optional[Dict]): Additional data to store
+
+        Returns:
+            PaystackResponse: Contains transaction details and status
+
+        Raises:
+            APIError: If required parameters are invalid
+        """
+        _validate_charge_authorization(email, str(amount), authorization_code)
+        
+        payload = {
+            "email": email,
+            "amount": str(amount),
+            "authorization_code": authorization_code,
+            "currency": currency
+        }
+        if reference:
+            payload["reference"] = reference
+        if channels:
+            payload["channels"] = channels
+        if subaccount:
+            payload["subaccount"] = subaccount
+        if transaction_charge is not None:
+            payload["transaction_charge"] = transaction_charge
+        if bearer:
+            payload["bearer"] = bearer
+        if queue is not None:
+            payload["queue"] = queue
+        if metadata:
+            # Convert metadata dict to JSON string as per API requirements
+            import json
+            payload["metadata"] = json.dumps(metadata)
+            
+        return self.request("POST", "transaction/charge_authorization", json_data=payload)
+
+    def view_timeline(self, id_or_reference: Union[int, str]) -> PaystackResponse:
+        """View the timeline/history of a transaction.
+
+        Args:
+            id_or_reference (Union[int, str]): Transaction ID or reference
+
+        Returns:
+            PaystackResponse: Contains transaction timeline events
+
+        Raises:
+            APIError: If id_or_reference is not provided
+        """
+        self._validate_required_params(id_or_reference=id_or_reference)
         return self.request("GET", f"transaction/timeline/{id_or_reference}")
 
-    def totals(self) -> dict:
-        """Get transaction totals.
-
-        Returns:
-            The response from the API.
-        """
-        return self.request("GET", "transaction/totals")
-
-    def export(self) -> dict:
-        """Export transactions.
-
-        Returns:
-            The response from the API.
-        """
-        return self.request("GET", "transaction/export")
-
-    def partial_debit(self, payload=None, **kwargs):
-        """Perform a partial debit on a transaction.
+    def get_totals(self, 
+                   per_page: Optional[int] = None,
+                   page: Optional[int] = None,
+                   from_date: Optional[str] = None,
+                   to_date: Optional[str] = None) -> PaystackResponse:
+        """Get transaction totals for your integration.
 
         Args:
-            payload: A dictionary containing the request payload.
-            **kwargs: Additional keyword arguments.
+            per_page (Optional[int]): Number of records per page
+            page (Optional[int]): Page number to retrieve
+            from_date (Optional[str]): Start date for totals calculation
+            to_date (Optional[str]): End date for totals calculation
 
         Returns:
-            The response from the API.
+            PaystackResponse: Contains total transaction values and counts
         """
-        if payload is None:
-            payload = kwargs
-        elif not isinstance(payload, dict):
-            raise APIError("Payload must be a dictionary")
+        params = {}
+        
+        if per_page is not None:
+            params["perPage"] = per_page
+        if page is not None:
+            params["page"] = page
+        if from_date:
+            params["from"] = from_date
+        if to_date:
+            params["to"] = to_date
+            
+        return self.request("GET", "transaction/totals", params=params)
 
-        _validate_charge_authorization(
-            payload.get("email"), payload.get("amount"), payload.get("authorization_code")
-        )
-        if not payload.get("currency"):
-            raise APIError("Currency is required")
+    def export_transactions(self, 
+                          per_page: Optional[int] = None,
+                          page: Optional[int] = None,
+                          from_date: Optional[str] = None,
+                          to_date: Optional[str] = None,
+                          customer: Optional[int] = None,
+                          status: Optional[str] = None,
+                          currency: Optional[str] = None,
+                          amount: Optional[Union[int, str]] = None,
+                          settled: Optional[bool] = None,
+                          settlement: Optional[int] = None,
+                          payment_page: Optional[int] = None) -> PaystackResponse:
+        """Export transactions as CSV.
 
-        return self.request("POST", "transaction/partial_debit", json=payload)
+        Args:
+            per_page (Optional[int]): Number of records per page
+            page (Optional[int]): Page number to retrieve
+            from_date (Optional[str]): Start date filter
+            to_date (Optional[str]): End date filter
+            customer (Optional[int]): Customer ID to filter by
+            status (Optional[str]): Transaction status filter
+            currency (Optional[str]): Currency filter
+            amount (Optional[Union[int, str]]): Amount filter
+            settled (Optional[bool]): Filter by settlement status
+            settlement (Optional[int]): Settlement ID filter
+            payment_page (Optional[int]): Payment page ID filter
+
+        Returns:
+            PaystackResponse: Contains export path and expiration details
+        """
+        params = {}
+        
+        if per_page is not None:
+            params["perPage"] = per_page
+        if page is not None:
+            params["page"] = page
+        if from_date:
+            params["from"] = from_date
+        if to_date:
+            params["to"] = to_date
+        if customer is not None:
+            params["customer"] = customer
+        if status:
+            params["status"] = status
+        if currency:
+            params["currency"] = currency
+        if amount is not None:
+            params["amount"] = str(amount)
+        if settled is not None:
+            params["settled"] = str(settled).lower()
+        if settlement is not None:
+            params["settlement"] = settlement
+        if payment_page is not None:
+            params["payment_page"] = payment_page
+            
+        return self.request("GET", "transaction/export", params=params)
+
+    def partial_debit(self, 
+                     authorization_code: str,
+                     currency: str,
+                     amount: Union[int, str],
+                     email: str,
+                     reference: Optional[str] = None,
+                     at_least: Optional[Union[int, str]] = None) -> PaystackResponse:
+        """Perform a partial debit transaction.
+        
+        This allows you to charge a customer but if the amount on their card/account
+        is less than what you're trying to charge, it charges the available amount.
+
+        Args:
+            authorization_code (str): Authorization code from previous transaction
+            currency (str): Currency code (NGN or GHS for partial debits)
+            amount (Union[int, str]): Preferred amount to charge in kobo
+            email (str): Customer's email address (attached to the authorization code)
+            reference (Optional[str]): Unique transaction reference
+            at_least (Optional[Union[int, str]]): Minimum acceptable amount in kobo
+
+        Returns:
+            PaystackResponse: Contains partial debit transaction details
+
+        Raises:
+            APIError: If required parameters are missing or invalid
+        """
+        # Validate required parameters
+        _validate_charge_authorization(email, str(amount), authorization_code)
+        self._validate_required_params(currency=currency)
+        
+        # Validate currency for partial debit
+        if currency not in ["NGN", "GHS"]:
+            raise APIError("currency must be 'NGN' or 'GHS' for partial debit")
+        
+        payload = {
+            "authorization_code": authorization_code,
+            "currency": currency,
+            "amount": str(amount),
+            "email": email
+        }
+        
+        # Add optional fields
+        if reference:
+            payload["reference"] = reference
+        if at_least is not None:
+            payload["at_least"] = str(at_least)
+            
+        return self.request("POST", "transaction/partial_debit", json_data=payload)
