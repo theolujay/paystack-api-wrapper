@@ -2,6 +2,7 @@ import pytest
 import requests
 import responses
 from api.exceptions import APIError
+from api.core import PaystackResponse
 
 # === Test Helpers ===
 def assert_api_error_contains(callable_method, expected_keyword, *args, **kwargs):
@@ -57,12 +58,12 @@ def test_charge_authorization(transaction_client):
     }
     setup_mock_response(transaction_client, payload)
     
-    data = transaction_client.charge_authorization(**payload)
+    response = transaction_client.charge_authorization(**payload)
     
-    assert isinstance(data, dict)
-    assert data["reference"] == "0m7frfnr47ezyxl"
-    assert data["status"] == "success"
-    assert data["authorization"]["authorization_code"] == payload["authorization_code"]
+    assert isinstance(response, PaystackResponse)
+    assert response.data["reference"] == "0m7frfnr47ezyxl"
+    assert response.data["status"] == "success"
+    assert response.data["authorization"]["authorization_code"] == payload["authorization_code"]
 
 @responses.activate
 def test_charge_authorization_invalid_key(transaction_client):
@@ -73,7 +74,7 @@ def test_charge_authorization_invalid_key(transaction_client):
     }
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_response(transaction_client, payload, mock_response, status_code=401)
-    assert_api_error_contains(transaction_client.charge_authorization, "unauthorized", **payload)
+    assert_api_error_contains(transaction_client.charge_authorization, "invalid api key", **payload)
 
 @responses.activate
 def test_charge_authorization_timeout(transaction_client):

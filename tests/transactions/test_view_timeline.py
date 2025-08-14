@@ -1,6 +1,7 @@
 import pytest
 import requests
 import responses
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 # === Test Helpers ===
@@ -49,19 +50,19 @@ def test_view_timeline(transaction_client):
     id_or_reference = "0m7frfnr47ezyxl"
     setup_mock_response(transaction_client, id_or_reference)
     
-    data = transaction_client.view_timeline(id_or_reference)
+    response = transaction_client.view_timeline(id_or_reference)
     
-    assert isinstance(data, dict)
-    assert data["success"] is True
-    assert isinstance(data["history"], list)
-    assert data["history"][0]["message"] == "Attempted to pay with card"
+    assert isinstance(response, PaystackResponse)
+    assert response.data["success"] is True
+    assert isinstance(response.data["history"], list)
+    assert response.data["history"][0]["message"] == "Attempted to pay with card"
 
 @responses.activate
 def test_view_timeline_invalid_key(transaction_client):
     id_or_reference = "0m7frfnr47ezyxl"
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_response(transaction_client, id_or_reference, mock_response, status_code=401)
-    assert_api_error_contains(transaction_client.view_timeline, "unauthorized", id_or_reference)
+    assert_api_error_contains(transaction_client.view_timeline, "invalid api key", id_or_reference)
 
 @responses.activate
 def test_view_timeline_timeout(transaction_client):

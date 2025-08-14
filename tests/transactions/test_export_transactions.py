@@ -1,6 +1,7 @@
 import pytest
 import requests
 import responses
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 # === Test Helpers ===
@@ -31,18 +32,18 @@ def setup_mock_response(transaction_client, response_data=None, status_code=200)
 def test_export_transactions(transaction_client):
     setup_mock_response(transaction_client)
     
-    data = transaction_client.export()
-    
-    assert isinstance(data, dict)
-    assert "path" in data
-    assert data["path"].startswith("https://s3.")
-    assert "expiresAt" in data
+    response = transaction_client.export_transactions()
+
+    assert isinstance(response, PaystackResponse)
+    assert "path" in response.data
+    assert response.data["path"].startswith("https://s3.")
+    assert "expiresAt" in response.data
 
 @responses.activate
 def test_export_transactions_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_response(transaction_client, mock_response, status_code=401)
-    assert_api_error_contains(transaction_client.export, "unauthorized")
+    assert_api_error_contains(transaction_client.export_transactions, "invalid api key")
 
 @responses.activate
 def test_export_transactions_timeout(transaction_client):
@@ -51,7 +52,7 @@ def test_export_transactions_timeout(transaction_client):
         f"{transaction_client.base_url}/transaction/export",
         body=requests.exceptions.Timeout(),
     )
-    assert_api_error_contains(transaction_client.export, "timed out")
+    assert_api_error_contains(transaction_client.export_transactions, "timed out")
 
 @responses.activate
 def test_export_transactions_malformed_json(transaction_client):
@@ -61,4 +62,4 @@ def test_export_transactions_malformed_json(transaction_client):
         body="Not a JSON",
         status=200,
     )
-    assert_api_error_contains(transaction_client.export, "invalid json response")
+    assert_api_error_contains(transaction_client.export_transactions, "invalid json response")

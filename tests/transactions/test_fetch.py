@@ -1,6 +1,7 @@
 import pytest
 import requests
 import responses
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 # === Test Helpers ===
@@ -38,18 +39,18 @@ def test_fetch_transaction(transaction_client):
     transaction_id = 102934
     setup_mock_response(transaction_client, transaction_id)
     
-    data = transaction_client.fetch(transaction_id)
+    response = transaction_client.fetch(transaction_id)
     
-    assert isinstance(data, dict)
-    assert data["id"] == transaction_id
-    assert data["reference"] == "ps_ref_12345"
+    assert isinstance(response, PaystackResponse)
+    assert response.data["id"] == transaction_id
+    assert response.data["reference"] == "ps_ref_12345"
 
 @responses.activate
 def test_fetch_transaction_invalid_key(transaction_client):
     transaction_id = 102934
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_response(transaction_client, transaction_id, mock_response, status_code=401)
-    assert_api_error_contains(transaction_client.fetch, "unauthorized", transaction_id)
+    assert_api_error_contains(transaction_client.fetch, "invalid api key", transaction_id)
 
 @responses.activate
 def test_fetch_transaction_timeout(transaction_client):

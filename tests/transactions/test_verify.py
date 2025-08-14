@@ -44,8 +44,8 @@ def test_verify_transaction(transaction_client):
 
     response = transaction_client.verify(reference)
 
-    assert response["reference"] == reference
-    assert response["status"] == "success"
+    assert response.data["reference"] == reference
+    assert response.data["status"] == "success"
 
 @responses.activate
 def test_verify_transaction_invalid_key(transaction_client):
@@ -54,7 +54,7 @@ def test_verify_transaction_invalid_key(transaction_client):
     setup_mock_response(transaction_client, reference, mock_response, status_code=401)
 
     assert_api_error_contains(
-        transaction_client.verify, "unauthorized", reference
+        transaction_client.verify, "invalid api key", reference
     )
 
 @responses.activate

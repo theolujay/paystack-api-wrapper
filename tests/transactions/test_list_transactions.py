@@ -1,6 +1,7 @@
 import pytest
 import requests
 import responses
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 # === Test Helpers ===
@@ -44,19 +45,19 @@ def setup_mock_response(transaction_client, response_data=None, status_code=200)
 def test_list_transactions(transaction_client):
     setup_mock_response(transaction_client)
     
-    # unpack tuple from BaseClient
-    data, meta = transaction_client.list()
+    response = transaction_client.list_transactions()
     
-    assert isinstance(data, list)
-    assert data[0]["reference"] == "ps_ref_12345"
-    assert isinstance(meta, dict)
-    assert meta["total"] == 50
+    assert isinstance(response, PaystackResponse)
+    assert isinstance(response.data, list)
+    assert response.data[0]["reference"] == "ps_ref_12345"
+    assert isinstance(response.meta, dict)
+    assert response.meta["total"] == 50
 
 @responses.activate
 def test_list_transactions_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_response(transaction_client, mock_response, status_code=401)
-    assert_api_error_contains(transaction_client.list, "unauthorized")
+    assert_api_error_contains(transaction_client.list_transactions, "invalid api key")
 
 @responses.activate
 def test_list_transactions_timeout(transaction_client):
@@ -65,7 +66,7 @@ def test_list_transactions_timeout(transaction_client):
         f"{transaction_client.base_url}/transaction",
         body=requests.exceptions.Timeout(),
     )
-    assert_api_error_contains(transaction_client.list, "timed out")
+    assert_api_error_contains(transaction_client.list_transactions, "timed out")
 
 @responses.activate
 def test_list_transactions_malformed_json(transaction_client):
@@ -75,4 +76,4 @@ def test_list_transactions_malformed_json(transaction_client):
         body="Not a JSON",
         status=200,
     )
-    assert_api_error_contains(transaction_client.list, "invalid json response")
+    assert_api_error_contains(transaction_client.list_transactions, "invalid json response")

@@ -1,6 +1,7 @@
 import pytest
 import requests
 import responses
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 # === Test Helpers ===
@@ -40,18 +41,18 @@ def setup_mock_response(transaction_client, response_data=None, status_code=200)
 def test_transaction_totals(transaction_client):
     setup_mock_response(transaction_client)
     
-    data = transaction_client.totals()
+    response = transaction_client.get_totals()
     
-    assert isinstance(data, dict)
-    assert data["total_transactions"] == 42670
-    assert isinstance(data["total_volume_by_currency"], list)
-    assert data["total_volume_by_currency"][0]["currency"] == "NGN"
+    assert isinstance(response, PaystackResponse)
+    assert response.data["total_transactions"] == 42670
+    assert isinstance(response.data["total_volume_by_currency"], list)
+    assert response.data["total_volume_by_currency"][0]["currency"] == "NGN"
 
 @responses.activate
 def test_transaction_totals_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_response(transaction_client, mock_response, status_code=401)
-    assert_api_error_contains(transaction_client.totals, "unauthorized")
+    assert_api_error_contains(transaction_client.get_totals, "invalid api key")
 
 @responses.activate
 def test_transaction_totals_timeout(transaction_client):
@@ -60,7 +61,7 @@ def test_transaction_totals_timeout(transaction_client):
         f"{transaction_client.base_url}/transaction/totals",
         body=requests.exceptions.Timeout(),
     )
-    assert_api_error_contains(transaction_client.totals, "timed out")
+    assert_api_error_contains(transaction_client.get_totals, "timed out")
 
 @responses.activate
 def test_transaction_totals_malformed_json(transaction_client):
@@ -70,4 +71,4 @@ def test_transaction_totals_malformed_json(transaction_client):
         body="Not a JSON",
         status=200,
     )
-    assert_api_error_contains(transaction_client.totals, "invalid json response")
+    assert_api_error_contains(transaction_client.get_totals, "invalid json response")

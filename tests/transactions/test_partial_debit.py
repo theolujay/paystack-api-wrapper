@@ -1,6 +1,7 @@
 import pytest
 import requests
 import responses
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 # === Test Helpers ===
@@ -61,14 +62,14 @@ def test_partial_debit_success(transaction_client):
         "amount": "20000",
         "email": "customer@email.com"
     }
-    data = transaction_client.partial_debit(payload)
+    response = transaction_client.partial_debit(**payload)
     
-    assert isinstance(data, dict)
-    assert data["status"] == "success"
-    assert data["currency"] == "NGN"
-    assert data["amount"] == 50000
-    assert "authorization" in data
-    assert data["authorization"]["reusable"] is True
+    assert isinstance(response, PaystackResponse)
+    assert response.data["status"] == "success"
+    assert response.data["currency"] == "NGN"
+    assert response.data["amount"] == 50000
+    assert "authorization" in response.data
+    assert response.data["authorization"]["reusable"] is True
 
 @responses.activate
 def test_partial_debit_invalid_key(transaction_client):
@@ -81,7 +82,7 @@ def test_partial_debit_invalid_key(transaction_client):
         "amount": "20000",
         "email": "customer@email.com"
     }
-    assert_api_error_contains(transaction_client.partial_debit, "unauthorized", payload)
+    assert_api_error_contains(transaction_client.partial_debit, "invalid api key", **payload)
 
 @responses.activate
 def test_partial_debit_timeout(transaction_client):
@@ -96,7 +97,7 @@ def test_partial_debit_timeout(transaction_client):
         "amount": "20000",
         "email": "customer@email.com"
     }
-    assert_api_error_contains(transaction_client.partial_debit, "timed out", payload)
+    assert_api_error_contains(transaction_client.partial_debit, "timed out", **payload)
 
 @responses.activate
 def test_partial_debit_malformed_json(transaction_client):
@@ -112,4 +113,4 @@ def test_partial_debit_malformed_json(transaction_client):
         "amount": "20000",
         "email": "customer@email.com"
     }
-    assert_api_error_contains(transaction_client.partial_debit, "invalid json response", payload)
+    assert_api_error_contains(transaction_client.partial_debit, "invalid json response", **payload)

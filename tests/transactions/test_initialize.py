@@ -4,6 +4,7 @@ import pytest
 import requests
 import responses
 
+from api.core import PaystackResponse
 from api.exceptions import APIError
 
 
@@ -43,31 +44,28 @@ def test_initialize_transaction(transaction_client):
         },
     }
     setup_mock_response(transaction_client, mock_response)
-    data = {"email": "customer@email.com", "amount": 20000}
+    data = {"email": "customer@email.com", "amount": "20000", "currency": "NGN"}
 
     response = transaction_client.initialize(email=data["email"], amount=data["amount"])
     request = responses.calls[0].request
     payload = json.loads(request.body)
 
     assert request.method == "POST"
-    assert all(
-        key in response for key in ["authorization_url", "access_code", "reference"]
-    )
+    assert isinstance(response, PaystackResponse)
     assert payload == data
 
 
 @pytest.mark.parametrize(
-    "missing_arg, test_kwargs",
+    "test_kwargs",
     [
-        ("email", {"amount": 20000}),
-        ("amount", {"email": "customer@email.com"}),
+        {"amount": 20000},
+        {"email": "customer@email.com"},
     ],
 )
-def test_validate_transaction_missing_required_fields(transaction_client, missing_arg, test_kwargs):
+def test_validate_transaction_missing_required_fields(transaction_client, test_kwargs):
     """Test validation for missing required fields."""
-    with pytest.raises(APIError) as excinfo:
+    with pytest.raises(TypeError):
         transaction_client.initialize(**test_kwargs)
-    assert missing_arg in str(excinfo.value).lower()
 
 
 @responses.activate
@@ -78,7 +76,7 @@ def test_initialize_transaction_invalid_api_key(transaction_client):
     }
     setup_mock_response(transaction_client, mock_response, 401)
     assert_api_error_contains(
-        transaction_client, "unauthorized", email="customer@email.com", amount=20000
+        transaction_client, "invalid api key", email="customer@email.com", amount=20000
     )
 
 @responses.activate

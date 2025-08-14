@@ -16,9 +16,9 @@ def test_baseclient_sets_authorization_header(base_client, secret_key):
             "data": {"x": 1}
         }, status=200
     )
-    data = base_client.request("GET", "test")
+    response = base_client.request("GET", "test")
     assert responses.calls[0].request.headers["Authorization"] == f"Bearer {secret_key}"
-    assert data == {"x": 1}
+    assert response.data == {"x": 1}
 
 @responses.activate
 def test_request_timeout(base_client):
@@ -56,18 +56,17 @@ def test_false_status_response(base_client):
 
 @responses.activate
 def test_invalid_response_structure(base_client):
-    
-    
+
+
     responses.add(
         responses.POST, f"{base_client.base_url}/initiate_payment",
         json={
-            "status": True,
-            "message": "Invalid JSON response",
+            "detail": "Invalid JSON response",
         }, status=200
     )
     with pytest.raises(APIError) as excinfo:
         base_client.request("POST", "initiate_payment")
-    assert "Unexpected response structure from Paystack" in str(excinfo.value)
+    assert "Invalid Paystack response structure" in str(excinfo.value)
 
 @responses.activate
 def test_error_status_code(base_client):
