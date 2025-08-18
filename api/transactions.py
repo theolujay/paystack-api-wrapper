@@ -28,7 +28,7 @@ class Transaction(BaseClient):
 
         Args:
             email (str): Customer's email address
-            amount (Union[int, str]): Amount in kobo (smallest currency unit)
+            amount (Union[int, str]): Amount in subunit of the supported currency
             currency (str): Currency code (default: "NGN")
             reference (Optional[str]): Unique transaction reference
             callback_url (Optional[str]): URL to redirect after payment
