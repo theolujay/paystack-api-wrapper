@@ -4,7 +4,7 @@ from .exceptions import APIError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 
-class Transaction(BaseClient):
+class TransactionsAPI(BaseClient):
     """Transaction API client for processing payments and managing transactions."""
     
     def __init__(self, secret_key: Optional[str] = None):

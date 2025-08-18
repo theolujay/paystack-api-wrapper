@@ -4,7 +4,7 @@ from .core import BaseClient, PaystackResponse
 from .exceptions import APIError
 
 
-class Miscellaneous(BaseClient):
+class MiscellaneousAPI(BaseClient):
     """Miscellaneous API client for supporting APIs that provide additional details to other APIs."""
     
     def __init__(self, secret_key: Optional[str] = None):

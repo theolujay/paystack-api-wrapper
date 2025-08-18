@@ -4,7 +4,7 @@ from .core import BaseClient, PaystackResponse
 from .exceptions import APIError
 
 
-class Refund(BaseClient):
+class RefundsAPI(BaseClient):
     """Refund API client for creating and managing transaction refunds."""
     
     def __init__(self, secret_key: Optional[str] = None):

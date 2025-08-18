@@ -5,7 +5,7 @@ from .exceptions import APIError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 
-class Charge(BaseClient):
+class ChargeAPI(BaseClient):
     """Charge API client for processing payments with specific payment channels."""
     
     def __init__(self, secret_key: Optional[str] = None):

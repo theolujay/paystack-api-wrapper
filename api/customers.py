@@ -6,7 +6,7 @@ from .core import BaseClient, PaystackResponse
 from .exceptions import APIError
 from .utils.helpers import validate_email
 
-class Customer(BaseClient):
+class CustomersAPI(BaseClient):
     """Customer API client for creating and managing customers."""
     
     def __init__(self, secret_key: Optional[str] = None):
