@@ -2,33 +2,33 @@ import pytest
 import os
 from dotenv import load_dotenv
 
-from api.core import BaseClient
-from api.exceptions import AuthenticationError
-from api.transactions import TransactionsAPI
-from api.apple_pay import ApplePayAPI
-from api.bulk_charges import BulkChargesAPI
-from api.charge import ChargeAPI
-from api.customers import CustomersAPI
-from api.dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
-from api.direct_debit import DirectDebitAPI
-from api.disputes import DisputesAPI
-from api.integration import IntegrationAPI
-from api.miscellaneous import MiscellaneousAPI
-from api.payment_pages import PaymentPagesAPI
-from api.payment_requests import PaymentRequestsAPI
-from api.plans import PlansAPI
-from api.products import ProductsAPI
-from api.refunds import RefundsAPI
-from api.settlements import SettlementsAPI
-from api.subaccounts import SubaccountsAPI
-from api.subscriptions import SubscriptionsAPI
-from api.terminal import TerminalAPI
-from api.transaction_splits import TransactionSplitsAPI
-from api.transfers_control import TransfersControlAPI
-from api.transfers_recipients import TransferRecipientsAPI
-from api.transfers import TransfersAPI
-from api.verification import VerificationAPI
-from api.virtual_terminal import VirtualTerminalAPI
+from paystack_client.core import BaseClient
+from paystack_client.exceptions import AuthenticationError
+from paystack_client.transactions import TransactionsAPI
+from paystack_client.apple_pay import ApplePayAPI
+from paystack_client.bulk_charges import BulkChargesAPI
+from paystack_client.charge import ChargeAPI
+from paystack_client.customers import CustomersAPI
+from paystack_client.dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
+from paystack_client.direct_debit import DirectDebitAPI
+from paystack_client.disputes import DisputesAPI
+from paystack_client.integration import IntegrationAPI
+from paystack_client.miscellaneous import MiscellaneousAPI
+from paystack_client.payment_pages import PaymentPagesAPI
+from paystack_client.payment_requests import PaymentRequestsAPI
+from paystack_client.plans import PlansAPI
+from paystack_client.products import ProductsAPI
+from paystack_client.refunds import RefundsAPI
+from paystack_client.settlements import SettlementsAPI
+from paystack_client.subaccounts import SubaccountsAPI
+from paystack_client.subscriptions import SubscriptionsAPI
+from paystack_client.terminal import TerminalAPI
+from paystack_client.transaction_splits import TransactionSplitsAPI
+from paystack_client.transfers_control import TransfersControlAPI
+from paystack_client.transfers_recipients import TransferRecipientsAPI
+from paystack_client.transfers import TransfersAPI
+from paystack_client.verification import VerificationAPI
+from paystack_client.virtual_terminal import VirtualTerminalAPI
 
 
 @pytest.fixture(autouse=True)

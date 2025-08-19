@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError
-from api.plans import PlansAPI
+from paystack_client.exceptions import APIError
+from paystack_client.plans import PlansAPI
 
 from .utils import assert_api_error_contains
 

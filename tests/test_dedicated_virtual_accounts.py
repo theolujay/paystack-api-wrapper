@@ -2,8 +2,8 @@ import pytest
 import responses
 
 from .utils import assert_api_error_contains
-from api.exceptions import APIError
-from api.dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
+from paystack_client.exceptions import APIError
+from paystack_client.dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
 
 
 @responses.activate

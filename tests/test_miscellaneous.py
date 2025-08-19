@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError
-from api.miscellaneous import MiscellaneousAPI
+from paystack_client.exceptions import APIError
+from paystack_client.miscellaneous import MiscellaneousAPI
 
 
 from .utils import assert_api_error_contains

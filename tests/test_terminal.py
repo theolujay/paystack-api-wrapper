@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import AuthenticationError
-from api.terminal import TerminalAPI
+from paystack_client.exceptions import AuthenticationError
+from paystack_client.terminal import TerminalAPI
 
 
 from .utils import assert_api_error_contains

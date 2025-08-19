@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError
-from api.disputes import DisputesAPI
+from paystack_client.exceptions import APIError
+from paystack_client.disputes import DisputesAPI
 
 
 from .utils import assert_api_error_contains

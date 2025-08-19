@@ -2,7 +2,7 @@ import pytest
 import responses
 from requests.exceptions import Timeout
 
-from api.exceptions import APIError, NetworkError, InvalidResponseError, ValidationError
+from paystack_client.exceptions import APIError, NetworkError, InvalidResponseError, ValidationError
 
 
 @responses.activate

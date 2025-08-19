@@ -3,7 +3,7 @@ import responses
 import json
 import re
 import requests
-from api.exceptions import APIError, NetworkError, InvalidResponseError, ValidationError, PaystackError
+from paystack_client.exceptions import APIError, NetworkError, InvalidResponseError, ValidationError, PaystackError
 
 
 from .utils import assert_api_error_contains

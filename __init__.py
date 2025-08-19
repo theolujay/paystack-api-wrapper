@@ -16,7 +16,7 @@ Example usage:
     result = charge.initialize(amount=10000, email="user@example.com")
 """
 
-from .api import *
+from .paystack_client import *
 from .client import PaystackClient
 
 __version__ = "1.0.0"

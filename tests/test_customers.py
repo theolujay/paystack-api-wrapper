@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError, ValidationError
-from api.customers import CustomersAPI
+from paystack_client.exceptions import APIError, ValidationError
+from paystack_client.customers import CustomersAPI
 
 @responses.activate
 def test_create_customer(customers_client):

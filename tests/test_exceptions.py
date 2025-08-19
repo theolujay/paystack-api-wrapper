@@ -2,7 +2,7 @@ import pytest
 import json
 from unittest.mock import Mock
 
-from api.exceptions import (
+from paystack_client.exceptions import (
     PaystackError,
     APIError,
     AuthenticationError,

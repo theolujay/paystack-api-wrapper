@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import AuthenticationError
-from api.virtual_terminal import VirtualTerminalAPI
+from paystack_client.exceptions import AuthenticationError
+from paystack_client.virtual_terminal import VirtualTerminalAPI
 
 
 from .utils import assert_api_error_contains

@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import AuthenticationError
-from api.transaction_splits import TransactionSplitsAPI
+from paystack_client.exceptions import AuthenticationError
+from paystack_client.transaction_splits import TransactionSplitsAPI
 
 
 from .utils import assert_api_error_contains

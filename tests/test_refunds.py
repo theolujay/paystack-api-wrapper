@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError
-from api.refunds import RefundsAPI
+from paystack_client.exceptions import APIError
+from paystack_client.refunds import RefundsAPI
 
 from .utils import assert_api_error_contains
 

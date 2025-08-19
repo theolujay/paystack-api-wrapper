@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import AuthenticationError
-from api.verification import VerificationAPI
+from paystack_client.exceptions import AuthenticationError
+from paystack_client.verification import VerificationAPI
 
 
 from .utils import assert_api_error_contains

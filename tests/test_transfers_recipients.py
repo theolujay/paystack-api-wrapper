@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import AuthenticationError
-from api.transfers_recipients import TransferRecipientsAPI
+from paystack_client.exceptions import AuthenticationError
+from paystack_client.transfers_recipients import TransferRecipientsAPI
 
 from .utils import assert_api_error_contains
 

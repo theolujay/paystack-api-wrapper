@@ -1,6 +1,6 @@
 import pytest
 
-from api.exceptions import AuthenticationError
+from paystack_client.exceptions import AuthenticationError
 
 
 def assert_api_error_contains(callable_method, expected_keyword, *args, **kwargs):

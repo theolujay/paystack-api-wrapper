@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError
-from api.subaccounts import SubaccountsAPI
+from paystack_client.exceptions import APIError
+from paystack_client.subaccounts import SubaccountsAPI
 
 
 from .utils import assert_api_error_contains

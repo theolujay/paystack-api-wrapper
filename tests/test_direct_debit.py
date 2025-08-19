@@ -1,8 +1,8 @@
 import pytest
 import responses
 
-from api.exceptions import APIError
-from api.direct_debit import DirectDebitAPI
+from paystack_client.exceptions import APIError
+from paystack_client.direct_debit import DirectDebitAPI
 from .utils import assert_api_error_contains
 
 @responses.activate

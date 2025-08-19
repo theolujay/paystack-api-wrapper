@@ -3,8 +3,8 @@ import responses
 import json
 import requests
 
-from api.transfers import TransfersAPI
-from api.exceptions import APIError, NetworkError, ValidationError, AuthenticationError, NotFoundError, ServerError
+from paystack_client.transfers import TransfersAPI
+from paystack_client.exceptions import APIError, NetworkError, ValidationError, AuthenticationError, NotFoundError, ServerError
 
 
 class TestInitiateTransfer:

@@ -1,7 +1,7 @@
 import pytest
 import responses
-from api.exceptions import APIError
-from api.payment_pages import PaymentPagesAPI
+from paystack_client.exceptions import APIError
+from paystack_client.payment_pages import PaymentPagesAPI
 
 
 from .utils import assert_api_error_contains
