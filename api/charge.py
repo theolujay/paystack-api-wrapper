@@ -1,7 +1,7 @@
 # charge.py
 from typing import Optional, Dict, Any, Union
 from .core import BaseClient, PaystackResponse
-from .exceptions import APIError
+from .exceptions import ValidationError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 
@@ -47,14 +47,14 @@ class ChargeAPI(BaseClient):
             pin (Optional[str]): 4-digit PIN (send with a non-reusable authorization code)
             metadata (Optional[Dict]): Additional details for post-payment processes
             reference (Optional[str]): Unique transaction reference. Only -, ., = and alphanumeric characters allowed
-            device_id (Optional[str]): Unique identifier of the device used for payment
+            device_id: (Optional[str]): Unique identifier of the device used for payment
             birthday (Optional[str]): Customer's birthday in YYYY-MM-DD format
 
         Returns:
             PaystackResponse: Contains charge details, status, and any required next steps
 
         Raises:
-            APIError: If email or amount is invalid, or if conflicting payment methods are provided
+            ValidationError: If email or amount is invalid, or if conflicting payment methods are provided
         """
         _validate_amount_and_email(email, str(amount))
         
@@ -72,7 +72,10 @@ class ChargeAPI(BaseClient):
             payload["transaction_charge"] = transaction_charge
         if bearer:
             if bearer not in ["account", "subaccount"]:
-                raise APIError("bearer must be either 'account' or 'subaccount'")
+                raise ValidationError(
+                    "bearer must be either 'account' or 'subaccount'",
+                    field_errors={"bearer": "Must be 'account' or 'subaccount'"}
+                )
             payload["bearer"] = bearer
         if bank:
             payload["bank"] = bank

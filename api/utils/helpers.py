@@ -1,5 +1,7 @@
 import re
 
+from api.exceptions import ValidationError
+
 def validate_email(email):
     """
     Validate an email address.
@@ -7,12 +9,19 @@ def validate_email(email):
     Args:
         email (str): The email address to validate.
 
-    Returns:
-        bool: True if the email is valid, False otherwise.
+    Raises:
+            ValidationError: If email format is invalid
     """
-    if not isinstance(email, str) or len(email) > 254:
-        return False
+    if not email or not isinstance(email, str) or len(email) > 254:
+        raise ValidationError(
+                message="Email is required",
+                field_errors={"email": "Email address is required"}
+            )
 
     pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     
-    return re.match(pattern, email) is not None
+    if not re.match(pattern, email):
+        raise ValidationError(
+                message="Invalid email format",
+                field_errors={"email": "Please provide a valid email address"}
+            )

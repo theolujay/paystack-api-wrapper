@@ -3,7 +3,7 @@
 from typing import Optional, Dict, Any
 
 from .core import BaseClient, PaystackResponse
-from .exceptions import APIError
+from .exceptions import ValidationError
 from .utils.helpers import validate_email
 
 class CustomersAPI(BaseClient):
@@ -133,7 +133,7 @@ class CustomersAPI(BaseClient):
             payload["metadata"] = metadata
             
         if not payload:
-            raise APIError("At least one field must be provided for update")
+            raise ValidationError("At least one field must be provided for update")
             
         return self.request("PUT", f"customer/{code}", json_data=payload)
 
@@ -190,8 +190,10 @@ class CustomersAPI(BaseClient):
         self._validate_required_params(customer=customer, risk_action=risk_action)
         
         if risk_action not in ["default", "allow", "deny"]:
-            raise APIError("risk_action must be one of: 'default', 'allow', 'deny'")
-        
+            raise ValidationError(
+                "risk_action must be one of: 'default', 'allow', 'deny'",
+                field_errors={"risk_action": "Must be 'default', 'allow', or 'deny'"}
+            )
         payload = {
             "customer": customer,
             "risk_action": risk_action
@@ -262,10 +264,15 @@ class CustomersAPI(BaseClient):
         self._validate_required_params(customer_id=customer_id)
         
         if not account or "number" not in account or "bank_code" not in account:
-            raise APIError("account must contain 'number' and 'bank_code'")
-            
+            raise ValidationError(
+                "account must contain 'number' and 'bank_code'",
+                field_errors={"account": "Must contain 'number' and 'bank_code'"}
+            )
         if not address or "street" not in address or "city" not in address or "state" not in address:
-            raise APIError("address must contain 'street', 'city', and 'state'")
+            raise ValidationError(
+                "address must contain 'street', 'city', and 'state'",
+                field_errors={"address": "Must contain 'street', 'city', and 'state'"}
+            )
         
         payload = {
             "account": account,

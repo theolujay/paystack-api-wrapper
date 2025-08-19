@@ -1,28 +1,51 @@
 import os
+import re
 import requests
 from typing import Optional, Dict, Any
-from requests.exceptions import JSONDecodeError, HTTPError, Timeout
+from requests.exceptions import JSONDecodeError
 
-from .exceptions import APIError
+from .exceptions import (
+    APIError, 
+    ValidationError,
+    AuthenticationError,
+    NetworkError,
+    InvalidResponseError,
+    TransactionFailureError,
+    create_error_from_response
+)
 
 class PaystackResponse:
-    """Wrapper for Paystack API responses to provide consistent interface."""
+    """Wrapper for Paystack API responses to provide consistent interface.
     
-    def __init__(self, data: Any, meta: Optional[Dict] = None, message: str = ""):
+    This class standardizes how we handle Paystack responses, making it easier
+    to work with paginated data and check response status.
+    """
+    
+    def __init__(self, data: Any, meta: Optional[Dict] = None, message: str = "", status: bool = True):
         self.data = data
         self.meta = meta
         self.message = message
+        self.status = status
         
     @property
     def is_paginated(self) -> bool:
         """Check if this is a paginated response."""
         return self.meta is not None
     
+    @property
+    def is_success(self) -> bool:
+        """Check if the operation was successful."""
+        return self.status is True
+    
     def __repr__(self):
-        return f"PaystackResponse(data={self.data}, meta={self.meta}"
+        return f"PaystackResponse(data={self.data}, meta={self.meta}, status={self.status})"
         
 class BaseClient:
-    """Base client for interacting with the Paystack API."""
+    """Base client for interacting with the Paystack API.
+    
+    This class handles authentication, request formatting, response parsing,
+    and error handling for all Paystack API endpoints.
+    """
     def __init__(self,
                  secret_key: Optional[str] = None,
                  base_url: Optional[str] = None,
@@ -32,12 +55,20 @@ class BaseClient:
         self.timeout = timeout
         
         if not self.secret_key:
-            raise ValueError("Paystack secret key is required. Set PAYSTACK_SERCRET_KEY environment variable or pass secret_key parameter.")
+            raise AuthenticationError(
+                "Paystack secret key is required. Set PAYSTACK_SERCRET_KEY environment variable or pass secret_key parameter."
+            )
+            
+        if not self.secret_key.startswith(("sk_test_", "sk_live")):
+            raise AuthenticationError(
+                "Invalid paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"
+            )
         
         self.session = requests.Session()
         self.session.headers.update({
             "Authorization": f"Bearer {self.secret_key}",
             "Content-Type": "application/json",
+            "User-Agent": "paystack-client/1.0.0",
         })
 
 
@@ -62,7 +93,7 @@ class BaseClient:
             PaystackResponse: Wrapped response with data, meta, and message.
 
         Raises:
-            APIError: If Paystack reports an error or response structure is invalid.
+            PaystackError: Various subclasses depending on the error type.
         """
         url = self._build_url(endpoint)
         headers = self.session.headers.copy()
@@ -82,45 +113,108 @@ class BaseClient:
                 params=params,
                 timeout=self.timeout,
             )
-            response.raise_for_status()
-            # resp_json = response.json()
+            
+            request_id = (
+                response.headers.get("x-amzn-requestid")
+                or response.headers.get("cf-ray")
+            )
+            
             try:
                 resp_json = response.json()
             except (ValueError, JSONDecodeError) as e:
-                raise APIError(f"Invalid JSON response: {e}") from e
-
-        except Timeout as e:
-            raise APIError(f"Request timed out: {self.timeout}s: {e}") from e
-        except HTTPError as e:
-            error_msg = f"HTTP error {response.status_code}"
-            try:
-                error_json = response.json()
-                if "message" in error_json:
-                    error_msg += f": {error_json['message']}"
-            except (ValueError, JSONDecodeError):
-                pass
-            raise APIError(error_msg) from e
-        except requests.RequestException as e:
-            raise APIError(f"Request failed: {e}") from e
-
-        # Validate Paystack response structure
+                raise InvalidResponseError(
+                    f"Invalid JSON response: {e}",
+                    status_code=response.status_code,
+                    request_id=request_id,
+                ) from e
+            
+            # Handle HTTP status codes
+            if response.status_code in [200, 201]:
+                return self._handle_success_response(resp_json, response.status_code, request_id)
+            else:
+                # Use the factory function to create appropriate exception
+                raise create_error_from_response(
+                    response=resp_json,
+                    status_code=response.status_code,
+                    request_id=request_id
+                )
+        except requests.exceptions.ConnectTimeout:
+            raise NetworkError("Connection timed out - check your internet connection")
+        except requests.exceptions.ReadTimeout:
+            raise NetworkError(f"Request timed out after {self.timeout} seconds")
+        except requests.exceptions.ConnectionError as e:
+            raise NetworkError(f"Connection error: {e}")
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(f"Request failed: {e}")
+    
+    def _handle_success_response(self, resp_json: Dict, status_code: int, request_id: Optional[str]) -> PaystackResponse:
+        """
+        Handle successful HTTP responses (200, 201).
+        
+        Important: Paystack returns Http 200 even for failed operations!
+        We need to check th 'status' field in the response.
+        """
         if not isinstance(resp_json, dict):
-            raise APIError(f"Expected JSON object, got {type(resp_json)}")
+            raise InvalidResponseError(
+                f"Expected JSON object, got {type(resp_json)}",
+                status_code=status_code,
+                request_id=request_id
+            )
         
         if "status" not in resp_json or "message" not in resp_json:
-            raise APIError(f"Invalid Paystack response structure: missing 'status' or 'message'")
-    
-        # Check if API reported an error
-        if not resp_json.get("status", False):
+            raise InvalidResponseError(
+                "Invalid Paystack response structure: missing 'status' or 'message'",
+                status_code=status_code,
+                request_id=request_id,
+                response=resp_json
+            )
+            
+        # Check if Paystack reported an error (even with HTTP 200)
+        paystack_status = resp_json.get("status", False)
+        if paystack_status is False:
             error_message = resp_json.get("message", "Unknown API error")
-            raise APIError(f"Paystack API error: {error_message}")
-
-        # Extract data and meta information
+            field_errors = None
+            if "errors" in resp_json and isinstance(resp_json["errors"], dict):
+                field_errors = resp_json["errors"]
+                raise ValidationError(
+                    message=error_message,
+                    field_errors=field_errors,
+                    status_code=status_code,
+                    response=resp_json,
+                    request_id=request_id
+                )
+                
+            # Generic API error with HTTP 200 but status: false
+            raise APIError(
+                message=f"API request failed: {error_message}",
+                status_code=status_code,
+                response=resp_json,
+                request_id=request_id
+            )
+        # Check for failed transactions (HTTP 200, status: true, but transaction failed)
         data = resp_json.get("data")
+        if isinstance(data, dict):
+            transaction_status = data.get("status")
+            if transaction_status in ["failed", "abandoned", "cancelled"]:
+                gateway_response = data.get("gateway_response", "Transaction failed")
+                raise TransactionFailureError(
+                    message=f"Transaction failed: {transaction_status}",
+                    status_code=status_code,
+                    response=resp_json,
+                    request_id=request_id,
+                    gateway_response=gateway_response
+                )
+        
+        # Extract response components
         meta = resp_json.get("meta")
-        message = resp_json.get("message")
-
-        return PaystackResponse(data=data, meta=meta, message=message)
+        message = resp_json.get("message", "")
+        
+        return PaystackResponse(
+            data=data,
+            meta=meta,
+            message=message,
+            status=paystack_status
+        )
 
     def _build_url(self, endpoint: str) -> str:
         """Build full URL from endpoint."""
@@ -128,7 +222,78 @@ class BaseClient:
         return f"{self.base_url}/{endpoint}"
     
     def _validate_required_params(self, **params):
-        """Validate that required parameters are provided and not empty."""
+        """
+        Validate that required parameters are provided and not empty.
+        
+        Raises ValidationError for missing required parameters.
+        """
+        missing_params = []
+        
         for param_name, param_value in params.items():
             if param_value is None or (isinstance(param_value, str) and not param_value.strip()):
-                raise APIError(f"{param_name} is required and cannot be empty")
+                missing_params.append(param_name)
+        
+        if missing_params:
+            raise ValidationError(
+                message=f"Missing required parameters: {', '.join(missing_params)}",
+                field_errors={param: "This field is required" for param in missing_params}
+            )
+    
+    def _validate_amount(self, amount: int, currency: str = "NGN"):
+        """
+        Validate transaction amounts according to Paystack rules.
+        
+        Args:
+            amount: Amount in the smallest currency unit (kobo for NGN)
+            currency: Currency code
+            
+        Raises:
+            ValidationError: If amount is invalid
+        """
+        if not isinstance(amount, int):
+            raise ValidationError(
+                message="Amount must be an integer",
+                field_errors={"amount": "Must be an integer value"}
+            )
+        
+        # Minimum amounts by currency (in smallest unit)
+        min_amounts = {
+            "NGN": 100,   # ₦1.00 in kobo
+            "USD": 50,    # $0.50 in cents
+            "GHS": 100,   # GH₵1.00 in pesewas
+        }
+        
+        min_amount = min_amounts.get(currency, 100)
+        if amount < min_amount:
+            raise ValidationError(
+                message=f"Amount too small for {currency}",
+                field_errors={"amount": f"Minimum amount is {min_amount} {currency} subunits"}
+            )
+            
+    def _validate_email(self, email: str):
+        """
+        Email validation for Paystack requirements
+
+        Args:
+            email (str): The email address to validate.
+
+        Raises:
+                ValidationError: If email format is invalid
+        """
+        if not email or not isinstance(email, str) or len(email) > 254:
+            raise ValidationError(
+                    message="Email is required",
+                    field_errors={"email": "Email address is required"}
+                )
+
+        pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        
+        if not re.match(pattern, email):
+            raise ValidationError(
+                    message="Invalid email format",
+                    field_errors={"email": "Please provide a valid email address"}
+                )
+            
+    def __repr__(self):
+        masked_key = f"{self.secret_key[:7]}***{self.secret_key[-4:]}" if self.secret_key else "None"
+        return f"BaseClient(secret_key={masked_key}, base_url='{self.base_url}')"
