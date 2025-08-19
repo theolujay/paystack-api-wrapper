@@ -2,9 +2,9 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/paystack-client)](https://pypi.org/project/paystack-client/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/paystack-client)](https://pypi.org/project/paystack-client/)
-[![License](https://img.shields.io/pypi/l/paystack-client)](https://github.com/theolujay/paystack-client/blob/main/LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/theolujay/paystack-client/ci.yml?branch=main)](https://github.com/theolujay/paystack-client/actions)
-[![Coverage Status](https://img.shields.io/codecov/c/github/theolujay/paystack-client)](https://codecov.io/gh/theolujay/paystack-client)
+[![License](https://img.shields.io/pypi/l/paystack-client)](https://github.com/theolujay/paystack_client/blob/main/LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/theolujay/paystack_client/ci.yml?branch=main)](https://github.com/theolujay/paystack_client/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/theolujay/paystack_client)](https://codecov.io/gh/theolujay/paystack_client)
 
 A modern, intuitive, and robust Python wrapper for the [Paystack API](https://paystack.com/docs/api/). This library is designed to make integrating Paystack into your Python applications simple and convenient, with a focus on code quality, clarity, and robust error handling.
 
@@ -13,8 +13,8 @@ A modern, intuitive, and robust Python wrapper for the [Paystack API](https://pa
 *   **Complete API Coverage**: Provides access to all Paystack API endpoints.
 *   **Intuitive Design**: A clean, object-oriented structure that's easy to understand and use.
 *   **Type-Hinted**: Fully type-hinted for better editor support (like autocompletion) and static analysis.
-*   **Robust Error Handling**: Raises a custom `APIError` for all API-related issues, providing clear feedback.
-*   **Standardized Responses**: Wraps all API responses in a consistent `PaystackResponse` object.
+*   **Robust Error Handling**: Raises specific, custom exceptions for different API errors (e.g., `ValidationError`, `AuthenticationError`), all inheriting from a base `PaystackError`.
+*   **Consistent Responses**: All API methods return a consistent `(data, meta)` tuple.
 *   **Minimal Dependencies**: Only requires `requests` for HTTP communication and `python-dotenv` for environment variable management.
 
 ## Installation
@@ -29,14 +29,15 @@ pip install paystack-client
 
 ### Initializing the Client
 
-First, instantiate the `PaystackClient` with your secret key. It's highly recommended to store your secret key as an environment variable and not hardcode it in your application.
+First, instantiate the `PaystackClient` with your secret key. It's highly recommended to store your secret key as an environment variable (e.g., `PAYSTACK_SECRET_KEY`) and load it using `python-dotenv` or similar methods, rather than hardcoding it.
 
 ```python
 import os
 from paystack_client import PaystackClient
-from paystack_client.api.exceptions import APIError
+from paystack_client.exceptions import APIError # Import specific exceptions
 
 # Load your secret key from an environment variable
+# Ensure PAYSTACK_SECRET_KEY is set in your environment or a .env file
 secret_key = os.getenv("PAYSTACK_SECRET_KEY")
 
 if not secret_key:
@@ -52,94 +53,133 @@ All API resources are available as properties on the `client` object. For exampl
 ```python
 try:
     # Initialize a transaction
-    response = client.transactions.initialize(
+    data, meta = client.transactions.initialize(
         email="customer@example.com",
         amount=50000,  # Amount in the subunit (kobo for NGN)
         currency="NGN"
     )
     
-    # The actual data is in the `data` attribute
-    print(response.data)
-    # Expected output:
-    # {'authorization_url': '...', 'access_code': '...', 'reference': '...'}
+    # The primary response data is in the 'data' variable
+    print(data)
+    # Expected output (example):
+    # {'authorization_url': 'https://checkout.paystack.com/...', 'access_code': '...', 'reference': '...'}
 
 except APIError as e:
-    print(f"An error occurred: {e}")
+    print(f"An error occurred: {e.message}")
+    if e.status_code:
+        print(f"HTTP Status Code: {e.status_code}")
 ```
 
 ### Handling Responses
 
-Every successful API call returns a `PaystackResponse` object. This object standardizes the structure of the response from Paystack.
+Every successful API call returns a `(data, meta)` tuple. This structure provides a consistent way to access the API response.
 
-*   `response.data`: Contains the primary data from the API call. This can be a `dict` (for single objects) or a `list` of `dict`s (for lists).
-*   `response.message`: A descriptive message from the API (e.g., "Customers retrieved").
-*   `response.meta`: For paginated results, this `dict` contains pagination details like `total`, `page`, `perPage`, etc.
-*   `response.is_paginated`: A boolean property that is `True` if the response contains pagination metadata.
+*   `data`: Contains the primary data from the API call. This can be a `dict` (for single objects) or a `list` of `dict`s (for lists).
+*   `meta`: For paginated results, this `dict` contains pagination details like `total`, `page`, `perPage`, etc. If the response is not paginated, `meta` will be an empty dictionary.
 
-**Example with a paginated response:**
+**Example with a paginated response (e.g., listing customers):**
 
 ```python
+from paystack_client.paystack_client.exceptions import APIError
+
 try:
     # List the first 5 customers
-    response = client.customers.list_customers(per_page=5)
+    customers_data, customers_meta = client.customers.list_customers(per_page=5)
 
-    if response.is_paginated:
-        print(f"Total Customers: {response.meta['total']}")
-        print(f"Current Page: {response.meta['page']} of {response.meta['pageCount']}")
+    if customers_meta: # Check if meta is not empty, indicating pagination
+        print(f"Total Customers: {customers_meta.get('total')}")
+        print(f"Current Page: {customers_meta.get('page')} of {customers_meta.get('pageCount')}")
 
-    for customer in response.data:
-        print(f"- {customer['first_name']} {customer['last_name']} ({customer['email']})")
+    for customer in customers_data:
+        print(f"- {customer.get('first_name')} {customer.get('last_name')} ({customer.get('email')})")
 
 except APIError as e:
-    print(f"An error occurred: {e}")
+    print(f"An error occurred: {e.message}")
 ```
 
-### Error Handling
+### Robust Error Handling
 
-The library raises a custom `APIError` for any issues encountered while communicating with the Paystack API. This includes network errors, invalid authentication, or bad requests. You should wrap your API calls in a `try...except` block to handle these exceptions gracefully.
+The library provides a comprehensive set of custom exceptions, all inheriting from `paystack_client.paystack_client.exceptions.APIError`. This allows for granular error handling based on the type of issue encountered.
 
-The `APIError` exception has the following properties:
-*   `e.message`: The error message.
-*   `e.status_code`: The HTTP status code of the response, if available.
+Key exception classes:
+
+*   `APIError`: Base exception for all Paystack API related errors.
+*   `AuthenticationError`: Raised for invalid or missing API keys.
+*   `NetworkError`: Raised for network connectivity issues (e.g., timeouts, connection refused).
+*   `InvalidResponseError`: Raised when the API returns an unexpected or malformed response.
+*   `ValidationError`: Raised when input parameters fail validation (either client-side or API-side).
+*   `TransactionFailureError`: Specifically for transactions that fail on Paystack's end, even if the HTTP status is 200.
+
+You should wrap your API calls in `try...except` blocks to handle these exceptions gracefully.
 
 ```python
+from paystack_client.paystack_client.exceptions import (
+    APIError,
+    AuthenticationError,
+    ValidationError,
+    NetworkError,
+    TransactionFailureError
+)
+
 try:
-    # This will fail because the reference is invalid
-    client.transactions.verify(reference="an-invalid-reference")
+    # Example of an invalid call that might raise an error
+    data, meta = client.transactions.verify(reference="an-invalid-reference-that-does-not-exist")
+    print(data)
+
+except AuthenticationError as e:
+    print(f"Authentication Error: {e.message}")
+    # Handle invalid secret key
+except ValidationError as e:
+    print(f"Validation Error: {e.message}")
+    if e.field_errors:
+        print(f"Field Errors: {e.field_errors}")
+    # Handle invalid input parameters
+except NetworkError as e:
+    print(f"Network Error: {e.message}")
+    # Handle connectivity issues
+except TransactionFailureError as e:
+    print(f"Transaction Failed: {e.message}")
+    print(f"Gateway Response: {e.gateway_response}")
+    # Handle failed transactions
 except APIError as e:
-    print(f"API Error: {e.message}")
-    print(f"HTTP Status Code: {e.status_code}")
+    print(f"Generic API Error: {e.message}")
+    if e.status_code:
+        print(f"HTTP Status Code: {e.status_code}")
+    # Catch any other API-related errors
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+    # Catch any other unexpected Python errors
 ```
 
 ## Available APIs
 
-The client provides access to the following Paystack API resources. Each resource corresponds to a property on the `PaystackClient` instance.
+The client provides access to the following Paystack API resources. Each resource corresponds to a property on the `PaystackClient` instance:
 
-- `apple_pay`
-- `bulk_charges`
-- `charge`
-- `customers`
-- `dedicated_virtual_accounts`
-- `direct_debit`
-- `disputes`
-- `integration`
-- `miscellaneous`
-- `payment_pages`
-- `payment_requests`
-- `plans`
-- `products`
-- `refunds`
-- `settlements`
-- `subaccounts`
-- `subscriptions`
-- `terminal`
-- `transactions`
-- `transaction_splits`
-- `transfers`
-- `transfers_control`
-- `transfer_recipients`
-- `verification`
-- `virtual_terminal`
+-   `apple_pay`
+-   `bulk_charges`
+-   `charge`
+-   `customers`
+-   `dedicated_virtual_accounts`
+-   `direct_debit`
+-   `disputes`
+-   `integration`
+-   `miscellaneous`
+-   `payment_pages`
+-   `payment_requests`
+-   `plans`
+-   `products`
+-   `refunds`
+-   `settlements`
+-   `subaccounts`
+-   `subscriptions`
+-   `terminal`
+-   `transactions`
+-   `transaction_splits`
+-   `transfers`
+-   `transfers_control`
+-   `transfer_recipients`
+-   `verification`
+-   `virtual_terminal`
 
 ## Contributing
 
