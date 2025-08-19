@@ -38,7 +38,7 @@ class DisputesAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(from_date, to_date)
+        self._validate_required_params(from_date=from_date, to_date=to_date)
         payload = {
             "from": from_date,
             "to": to_date,
@@ -101,7 +101,7 @@ class DisputesAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(dispute_id, refund_amount)
+        self._validate_required_params(dispute_id=dispute_id, refund_amount=refund_amount)
         payload = {"refund_amount": refund_amount}
         if uploaded_filename:
             payload["uploaded_filename"] = uploaded_filename
@@ -134,7 +134,7 @@ class DisputesAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(
-            customer_email, customer_name, customer_phone, service_details
+            customer_email=customer_email, customer_name=customer_name, customer_phone=customer_phone, service_details=service_details
         )
         payload = {
             "customer_email": customer_email,
@@ -162,7 +162,7 @@ class DisputesAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(dispute_id, upload_filename)
+        self._validate_required_params(dispute_id=dispute_id, upload_filename=upload_filename)
         params = {"upload_filename": upload_filename}
         return self.request("GET", f"dispute/{dispute_id}/upload_url", params=params)
 
@@ -190,7 +190,7 @@ class DisputesAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(
-            dispute_id, resolution, message, refund_amount, uploaded_filename
+            dispute_id=dispute_id, resolution=resolution, message=message, refund_amount=refund_amount, uploaded_filename=uploaded_filename
         )
         payload = {
             "resolution": resolution,

@@ -58,7 +58,8 @@ class ChargeAPI(BaseClient):
         Raises:
             ValidationError: If email or amount is invalid, or if conflicting payment methods are provided
         """
-        _validate_amount_and_email(email, str(amount))
+        self._validate_email(email)
+        self._validate_amount(amount)
 
         payload = {"email": email, "amount": str(amount)}
 

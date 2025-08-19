@@ -1,6 +1,18 @@
 # Core imports
-from .core import BaseClient, PaystackResponse
-from .exceptions import APIError
+from .core import BaseClient
+from .exceptions import (
+    PaystackError,
+    APIError,
+    AuthenticationError,
+    ValidationError,
+    NotFoundError,
+    RateLimitError,
+    ServerError,
+    NetworkError,
+    InvalidResponseError,
+    TransactionFailureError,
+    create_error_from_response,
+)
 
 # API Client imports
 from .apple_pay import ApplePayAPI
@@ -31,13 +43,21 @@ from .virtual_terminal import VirtualTerminalAPI
 
 __all__ = [
     "BaseClient",
-    "PaystackResponse", 
     "APIError",
-
+    "PaystackError",
+    "AuthenticationError",
+    "ValidationError",
+    "NotFoundError",
+    "RateLimitError",
+    "ServerError",
+    "NetworkError",
+    "InvalidResponseError",
+    "TransactionFailureError",
+    "create_error_from_response",
     "ApplePayAPI",
     "BulkChargesAPI",
     "ChargeAPI",
-    "CustomersAPI", 
+    "CustomersAPI",
     "DedicatedVirtualAccountsAPI",
     "DirectDebitAPI",
     "DisputesAPI",

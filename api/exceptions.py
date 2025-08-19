@@ -247,6 +247,7 @@ def create_error_from_response(
     """
 
     # Try to extract error message and data from response
+    field_errors = None
     try:
         if hasattr(response, "json"):
             data = response.json()
@@ -258,7 +259,6 @@ def create_error_from_response(
         message = data.get("message", f"HTTP {status_code} error")
 
         # Extract field-specific errors for validation errors
-        field_errors = None
         if "errors" in data and isinstance(data["errors"], dict):
             field_errors = data["errors"]
 

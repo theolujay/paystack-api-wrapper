@@ -37,7 +37,7 @@ class BaseClient:
                 "Paystack secret key is required. Set PAYSTACK_SERCRET_KEY environment variable or pass secret_key parameter."
             )
 
-        if not self.secret_key.startswith(("sk_test_", "sk_live")):
+        if not self.secret_key.startswith(("sk_test", "sk_live")):
             raise AuthenticationError(
                 "Invalid paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"
             )
@@ -199,7 +199,7 @@ class BaseClient:
         endpoint = endpoint.lstrip("/")  # Remove leading slash if present
         return f"{self.base_url}/{endpoint}"
 
-    def _validate_required_params(self, **params):
+    def _validate_required_params(self, *args, **kwargs):
         """
         Validate that required parameters are provided and not empty.
 
@@ -207,7 +207,11 @@ class BaseClient:
         """
         missing_params = []
 
-        for param_name, param_value in params.items():
+        # Ensure no positional arguments are passed
+        if args:
+            raise TypeError("Positional arguments are not allowed for this method.")
+
+        for param_name, param_value in kwargs.items():
             if param_value is None or (
                 isinstance(param_value, str) and not param_value.strip()
             ):

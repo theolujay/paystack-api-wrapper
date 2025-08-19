@@ -16,18 +16,18 @@ def _validate_amount_and_email(email: str, amount: Union[int, str]):
         APIError: If email or amount is invalid.
     """
     if not email:
-        raise APIError("Email is required")
+        raise ValidationError("Email is required")
     if not amount:
-        raise APIError("Amount is required")
+        raise ValidationError("Amount is required")
     if not validate_email(email):
-        raise APIError("Invalid email format")
+        raise ValidationError("Invalid email format")
 
     try:
         amount_int = int(amount)
         if amount_int <= 0:
-            raise APIError("Amount must be a positive number")
+            raise ValidationError("Amount must be a positive number")
     except (ValueError, TypeError):
-        raise APIError("Amount must be a valid number string without comma or decimal")
+        raise ValidationError("Amount must be a valid number string without comma or decimal")
 
 
 def _validate_charge_authorization(

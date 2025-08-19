@@ -25,10 +25,11 @@ from .api.transaction_splits import TransactionSplitsAPI
 from .api.integration import IntegrationAPI
 from .api.miscellaneous import MiscellaneousAPI
 
+
 class PaystackClient(BaseClient):
     """
     Main Paystack client that provides access to all API endpoints.
-    
+
     Usage:
         client = PaystackClient(secret_key="your_secret_key")
         transaction = client.transactions.initialize(
@@ -36,11 +37,11 @@ class PaystackClient(BaseClient):
             amount=50000  # Amount in kobo
         )
     """
-    
+
     def __init__(self, secret_key: str, base_url: str = "https://api.paystack.co"):
         """
         Initialize the Paystack client.
-        
+
         Args:
             secret_key (str): Your Paystack secret key
             base_url (str): API base URL (defaults to production)
@@ -64,7 +65,9 @@ class PaystackClient(BaseClient):
         self.payment_pages = PaymentPagesAPI(secret_key, base_url)
         self.payment_requests = PaymentRequestsAPI(secret_key, base_url)
         self.bulk_charges = BulkChargesAPI(secret_key, base_url)
-        self.dedicated_virtual_accounts = DedicatedVirtualAccountsAPI(secret_key, base_url)
+        self.dedicated_virtual_accounts = DedicatedVirtualAccountsAPI(
+            secret_key, base_url
+        )
         self.direct_debit = DirectDebitAPI(secret_key, base_url)
         self.apple_pay = ApplePayAPI(secret_key, base_url)
         self.terminal = TerminalAPI(secret_key, base_url)
@@ -72,6 +75,6 @@ class PaystackClient(BaseClient):
         self.transaction_splits = TransactionSplitsAPI(secret_key, base_url)
         self.integration = IntegrationAPI(secret_key, base_url)
         self.miscellaneous = MiscellaneousAPI(secret_key, base_url)
-    
+
     def __repr__(self):
         return f"PaystackClient(base_url='{self.base_url}')"
