@@ -6,16 +6,18 @@ from .exceptions import APIError
 
 class RefundsAPI(BaseClient):
     """Refund API client for creating and managing transaction refunds."""
-    
+
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create(self,
-               transaction: Union[str, int],
-               amount: Optional[int] = None,
-               currency: Optional[str] = None,
-               customer_note: Optional[str] = None,
-               merchant_note: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create(
+        self,
+        transaction: Union[str, int],
+        amount: Optional[int] = None,
+        currency: Optional[str] = None,
+        customer_note: Optional[str] = None,
+        merchant_note: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Initiate a refund on your integration.
 
         Args:
@@ -33,10 +35,8 @@ class RefundsAPI(BaseClient):
             APIError: If transaction parameter is not provided
         """
         self._validate_required_params(transaction=transaction)
-        
-        payload = {
-            "transaction": str(transaction)
-        }
+
+        payload = {"transaction": str(transaction)}
 
         if amount is not None:
             if amount <= 0:
@@ -48,16 +48,18 @@ class RefundsAPI(BaseClient):
             payload["customer_note"] = customer_note
         if merchant_note:
             payload["merchant_note"] = merchant_note
-            
+
         return self.request("POST", "refund", json_data=payload)
 
-    def list_refunds(self,
-                    transaction: str,
-                    currency: str,
-                    from_date: Optional[str] = None,
-                    to_date: Optional[str] = None,
-                    per_page: Optional[int] = None,
-                    page: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_refunds(
+        self,
+        transaction: str,
+        currency: str,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """List refunds available on your integration.
 
         Args:
@@ -75,12 +77,8 @@ class RefundsAPI(BaseClient):
             APIError: If per_page or page parameters are invalid
         """
         self._validate_required_params(transaction=transaction, currency=currency)
-        
-        payload = {
-            "transaction": transaction,
-            "currency": currency
-        
-        }
+
+        payload = {"transaction": transaction, "currency": currency}
 
         if transaction:
             payload["transaction"] = transaction
@@ -98,10 +96,12 @@ class RefundsAPI(BaseClient):
             if page <= 0:
                 raise APIError("page must be greater than 0")
             payload["page"] = page
-            
+
         return self.request("GET", "refund", json_data=payload)
 
-    def fetch(self, refund_id: Union[str, int]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch(
+        self, refund_id: Union[str, int]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get details of a refund on your integration.
 
         Args:
@@ -114,5 +114,5 @@ class RefundsAPI(BaseClient):
             APIError: If refund_id is not provided
         """
         self._validate_required_params(refund_id=refund_id)
-        
+
         return self.request("GET", f"refund/{refund_id}")

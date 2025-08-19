@@ -1,6 +1,7 @@
 """
 The Transfer Recipients API allows you create and manage beneficiaries that you send money to.
 """
+
 from typing import Optional, List, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,17 @@ class TransferRecipientsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_transfer_recipient(self, type: str, name: str, account_number: Optional[str] = None, bank_code: Optional[str] = None, description: Optional[str] = None, currency: Optional[str] = None, authorization_code: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_transfer_recipient(
+        self,
+        type: str,
+        name: str,
+        account_number: Optional[str] = None,
+        bank_code: Optional[str] = None,
+        description: Optional[str] = None,
+        currency: Optional[str] = None,
+        authorization_code: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Creates a new recipient. A duplicate account number will lead to the retrieval of the existing record.
 
@@ -50,7 +61,9 @@ class TransferRecipientsAPI(BaseClient):
 
         return self.request("POST", "transferrecipient", json_data=payload)
 
-    def bulk_create_transfer_recipient(self, batch: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def bulk_create_transfer_recipient(
+        self, batch: List[Dict[str, Any]]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create multiple transfer recipients in batches. A duplicate account number will lead to the retrieval of the existing record.
 
@@ -63,7 +76,13 @@ class TransferRecipientsAPI(BaseClient):
         payload = {"batch": batch}
         return self.request("POST", "transferrecipient/bulk", json_data=payload)
 
-    def list_transfer_recipients(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_transfer_recipients(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List transfer recipients available on your integration
 
@@ -88,7 +107,9 @@ class TransferRecipientsAPI(BaseClient):
 
         return self.request("GET", "transferrecipient", params=params)
 
-    def fetch_transfer_recipient(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_transfer_recipient(
+        self, id_or_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Fetch the details of a transfer recipient
 
@@ -100,7 +121,9 @@ class TransferRecipientsAPI(BaseClient):
         """
         return self.request("GET", f"transferrecipient/{id_or_code}")
 
-    def update_transfer_recipient(self, id_or_code: str, name: Optional[str] = None, email: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_transfer_recipient(
+        self, id_or_code: str, name: Optional[str] = None, email: Optional[str] = None
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update transfer recipients available on your integration
 
@@ -120,7 +143,9 @@ class TransferRecipientsAPI(BaseClient):
 
         return self.request("PUT", f"transferrecipient/{id_or_code}", json_data=payload)
 
-    def delete_transfer_recipient(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def delete_transfer_recipient(
+        self, id_or_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Delete a transfer recipient (sets the transfer recipient to inactive)
 

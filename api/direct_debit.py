@@ -1,6 +1,7 @@
 """
 The Direct Debit API allows you manage the authorization on your customer's bank accounts.
 """
+
 from typing import Optional, List, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,9 @@ class DirectDebitAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def trigger_activation_charge(self, customer_ids: List[int]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def trigger_activation_charge(
+        self, customer_ids: List[int]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Trigger an activation charge on pending mandates on behalf of your customers.
 
@@ -27,7 +30,12 @@ class DirectDebitAPI(BaseClient):
         payload = {"customer_ids": customer_ids}
         return self.request("PUT", "directdebit/activation-charge", json_data=payload)
 
-    def list_mandate_authorizations(self, cursor: Optional[str] = None, status: Optional[str] = None, per_page: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_mandate_authorizations(
+        self,
+        cursor: Optional[str] = None,
+        status: Optional[str] = None,
+        per_page: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get the list of direct debit mandates on your integration.
 

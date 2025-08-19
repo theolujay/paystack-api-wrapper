@@ -1,6 +1,7 @@
 """
 The Subaccounts API allows you create and manage subaccounts on your integration.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,18 @@ class SubaccountsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_subaccount(self, business_name: str, bank_code: str, account_number: str, percentage_charge: float, description: Optional[str] = None, primary_contact_email: Optional[str] = None, primary_contact_name: Optional[str] = None, primary_contact_phone: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_subaccount(
+        self,
+        business_name: str,
+        bank_code: str,
+        account_number: str,
+        percentage_charge: float,
+        description: Optional[str] = None,
+        primary_contact_email: Optional[str] = None,
+        primary_contact_name: Optional[str] = None,
+        primary_contact_phone: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a subacount on your integration
 
@@ -51,7 +63,13 @@ class SubaccountsAPI(BaseClient):
 
         return self.request("POST", "subaccount", json_data=payload)
 
-    def list_subaccounts(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_subaccounts(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List subaccounts available on your integration
 
@@ -76,7 +94,9 @@ class SubaccountsAPI(BaseClient):
 
         return self.request("GET", "subaccount", params=params)
 
-    def fetch_subaccount(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_subaccount(
+        self, id_or_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a subaccount on your integration
 
@@ -88,7 +108,21 @@ class SubaccountsAPI(BaseClient):
         """
         return self.request("GET", f"subaccount/{id_or_code}")
 
-    def update_subaccount(self, id_or_code: str, business_name: Optional[str] = None, description: Optional[str] = None, bank_code: Optional[str] = None, account_number: Optional[str] = None, active: Optional[bool] = None, percentage_charge: Optional[float] = None, primary_contact_email: Optional[str] = None, primary_contact_name: Optional[str] = None, primary_contact_phone: Optional[str] = None, settlement_schedule: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_subaccount(
+        self,
+        id_or_code: str,
+        business_name: Optional[str] = None,
+        description: Optional[str] = None,
+        bank_code: Optional[str] = None,
+        account_number: Optional[str] = None,
+        active: Optional[bool] = None,
+        percentage_charge: Optional[float] = None,
+        primary_contact_email: Optional[str] = None,
+        primary_contact_name: Optional[str] = None,
+        primary_contact_phone: Optional[str] = None,
+        settlement_schedule: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a subaccount details on your integration
 

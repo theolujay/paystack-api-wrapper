@@ -1,29 +1,31 @@
 from typing import Optional, Dict, Any, Union, Tuple
 from .core import BaseClient
-from .exceptions import APIError
+from .exceptions import APIError, ValidationError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 
 class TransactionsAPI(BaseClient):
     """Transaction API client for processing payments and managing transactions."""
-    
+
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def initialize(self, 
-                  email: str, 
-                  amount: Union[int, str], 
-                  currency: str = "NGN",
-                  reference: Optional[str] = None,
-                  callback_url: Optional[str] = None,
-                  plan: Optional[str] = None,
-                  invoice_limit: Optional[int] = None,
-                  metadata: Optional[Dict[str, Any]] = None,
-                  channels: Optional[list] = None,
-                  split_code: Optional[str] = None,
-                  subaccount: Optional[str] = None,
-                  transaction_charge: Optional[int] = None,
-                  bearer: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def initialize(
+        self,
+        email: str,
+        amount: Union[int, str],
+        currency: str = "NGN",
+        reference: Optional[str] = None,
+        callback_url: Optional[str] = None,
+        plan: Optional[str] = None,
+        invoice_limit: Optional[int] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        channels: Optional[list] = None,
+        split_code: Optional[str] = None,
+        subaccount: Optional[str] = None,
+        transaction_charge: Optional[int] = None,
+        bearer: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Initialize a transaction for payment.
 
         Args:
@@ -47,12 +49,10 @@ class TransactionsAPI(BaseClient):
         Raises:
             APIError: If email or amount is invalid
         """
-        _validate_amount_and_email(email, str(amount))
-        payload = {
-            "email": email,
-            "amount": str(amount),
-            "currency": currency
-        }
+        self._validate_email(email)
+        self._validate_amount(amount, currency)
+
+        payload = {"email": email, "amount": (amount), "currency": currency}
         if reference:
             payload["reference"] = reference
         if callback_url:
@@ -64,6 +64,7 @@ class TransactionsAPI(BaseClient):
         if metadata:
             # Convert metadata dict to JSON string as per API requirements
             import json
+
             payload["metadata"] = json.dumps(metadata)
         if channels:
             payload["channels"] = channels
@@ -75,7 +76,7 @@ class TransactionsAPI(BaseClient):
             payload["transaction_charge"] = transaction_charge
         if bearer:
             payload["bearer"] = bearer
-            
+
         return self.request("POST", "transaction/initialize", json_data=payload)
 
     def verify(self, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -93,15 +94,17 @@ class TransactionsAPI(BaseClient):
         self._validate_required_params(reference=reference)
         return self.request("GET", f"transaction/verify/{reference}")
 
-    def list_transactions(self, 
-                         per_page: Optional[int] = None,
-                         page: Optional[int] = None,
-                         customer: Optional[int] = None,
-                         terminal_id: Optional[str] = None,
-                         status: Optional[str] = None,
-                         from_date: Optional[str] = None,
-                         to_date: Optional[str] = None,
-                         amount: Optional[Union[int, str]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_transactions(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        customer: Optional[int] = None,
+        terminal_id: Optional[str] = None,
+        status: Optional[str] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        amount: Optional[Union[int, str]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """List transactions with optional filtering.
 
         Args:
@@ -118,7 +121,7 @@ class TransactionsAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
-        
+
         if per_page is not None:
             params["perPage"] = per_page
         if page is not None:
@@ -129,7 +132,9 @@ class TransactionsAPI(BaseClient):
             params["terminalid"] = terminal_id
         if status:
             if status not in ["failed", "success", "abandoned"]:
-                raise APIError("status must be one of: 'failed', 'success', 'abandoned'")
+                raise APIError(
+                    "status must be one of: 'failed', 'success', 'abandoned'"
+                )
             params["status"] = status
         if from_date:
             params["from"] = from_date
@@ -137,10 +142,10 @@ class TransactionsAPI(BaseClient):
             params["to"] = to_date
         if amount is not None:
             params["amount"] = str(amount)
-            
+
         return self.request("GET", "transaction", params=params)
 
-    def fetch(self, transaction_id: Union[int, str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch(self, transaction_id: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Fetch details of a single transaction.
 
         Args:
@@ -155,18 +160,20 @@ class TransactionsAPI(BaseClient):
         self._validate_required_params(transaction_id=transaction_id)
         return self.request("GET", f"transaction/{transaction_id}")
 
-    def charge_authorization(self, 
-                           email: str,
-                           amount: Union[int, str],
-                           authorization_code: str,
-                           currency: str = "NGN",
-                           reference: Optional[str] = None,
-                           channels: Optional[list] = None,
-                           subaccount: Optional[str] = None,
-                           transaction_charge: Optional[int] = None,
-                           bearer: Optional[str] = None,
-                           queue: Optional[bool] = None,
-                           metadata: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def charge_authorization(
+        self,
+        email: str,
+        amount: Union[int, str],
+        authorization_code: str,
+        currency: str = "NGN",
+        reference: Optional[str] = None,
+        channels: Optional[list] = None,
+        subaccount: Optional[str] = None,
+        transaction_charge: Optional[int] = None,
+        bearer: Optional[str] = None,
+        queue: Optional[bool] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Charge a customer's authorization (for recurring payments).
 
         Args:
@@ -188,13 +195,14 @@ class TransactionsAPI(BaseClient):
         Raises:
             APIError: If required parameters are invalid
         """
-        _validate_charge_authorization(email, str(amount), authorization_code)
-        
+        self._validate_email(email)
+        self._validate_amount(amount, currency)
+
         payload = {
             "email": email,
-            "amount": str(amount),
+            "amount": amount,
             "authorization_code": authorization_code,
-            "currency": currency
+            "currency": currency,
         }
         if reference:
             payload["reference"] = reference
@@ -209,13 +217,17 @@ class TransactionsAPI(BaseClient):
         if queue is not None:
             payload["queue"] = queue
         if metadata:
-            # Convert metadata dict to JSON string as per API requirements
             import json
-            payload["metadata"] = json.dumps(metadata)
-            
-        return self.request("POST", "transaction/charge_authorization", json_data=payload)
 
-    def view_timeline(self, id_or_reference: Union[int, str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+            payload["metadata"] = json.dumps(metadata)
+
+        return self.request(
+            "POST", "transaction/charge_authorization", json_data=payload
+        )
+
+    def view_timeline(
+        self, id_or_reference: Union[int, str]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """View the timeline/history of a transaction.
 
         Args:
@@ -230,11 +242,13 @@ class TransactionsAPI(BaseClient):
         self._validate_required_params(id_or_reference=id_or_reference)
         return self.request("GET", f"transaction/timeline/{id_or_reference}")
 
-    def get_totals(self, 
-                   per_page: Optional[int] = None,
-                   page: Optional[int] = None,
-                   from_date: Optional[str] = None,
-                   to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def get_totals(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get transaction totals for your integration.
 
         Args:
@@ -247,7 +261,7 @@ class TransactionsAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
-        
+
         if per_page is not None:
             params["perPage"] = per_page
         if page is not None:
@@ -256,21 +270,23 @@ class TransactionsAPI(BaseClient):
             params["from"] = from_date
         if to_date:
             params["to"] = to_date
-            
+
         return self.request("GET", "transaction/totals", params=params)
 
-    def export_transactions(self, 
-                          per_page: Optional[int] = None,
-                          page: Optional[int] = None,
-                          from_date: Optional[str] = None,
-                          to_date: Optional[str] = None,
-                          customer: Optional[int] = None,
-                          status: Optional[str] = None,
-                          currency: Optional[str] = None,
-                          amount: Optional[Union[int, str]] = None,
-                          settled: Optional[bool] = None,
-                          settlement: Optional[int] = None,
-                          payment_page: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def export_transactions(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        customer: Optional[int] = None,
+        status: Optional[str] = None,
+        currency: Optional[str] = None,
+        amount: Optional[Union[int, str]] = None,
+        settled: Optional[bool] = None,
+        settlement: Optional[int] = None,
+        payment_page: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Export transactions as CSV.
 
         Args:
@@ -289,42 +305,44 @@ class TransactionsAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        params = {}
-        
-        if per_page is not None:
-            params["perPage"] = per_page
-        if page is not None:
-            params["page"] = page
-        if from_date:
-            params["from"] = from_date
-        if to_date:
-            params["to"] = to_date
-        if customer is not None:
-            params["customer"] = customer
-        if status:
-            params["status"] = status
-        if currency:
-            params["currency"] = currency
-        if amount is not None:
-            params["amount"] = str(amount)
-        if settled is not None:
-            params["settled"] = str(settled).lower()
-        if settlement is not None:
-            params["settlement"] = settlement
-        if payment_page is not None:
-            params["payment_page"] = payment_page
-            
-        return self.request("GET", "transaction/export", params=params)
+        query = {}
 
-    def partial_debit(self, 
-                     authorization_code: str,
-                     currency: str,
-                     amount: Union[int, str],
-                     email: str,
-                     reference: Optional[str] = None,
-                     at_least: Optional[Union[int, str]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        if per_page is not None:
+            query["perPage"] = per_page
+        if page is not None:
+            query["page"] = page
+        if from_date:
+            query["from"] = from_date
+        if to_date:
+            query["to"] = to_date
+        if customer is not None:
+            query["customer"] = customer
+        if status:
+            query["status"] = status
+        if currency:
+            query["currency"] = currency
+        if amount is not None:
+            query["amount"] = str(amount)
+        if settled is not None:
+            query["settled"] = str(settled).lower()
+        if settlement is not None:
+            query["settlement"] = settlement
+        if payment_page is not None:
+            query["payment_page"] = payment_page
+
+        return self.request("GET", "transaction/export", params=query)
+
+    def partial_debit(
+        self,
+        authorization_code: str,
+        currency: str,
+        amount: Union[int, str],
+        email: str,
+        reference: Optional[str] = None,
+        at_least: Optional[Union[int, str]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Perform a partial debit transaction.
-        
+
         This allows you to charge a customer but if the amount on their card/account
         is less than what you're trying to charge, it charges the available amount.
 
@@ -342,25 +360,25 @@ class TransactionsAPI(BaseClient):
         Raises:
             APIError: If required parameters are missing or invalid
         """
-        # Validate required parameters
-        _validate_charge_authorization(email, str(amount), authorization_code)
+        self._validate_email(email)
         self._validate_required_params(currency=currency)
-        
+        self._validate_amount(amount, currency)
+
         # Validate currency for partial debit
         if currency not in ["NGN", "GHS"]:
-            raise APIError("currency must be 'NGN' or 'GHS' for partial debit")
-        
+            raise ValidationError("currency must be 'NGN' or 'GHS' for partial debit")
+
         payload = {
             "authorization_code": authorization_code,
             "currency": currency,
             "amount": str(amount),
-            "email": email
+            "email": email,
         }
-        
+
         # Add optional fields
         if reference:
             payload["reference"] = reference
         if at_least is not None:
             payload["at_least"] = str(at_least)
-            
+
         return self.request("POST", "transaction/partial_debit", json_data=payload)

@@ -1,6 +1,7 @@
 """
 The Settlements API allows you gain insights into payouts made by Paystack to your bank account.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,15 @@ class SettlementsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def list_settlements(self, per_page: Optional[int] = None, page: Optional[int] = None, status: Optional[str] = None, subaccount: Optional[str] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_settlements(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        status: Optional[str] = None,
+        subaccount: Optional[str] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List settlements made to your settlement accounts
 
@@ -45,7 +54,14 @@ class SettlementsAPI(BaseClient):
 
         return self.request("GET", "settlement", params=params)
 
-    def list_settlement_transactions(self, settlement_id: str, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_settlement_transactions(
+        self,
+        settlement_id: str,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get the transactions that make up a particular settlement
 
@@ -69,4 +85,6 @@ class SettlementsAPI(BaseClient):
         if to_date:
             params["to"] = to_date
 
-        return self.request("GET", f"settlement/{settlement_id}/transactions", params=params)
+        return self.request(
+            "GET", f"settlement/{settlement_id}/transactions", params=params
+        )

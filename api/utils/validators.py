@@ -1,10 +1,11 @@
 """Validation helpers for Paystack API calls."""
 
+from typing import Union
 from ..exceptions import APIError
 from .helpers import validate_email
 
 
-def _validate_amount_and_email(email: str, amount: int):
+def _validate_amount_and_email(email: str, amount: Union[int, str]):
     """Validate email and amount for a transaction.
 
     Args:
@@ -29,7 +30,9 @@ def _validate_amount_and_email(email: str, amount: int):
         raise APIError("Amount must be a valid number string without comma or decimal")
 
 
-def _validate_charge_authorization(email: str, amount: int, authorization_code: str):
+def _validate_charge_authorization(
+    email: str, amount: Union[int, str], authorization_code: str
+):
     """Validate email, amount, and authorization code for a transaction.
 
     Args:

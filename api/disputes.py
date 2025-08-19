@@ -1,7 +1,8 @@
 """
 The Disputes API allows you manage transaction disputes.
 """
-from typing import Optional, Dict, Any, Tuple
+
+from typing import Optional, Dict, Any, Tuple, Union
 
 from .core import BaseClient
 
@@ -14,7 +15,15 @@ class DisputesAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def list_disputes(self, from_date: str, to_date: str, per_page: Optional[int] = None, page: Optional[int] = None, transaction_id: Optional[str] = None, status: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_disputes(
+        self,
+        from_date: str,
+        to_date: str,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        transaction_id: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List disputes filed against you.
 
@@ -61,7 +70,9 @@ class DisputesAPI(BaseClient):
         """
         return self.request("GET", f"dispute/{dispute_id}")
 
-    def list_transaction_disputes(self, transaction_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_transaction_disputes(
+        self, transaction_id: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This endpoint retrieves disputes for a particular transaction
 
@@ -73,7 +84,12 @@ class DisputesAPI(BaseClient):
         """
         return self.request("GET", f"dispute/transaction/{transaction_id}")
 
-    def update_dispute(self, dispute_id: str, refund_amount: int, uploaded_filename: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_dispute(
+        self,
+        dispute_id: str,
+        refund_amount: Union[int, str],
+        uploaded_filename: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update details of a dispute on your integration
 
@@ -92,7 +108,16 @@ class DisputesAPI(BaseClient):
 
         return self.request("PUT", f"dispute/{dispute_id}", json_data=payload)
 
-    def add_evidence(self, dispute_id: str, customer_email: str, customer_name: str, customer_phone: str, service_details: str, delivery_address: Optional[str] = None, delivery_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def add_evidence(
+        self,
+        dispute_id: str,
+        customer_email: str,
+        customer_name: str,
+        customer_phone: str,
+        service_details: str,
+        delivery_address: Optional[str] = None,
+        delivery_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Provide evidence for a dispute
 
@@ -108,7 +133,9 @@ class DisputesAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(customer_email, customer_name, customer_phone, service_details)
+        self._validate_required_params(
+            customer_email, customer_name, customer_phone, service_details
+        )
         payload = {
             "customer_email": customer_email,
             "customer_name": customer_name,
@@ -122,7 +149,9 @@ class DisputesAPI(BaseClient):
 
         return self.request("POST", f"dispute/{dispute_id}/evidence", json_data=payload)
 
-    def get_upload_url(self, dispute_id: str, upload_filename: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def get_upload_url(
+        self, dispute_id: str, upload_filename: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This endpoint retrieves disputes for a particular transaction
 
@@ -137,7 +166,15 @@ class DisputesAPI(BaseClient):
         params = {"upload_filename": upload_filename}
         return self.request("GET", f"dispute/{dispute_id}/upload_url", params=params)
 
-    def resolve_dispute(self, dispute_id: str, resolution: str, message: str, refund_amount: int, uploaded_filename: str, evidence: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def resolve_dispute(
+        self,
+        dispute_id: str,
+        resolution: str,
+        message: str,
+        refund_amount: Union[int, str],
+        uploaded_filename: str,
+        evidence: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Resolve a dispute on your integration
 
@@ -152,7 +189,9 @@ class DisputesAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(dispute_id, resolution, message, refund_amount, uploaded_filename)
+        self._validate_required_params(
+            dispute_id, resolution, message, refund_amount, uploaded_filename
+        )
         payload = {
             "resolution": resolution,
             "message": message,
@@ -164,7 +203,15 @@ class DisputesAPI(BaseClient):
 
         return self.request("PUT", f"dispute/{dispute_id}/resolve", json_data=payload)
 
-    def export_disputes(self, from_date: str, to_date: str, per_page: Optional[int] = None, page: Optional[int] = None, transaction_id: Optional[str] = None, status: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def export_disputes(
+        self,
+        from_date: str,
+        to_date: str,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        transaction_id: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Export disputes available on your integration
 
@@ -179,7 +226,7 @@ class DisputesAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        payload= {
+        payload = {
             "from": from_date,
             "to": to_date,
         }

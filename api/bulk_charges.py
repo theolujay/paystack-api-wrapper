@@ -1,6 +1,7 @@
 """
 The Bulk Charges API allows you create and manage multiple recurring payments from your customers.
 """
+
 from typing import Optional, List, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,9 @@ class BulkChargesAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def initiate_bulk_charge(self, charges: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def initiate_bulk_charge(
+        self, charges: List[Dict[str, Any]]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Send an array of objects with authorization codes and amount, using the supported currency format, so we can process transactions as a batch.
 
@@ -27,7 +30,13 @@ class BulkChargesAPI(BaseClient):
         self._validate_required_params(charges=charges)
         return self.request("POST", "bulkcharge", json_data=charges)
 
-    def list_bulk_charge_batches(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_bulk_charge_batches(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This lists all bulk charge batches created by the integration. Statuses can be active, paused, or complete
 
@@ -52,7 +61,9 @@ class BulkChargesAPI(BaseClient):
 
         return self.request("GET", "bulkcharge", params=params)
 
-    def fetch_bulk_charge_batch(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_bulk_charge_batch(
+        self, id_or_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This endpoint retrieves a specific batch code. It also returns useful information on its progress by way of the total_charges and pending_charges attributes.
 
@@ -65,7 +76,15 @@ class BulkChargesAPI(BaseClient):
         self._validate_required_params(id_or_code=id_or_code)
         return self.request("GET", f"bulkcharge/{id_or_code}")
 
-    def fetch_charges_in_batch(self, id_or_code: str, status: Optional[str] = None, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_charges_in_batch(
+        self,
+        id_or_code: str,
+        status: Optional[str] = None,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This endpoint retrieves the charges associated with a specified batch code. Pagination parameters are available. You can also filter by status. Charge statuses can be pending, success or failed.
 
@@ -95,7 +114,9 @@ class BulkChargesAPI(BaseClient):
 
         return self.request("GET", f"bulkcharge/{id_or_code}/charges", params=params)
 
-    def pause_bulk_charge_batch(self, batch_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def pause_bulk_charge_batch(
+        self, batch_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Use this endpoint to pause processing a batch
 
@@ -108,7 +129,9 @@ class BulkChargesAPI(BaseClient):
         self._validate_required_params(batch_code=batch_code)
         return self.request("GET", f"bulkcharge/pause/{batch_code}")
 
-    def resume_bulk_charge_batch(self, batch_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def resume_bulk_charge_batch(
+        self, batch_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Use this endpoint to resume processing a batch
 

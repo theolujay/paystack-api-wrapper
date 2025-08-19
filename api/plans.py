@@ -1,7 +1,8 @@
 """
 The Plans API allows you create and manage installment payment options on your integration.
 """
-from typing import Optional, Dict, Any, Tuple
+
+from typing import Optional, Dict, Any, Tuple, Union
 
 from .core import BaseClient
 
@@ -14,7 +15,17 @@ class PlansAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_plan(self, name: str, amount: int, interval: str, description: Optional[str] = None, send_invoices: Optional[bool] = None, send_sms: Optional[bool] = None, currency: Optional[str] = None, invoice_limit: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_plan(
+        self,
+        name: str,
+        amount: Union[int, str],
+        interval: str,
+        description: Optional[str] = None,
+        send_invoices: Optional[bool] = None,
+        send_sms: Optional[bool] = None,
+        currency: Optional[str] = None,
+        invoice_limit: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a plan on your integration
 
@@ -49,7 +60,14 @@ class PlansAPI(BaseClient):
 
         return self.request("POST", "plan", json_data=payload)
 
-    def list_plans(self, per_page: Optional[int] = None, page: Optional[int] = None, status: Optional[str] = None, interval: Optional[str] = None, amount: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_plans(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        status: Optional[str] = None,
+        interval: Optional[str] = None,
+        amount: Optional[Union[int, str]] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List plans available on your integration
 
@@ -89,7 +107,19 @@ class PlansAPI(BaseClient):
         """
         return self.request("GET", f"plan/{id_or_code}")
 
-    def update_plan(self, id_or_code: str, name: Optional[str] = None, amount: Optional[int] = None, interval: Optional[str] = None, description: Optional[str] = None, send_invoices: Optional[bool] = None, send_sms: Optional[bool] = None, currency: Optional[str] = None, invoice_limit: Optional[int] = None, update_existing_subscriptions: Optional[bool] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_plan(
+        self,
+        id_or_code: str,
+        name: Optional[str] = None,
+        amount: Optional[Union[int, str]] = None,
+        interval: Optional[str] = None,
+        description: Optional[str] = None,
+        send_invoices: Optional[bool] = None,
+        send_sms: Optional[bool] = None,
+        currency: Optional[str] = None,
+        invoice_limit: Optional[int] = None,
+        update_existing_subscriptions: Optional[bool] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a plan details on your integration
 

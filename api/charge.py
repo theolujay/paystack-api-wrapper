@@ -7,28 +7,30 @@ from .utils.validators import _validate_amount_and_email, _validate_charge_autho
 
 class ChargeAPI(BaseClient):
     """Charge API client for processing payments with specific payment channels."""
-    
+
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create(self,
-               email: str,
-               amount: Union[int, str],
-               split_code: Optional[str] = None,
-               subaccount: Optional[str] = None,
-               transaction_charge: Optional[int] = None,
-               bearer: Optional[str] = None,
-               bank: Optional[Dict[str, Any]] = None,
-               bank_transfer: Optional[Dict[str, Any]] = None,
-               ussd: Optional[Dict[str, Any]] = None,
-               mobile_money: Optional[Dict[str, Any]] = None,
-               qr: Optional[Dict[str, Any]] = None,
-               authorization_code: Optional[str] = None,
-               pin: Optional[str] = None,
-               metadata: Optional[Dict[str, Any]] = None,
-               reference: Optional[str] = None,
-               device_id: Optional[str] = None,
-               birthday: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create(
+        self,
+        email: str,
+        amount: Union[int, str],
+        split_code: Optional[str] = None,
+        subaccount: Optional[str] = None,
+        transaction_charge: Optional[int] = None,
+        bearer: Optional[str] = None,
+        bank: Optional[Dict[str, Any]] = None,
+        bank_transfer: Optional[Dict[str, Any]] = None,
+        ussd: Optional[Dict[str, Any]] = None,
+        mobile_money: Optional[Dict[str, Any]] = None,
+        qr: Optional[Dict[str, Any]] = None,
+        authorization_code: Optional[str] = None,
+        pin: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        reference: Optional[str] = None,
+        device_id: Optional[str] = None,
+        birthday: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Initiate a payment by integrating the payment channel of your choice.
 
         Args:
@@ -57,12 +59,9 @@ class ChargeAPI(BaseClient):
             ValidationError: If email or amount is invalid, or if conflicting payment methods are provided
         """
         _validate_amount_and_email(email, str(amount))
-        
-        payload = {
-            "email": email,
-            "amount": str(amount)
-        }
-        
+
+        payload = {"email": email, "amount": str(amount)}
+
         # Add optional fields
         if split_code:
             payload["split_code"] = split_code
@@ -74,7 +73,7 @@ class ChargeAPI(BaseClient):
             if bearer not in ["account", "subaccount"]:
                 raise ValidationError(
                     "bearer must be either 'account' or 'subaccount'",
-                    field_errors={"bearer": "Must be 'account' or 'subaccount'"}
+                    field_errors={"bearer": "Must be 'account' or 'subaccount'"},
                 )
             payload["bearer"] = bearer
         if bank:
@@ -94,17 +93,22 @@ class ChargeAPI(BaseClient):
         if metadata:
             # Convert metadata dict to JSON string as per API requirements
             import json
-            payload["metadata"] = json.dumps(metadata) if isinstance(metadata, dict) else metadata
+
+            payload["metadata"] = (
+                json.dumps(metadata) if isinstance(metadata, dict) else metadata
+            )
         if reference:
             payload["reference"] = reference
         if device_id:
             payload["device_id"] = device_id
         if birthday:
             payload["birthday"] = birthday
-            
+
         return self.request("POST", "charge", json_data=payload)
 
-    def submit_pin(self, pin: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def submit_pin(
+        self, pin: str, reference: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit PIN to continue a charge.
 
         Args:
@@ -118,15 +122,14 @@ class ChargeAPI(BaseClient):
             APIError: If pin or reference is not provided
         """
         self._validate_required_params(pin=pin, reference=reference)
-        
-        payload = {
-            "pin": pin,
-            "reference": reference
-        }
-        
+
+        payload = {"pin": pin, "reference": reference}
+
         return self.request("POST", "charge/submit_pin", json_data=payload)
 
-    def submit_otp(self, otp: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def submit_otp(
+        self, otp: str, reference: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit OTP to complete a charge.
 
         Args:
@@ -140,15 +143,14 @@ class ChargeAPI(BaseClient):
             APIError: If otp or reference is not provided
         """
         self._validate_required_params(otp=otp, reference=reference)
-        
-        payload = {
-            "otp": otp,
-            "reference": reference
-        }
-        
+
+        payload = {"otp": otp, "reference": reference}
+
         return self.request("POST", "charge/submit_otp", json_data=payload)
 
-    def submit_phone(self, phone: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def submit_phone(
+        self, phone: str, reference: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit phone number when requested.
 
         Args:
@@ -162,15 +164,14 @@ class ChargeAPI(BaseClient):
             APIError: If phone or reference is not provided
         """
         self._validate_required_params(phone=phone, reference=reference)
-        
-        payload = {
-            "phone": phone,
-            "reference": reference
-        }
-        
+
+        payload = {"phone": phone, "reference": reference}
+
         return self.request("POST", "charge/submit_phone", json_data=payload)
 
-    def submit_birthday(self, birthday: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def submit_birthday(
+        self, birthday: str, reference: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit birthday when requested.
 
         Args:
@@ -184,20 +185,14 @@ class ChargeAPI(BaseClient):
             APIError: If birthday or reference is not provided
         """
         self._validate_required_params(birthday=birthday, reference=reference)
-        
-        payload = {
-            "birthday": birthday,
-            "reference": reference
-        }
-        
+
+        payload = {"birthday": birthday, "reference": reference}
+
         return self.request("POST", "charge/submit_birthday", json_data=payload)
 
-    def submit_address(self, 
-                      address: str,
-                      reference: str,
-                      city: str,
-                      state: str,
-                      zip_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def submit_address(
+        self, address: str, reference: str, city: str, state: str, zip_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit address to continue a charge.
 
         Args:
@@ -214,28 +209,30 @@ class ChargeAPI(BaseClient):
             APIError: If any required parameter is not provided
         """
         self._validate_required_params(
-            address=address, 
-            reference=reference, 
-            city=city, 
-            state=state, 
-            zip_code=zip_code
+            address=address,
+            reference=reference,
+            city=city,
+            state=state,
+            zip_code=zip_code,
         )
-        
+
         payload = {
             "address": address,
             "reference": reference,
             "city": city,
             "state": state,
-            "zip_code": zip_code
+            "zip_code": zip_code,
         }
-        
+
         return self.request("POST", "charge/submit_address", json_data=payload)
 
-    def check_pending_charge(self, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def check_pending_charge(
+        self, reference: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Check the status of a pending charge.
-        
-        When you get 'pending' as a charge status or if there was an exception when calling 
-        any of the /charge endpoints, wait 10 seconds or more, then make a check to see if 
+
+        When you get 'pending' as a charge status or if there was an exception when calling
+        any of the /charge endpoints, wait 10 seconds or more, then make a check to see if
         its status has changed. Don't call too early as you may get a lot more pending than you should.
 
         Args:

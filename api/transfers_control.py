@@ -1,6 +1,7 @@
 """
 The Transfers Control API allows you manage settings of your transfers.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -32,7 +33,9 @@ class TransfersControlAPI(BaseClient):
         """
         return self.request("GET", "balance/ledger")
 
-    def resend_otp(self, transfer_code: str, reason: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def resend_otp(
+        self, transfer_code: str, reason: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Generates a new OTP and sends to customer in the event they are having trouble receiving one.
 

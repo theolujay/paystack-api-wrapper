@@ -1,7 +1,8 @@
 """
 The Transfers API allows you automate sending money to your customers.
 """
-from typing import Optional, List, Dict, Any, Tuple
+
+from typing import Optional, List, Dict, Any, Tuple, Union
 
 from .core import BaseClient
 
@@ -14,7 +15,15 @@ class TransfersAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def initiate_transfer(self, source: str, amount: int, recipient: str, reason: Optional[str] = None, currency: Optional[str] = None, reference: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def initiate_transfer(
+        self,
+        source: str,
+        amount: Union[int, str],
+        recipient: str,
+        reason: Optional[str] = None,
+        currency: Optional[str] = None,
+        reference: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Send money to your customers.
 
@@ -29,7 +38,9 @@ class TransfersAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(source=source, amount=amount, recipient=recipient)
+        self._validate_required_params(
+            source=source, amount=amount, recipient=recipient
+        )
         payload = {
             "source": source,
             "amount": amount,
@@ -44,7 +55,9 @@ class TransfersAPI(BaseClient):
 
         return self.request("POST", "transfer", json_data=payload)
 
-    def finalize_transfer(self, transfer_code: str, otp: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def finalize_transfer(
+        self, transfer_code: str, otp: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Finalize an initiated transfer
 
@@ -62,7 +75,9 @@ class TransfersAPI(BaseClient):
         }
         return self.request("POST", "transfer/finalize_transfer", json_data=payload)
 
-    def initiate_bulk_transfer(self, source: str, transfers: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def initiate_bulk_transfer(
+        self, source: str, transfers: List[Dict[str, Any]]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Batch multiple transfers in a single request.
 
@@ -80,7 +95,14 @@ class TransfersAPI(BaseClient):
         }
         return self.request("POST", "transfer/bulk", json_data=payload)
 
-    def list_transfers(self, per_page: Optional[int] = None, page: Optional[int] = None, recipient: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_transfers(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        recipient: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the transfers made on your integration.
 

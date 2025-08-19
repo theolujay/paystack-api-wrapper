@@ -1,6 +1,7 @@
 """
 The Transaction Splits API enables merchants split the settlement for a transaction across their payout account, and one or more subaccounts.
 """
+
 from typing import Optional, List, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,15 @@ class TransactionSplitsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_split(self, name: str, type: str, currency: str, subaccounts: List[Dict[str, Any]], bearer_type: str, bearer_subaccount: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_split(
+        self,
+        name: str,
+        type: str,
+        currency: str,
+        subaccounts: List[Dict[str, Any]],
+        bearer_type: str,
+        bearer_subaccount: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a split payment on your integration
 
@@ -41,7 +50,16 @@ class TransactionSplitsAPI(BaseClient):
 
         return self.request("POST", "split", json_data=payload)
 
-    def list_splits(self, name: Optional[str] = None, active: Optional[bool] = None, sort_by: Optional[str] = None, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_splits(
+        self,
+        name: Optional[str] = None,
+        active: Optional[bool] = None,
+        sort_by: Optional[str] = None,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the transaction splits available on your integration
 
@@ -87,7 +105,14 @@ class TransactionSplitsAPI(BaseClient):
         """
         return self.request("GET", f"split/{split_id}")
 
-    def update_split(self, split_id: str, name: str, active: bool, bearer_type: Optional[str] = None, bearer_subaccount: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_split(
+        self,
+        split_id: str,
+        name: str,
+        active: bool,
+        bearer_type: Optional[str] = None,
+        bearer_subaccount: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a transaction split details on your integration
 
@@ -112,7 +137,9 @@ class TransactionSplitsAPI(BaseClient):
 
         return self.request("PUT", f"split/{split_id}", json_data=payload)
 
-    def add_update_subaccount_split(self, split_id: str, subaccount: str, share: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def add_update_subaccount_split(
+        self, split_id: str, subaccount: str, share: int
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Add a Subaccount to a Transaction Split, or update the share of an existing Subaccount in a Transaction Split
 
@@ -128,9 +155,13 @@ class TransactionSplitsAPI(BaseClient):
             "subaccount": subaccount,
             "share": share,
         }
-        return self.request("POST", f"split/{split_id}/subaccount/add", json_data=payload)
+        return self.request(
+            "POST", f"split/{split_id}/subaccount/add", json_data=payload
+        )
 
-    def remove_subaccount_from_split(self, split_id: str, subaccount: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def remove_subaccount_from_split(
+        self, split_id: str, subaccount: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Remove a subaccount from a transaction split
 
@@ -142,4 +173,6 @@ class TransactionSplitsAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"subaccount": subaccount}
-        return self.request("POST", f"split/{split_id}/subaccount/remove", json_data=payload)
+        return self.request(
+            "POST", f"split/{split_id}/subaccount/remove", json_data=payload
+        )

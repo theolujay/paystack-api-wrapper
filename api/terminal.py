@@ -1,6 +1,7 @@
 """
 The Terminal API allows you to build delightful in-person payment experiences.
 """
+
 from typing import Optional, List, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,9 @@ class TerminalAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def send_event(self, terminal_id: str, type: str, action: str, data: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def send_event(
+        self, terminal_id: str, type: str, action: str, data: Dict[str, Any]
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Send an event from your application to the Paystack Terminal
 
@@ -34,7 +37,9 @@ class TerminalAPI(BaseClient):
         }
         return self.request("POST", f"terminal/{terminal_id}/event", json_data=payload)
 
-    def fetch_event_status(self, terminal_id: str, event_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_event_status(
+        self, terminal_id: str, event_id: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Check the status of an event sent to the Terminal
 
@@ -47,7 +52,9 @@ class TerminalAPI(BaseClient):
         """
         return self.request("GET", f"terminal/{terminal_id}/event/{event_id}")
 
-    def fetch_terminal_status(self, terminal_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_terminal_status(
+        self, terminal_id: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Check the availiability of a Terminal before sending an event to it
 
@@ -59,7 +66,12 @@ class TerminalAPI(BaseClient):
         """
         return self.request("GET", f"terminal/{terminal_id}/presence")
 
-    def list_terminals(self, per_page: Optional[int] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_terminals(
+        self,
+        per_page: Optional[int] = None,
+        next_cursor: Optional[str] = None,
+        previous_cursor: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the Terminals available on your integration
 
@@ -93,7 +105,12 @@ class TerminalAPI(BaseClient):
         """
         return self.request("GET", f"terminal/{terminal_id}")
 
-    def update_terminal(self, terminal_id: str, name: Optional[str] = None, address: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_terminal(
+        self,
+        terminal_id: str,
+        name: Optional[str] = None,
+        address: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update the details of a Terminal
 
@@ -113,7 +130,9 @@ class TerminalAPI(BaseClient):
 
         return self.request("PUT", f"terminal/{terminal_id}", json_data=payload)
 
-    def commission_terminal(self, serial_number: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def commission_terminal(
+        self, serial_number: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Activate your debug device by linking it to your integration
 
@@ -126,7 +145,9 @@ class TerminalAPI(BaseClient):
         payload = {"serial_number": serial_number}
         return self.request("POST", "terminal/commission_device", json_data=payload)
 
-    def decommission_terminal(self, serial_number: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def decommission_terminal(
+        self, serial_number: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Unlink your debug device from your integration
 

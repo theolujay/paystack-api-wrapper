@@ -1,6 +1,7 @@
 """
 The Verification API allows you perform KYC processes.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,9 @@ class VerificationAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def resolve_account(self, account_number: str, bank_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def resolve_account(
+        self, account_number: str, bank_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Confirm an account belongs to the right customer.
 
@@ -25,7 +28,9 @@ class VerificationAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        self._validate_required_params(account_number=account_number, bank_code=bank_code)
+        self._validate_required_params(
+            account_number=account_number, bank_code=bank_code
+        )
 
         params = {
             "account_number": account_number,
@@ -33,14 +38,16 @@ class VerificationAPI(BaseClient):
         }
         return self.request("GET", "bank/resolve", params=params)
 
-    def validate_account(self,
-                         account_name: str,
-                         account_number: str,
-                         account_type: str,
-                         bank_code: str,
-                         country_code: str,
-                         document_type: str,
-                         document_number: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def validate_account(
+        self,
+        account_name: str,
+        account_number: str,
+        account_type: str,
+        bank_code: str,
+        country_code: str,
+        document_type: str,
+        document_number: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Confirm the authenticity of a customer's account number before sending money.
 
@@ -74,7 +81,7 @@ class VerificationAPI(BaseClient):
             "document_type": document_type,
         }
         if document_number:
-            payload['document_number'] = document_number
+            payload["document_number"] = document_number
 
         return self.request("POST", "bank/validate", json_data=payload)
 

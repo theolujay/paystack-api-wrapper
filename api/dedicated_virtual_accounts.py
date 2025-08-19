@@ -1,6 +1,7 @@
 """
 The Dedicated Virtual Account API enables Nigerian and Ghanaian merchants to manage unique payment accounts of their customers.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,16 @@ class DedicatedVirtualAccountsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_dedicated_virtual_account(self, customer: str, preferred_bank: Optional[str] = None, subaccount: Optional[str] = None, split_code: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, phone: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_dedicated_virtual_account(
+        self,
+        customer: str,
+        preferred_bank: Optional[str] = None,
+        subaccount: Optional[str] = None,
+        split_code: Optional[str] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        phone: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a dedicated virtual account for an existing customer
 
@@ -46,7 +56,20 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("POST", "dedicated_account", json_data=payload)
 
-    def assign_dedicated_virtual_account(self, email: str, first_name: str, last_name: str, phone: str, preferred_bank: str, country: str, account_number: Optional[str] = None, bvn: Optional[str] = None, bank_code: Optional[str] = None, subaccount: Optional[str] = None, split_code: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def assign_dedicated_virtual_account(
+        self,
+        email: str,
+        first_name: str,
+        last_name: str,
+        phone: str,
+        preferred_bank: str,
+        country: str,
+        account_number: Optional[str] = None,
+        bvn: Optional[str] = None,
+        bank_code: Optional[str] = None,
+        subaccount: Optional[str] = None,
+        split_code: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         With this endpoint, you can create a customer, validate the customer, and assign a DVA to the customer.
 
@@ -87,7 +110,14 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("POST", "dedicated_account/assign", json_data=payload)
 
-    def list_dedicated_virtual_accounts(self, active: Optional[bool] = None, currency: Optional[str] = None, provider_slug: Optional[str] = None, bank_id: Optional[str] = None, customer: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_dedicated_virtual_accounts(
+        self,
+        active: Optional[bool] = None,
+        currency: Optional[str] = None,
+        provider_slug: Optional[str] = None,
+        bank_id: Optional[str] = None,
+        customer: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List dedicated virtual accounts available on your integration.
 
@@ -115,7 +145,9 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("GET", "dedicated_account", params=params)
 
-    def fetch_dedicated_virtual_account(self, dedicated_account_id: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_dedicated_virtual_account(
+        self, dedicated_account_id: int
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a dedicated virtual account on your integration.
 
@@ -127,7 +159,9 @@ class DedicatedVirtualAccountsAPI(BaseClient):
         """
         return self.request("GET", f"dedicated_account/{dedicated_account_id}")
 
-    def requery_dedicated_account(self, account_number: str, provider_slug: str, date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def requery_dedicated_account(
+        self, account_number: str, provider_slug: str, date: Optional[str] = None
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Requery Dedicated Virtual Account for new transactions
 
@@ -148,7 +182,9 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("GET", "dedicated_account/requery", params=params)
 
-    def deactivate_dedicated_account(self, dedicated_account_id: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def deactivate_dedicated_account(
+        self, dedicated_account_id: int
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Deactivate a dedicated virtual account on your integration.
 
@@ -160,7 +196,13 @@ class DedicatedVirtualAccountsAPI(BaseClient):
         """
         return self.request("DELETE", f"dedicated_account/{dedicated_account_id}")
 
-    def split_dedicated_account_transaction(self, customer: str, subaccount: Optional[str] = None, split_code: Optional[str] = None, preferred_bank: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def split_dedicated_account_transaction(
+        self,
+        customer: str,
+        subaccount: Optional[str] = None,
+        split_code: Optional[str] = None,
+        preferred_bank: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Split a dedicated virtual account transaction with one or more accounts
 
@@ -183,7 +225,9 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("POST", "dedicated_account/split", json_data=payload)
 
-    def remove_split_from_dedicated_account(self, account_number: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def remove_split_from_dedicated_account(
+        self, account_number: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         If you've previously set up split payment for transactions on a dedicated virtual account, you can remove it with this endpoint
 

@@ -1,6 +1,7 @@
 """
 The Products API allows you create and manage inventories on your integration.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,15 @@ class ProductsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_product(self, name: str, description: str, price: int, currency: str, unlimited: Optional[bool] = None, quantity: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_product(
+        self,
+        name: str,
+        description: str,
+        price: int,
+        currency: str,
+        unlimited: Optional[bool] = None,
+        quantity: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a product on your integration
 
@@ -42,7 +51,13 @@ class ProductsAPI(BaseClient):
 
         return self.request("POST", "product", json_data=payload)
 
-    def list_products(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_products(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List products available on your integration
 
@@ -79,7 +94,16 @@ class ProductsAPI(BaseClient):
         """
         return self.request("GET", f"product/{product_id}")
 
-    def update_product(self, product_id: str, name: Optional[str] = None, description: Optional[str] = None, price: Optional[int] = None, currency: Optional[str] = None, unlimited: Optional[bool] = None, quantity: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def update_product(
+        self,
+        product_id: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        price: Optional[int] = None,
+        currency: Optional[str] = None,
+        unlimited: Optional[bool] = None,
+        quantity: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a product details on your integration
 

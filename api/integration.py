@@ -1,6 +1,7 @@
 """
 The Integration API allows you manage some settings on your integration.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -35,4 +36,6 @@ class IntegrationAPI(BaseClient):
         """
         self._validate_required_params(timeout=timeout)
         payload = {"timeout": timeout}
-        return self.request("PUT", "integration/payment_session_timeout", json_data=payload)
+        return self.request(
+            "PUT", "integration/payment_session_timeout", json_data=payload
+        )

@@ -1,6 +1,7 @@
 """
 The Apple Pay API allows you register your application's top-level domain or subdomain.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,9 @@ class ApplePayAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def register_domain(self, domain_name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def register_domain(
+        self, domain_name: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Register a top-level domain or subdomain for your Apple Pay integration.
 
@@ -27,7 +30,12 @@ class ApplePayAPI(BaseClient):
         payload = {"domainName": domain_name}
         return self.request("POST", "apple-pay/domain", json_data=payload)
 
-    def list_domains(self, use_cursor: Optional[bool] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_domains(
+        self,
+        use_cursor: Optional[bool] = None,
+        next_cursor: Optional[str] = None,
+        previous_cursor: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Lists all registered domains on your integration. Returns an empty array if no domains have been added.
 
@@ -49,7 +57,9 @@ class ApplePayAPI(BaseClient):
 
         return self.request("GET", "apple-pay/domain", params=params)
 
-    def unregister_domain(self, domain_name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def unregister_domain(
+        self, domain_name: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Unregister a top-level domain or subdomain previously used for your Apple Pay integration.
 

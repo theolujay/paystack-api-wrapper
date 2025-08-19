@@ -1,6 +1,7 @@
 """
 The Subscriptions API allows you create and manage recurring payment on your integration.
 """
+
 from typing import Optional, Dict, Any, Tuple
 
 from .core import BaseClient
@@ -14,7 +15,13 @@ class SubscriptionsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_subscription(self, customer: str, plan: str, authorization: Optional[str] = None, start_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def create_subscription(
+        self,
+        customer: str,
+        plan: str,
+        authorization: Optional[str] = None,
+        start_date: Optional[str] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a subscription on your integration
 
@@ -38,7 +45,13 @@ class SubscriptionsAPI(BaseClient):
 
         return self.request("POST", "subscription", json_data=payload)
 
-    def list_subscriptions(self, per_page: Optional[int] = None, page: Optional[int] = None, customer: Optional[int] = None, plan: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def list_subscriptions(
+        self,
+        per_page: Optional[int] = None,
+        page: Optional[int] = None,
+        customer: Optional[int] = None,
+        plan: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List subscriptions available on your integration
 
@@ -63,7 +76,9 @@ class SubscriptionsAPI(BaseClient):
 
         return self.request("GET", "subscription", params=params)
 
-    def fetch_subscription(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def fetch_subscription(
+        self, id_or_code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a subscription on your integration
 
@@ -75,7 +90,9 @@ class SubscriptionsAPI(BaseClient):
         """
         return self.request("GET", f"subscription/{id_or_code}")
 
-    def enable_subscription(self, code: str, token: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def enable_subscription(
+        self, code: str, token: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Enable a subscription on your integration
 
@@ -92,7 +109,9 @@ class SubscriptionsAPI(BaseClient):
         }
         return self.request("POST", "subscription/enable", json_data=payload)
 
-    def disable_subscription(self, code: str, token: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def disable_subscription(
+        self, code: str, token: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Disable a subscription on your integration
 
@@ -109,7 +128,9 @@ class SubscriptionsAPI(BaseClient):
         }
         return self.request("POST", "subscription/disable", json_data=payload)
 
-    def generate_update_subscription_link(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def generate_update_subscription_link(
+        self, code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Generate a link for updating the card on a subscription
 
@@ -121,7 +142,9 @@ class SubscriptionsAPI(BaseClient):
         """
         return self.request("GET", f"subscription/{code}/manage/link")
 
-    def send_update_subscription_link(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def send_update_subscription_link(
+        self, code: str
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Email a customer a link for updating the card on their subscription
 
