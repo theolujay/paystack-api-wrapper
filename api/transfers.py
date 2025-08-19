@@ -1,9 +1,9 @@
 """
 The Transfers API allows you automate sending money to your customers.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class TransfersAPI(BaseClient):
@@ -14,7 +14,7 @@ class TransfersAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def initiate_transfer(self, source: str, amount: int, recipient: str, reason: Optional[str] = None, currency: Optional[str] = None, reference: Optional[str] = None) -> PaystackResponse:
+    def initiate_transfer(self, source: str, amount: int, recipient: str, reason: Optional[str] = None, currency: Optional[str] = None, reference: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Send money to your customers.
 
@@ -27,7 +27,7 @@ class TransfersAPI(BaseClient):
             reference: If specified, the field should be a unique identifier (in lowercase) for the object. Only -,_ and alphanumeric characters allowed.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(source=source, amount=amount, recipient=recipient)
         payload = {
@@ -44,7 +44,7 @@ class TransfersAPI(BaseClient):
 
         return self.request("POST", "transfer", json_data=payload)
 
-    def finalize_transfer(self, transfer_code: str, otp: str) -> PaystackResponse:
+    def finalize_transfer(self, transfer_code: str, otp: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Finalize an initiated transfer
 
@@ -53,7 +53,7 @@ class TransfersAPI(BaseClient):
             otp: OTP sent to business phone to verify transfer
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(transfer_code=transfer_code, otp=otp)
         payload = {
@@ -62,7 +62,7 @@ class TransfersAPI(BaseClient):
         }
         return self.request("POST", "transfer/finalize_transfer", json_data=payload)
 
-    def initiate_bulk_transfer(self, source: str, transfers: List[Dict[str, Any]]) -> PaystackResponse:
+    def initiate_bulk_transfer(self, source: str, transfers: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Batch multiple transfers in a single request.
 
@@ -71,7 +71,7 @@ class TransfersAPI(BaseClient):
             transfers: A list of transfer object. Each object should contain amount, recipient, and reference
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(source=source, transfers=transfers)
         payload = {
@@ -80,7 +80,7 @@ class TransfersAPI(BaseClient):
         }
         return self.request("POST", "transfer/bulk", json_data=payload)
 
-    def list_transfers(self, per_page: Optional[int] = None, page: Optional[int] = None, recipient: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_transfers(self, per_page: Optional[int] = None, page: Optional[int] = None, recipient: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the transfers made on your integration.
 
@@ -92,7 +92,7 @@ class TransfersAPI(BaseClient):
             to_date: A timestamp at which to stop listing transfer e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -108,7 +108,7 @@ class TransfersAPI(BaseClient):
 
         return self.request("GET", "transfer", params=params)
 
-    def fetch_transfer(self, id_or_code: str) -> PaystackResponse:
+    def fetch_transfer(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a transfer on your integration.
 
@@ -116,12 +116,12 @@ class TransfersAPI(BaseClient):
             id_or_code: The transfer ID or code you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(id_or_code=id_or_code)
         return self.request("GET", f"transfer/{id_or_code}")
 
-    def verify_transfer(self, reference: str) -> PaystackResponse:
+    def verify_transfer(self, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Verify the status of a transfer on your integration.
 
@@ -129,7 +129,7 @@ class TransfersAPI(BaseClient):
             reference: Transfer reference
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(reference=reference)
         return self.request("GET", f"transfer/verify/{reference}")

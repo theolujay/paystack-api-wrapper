@@ -1,9 +1,9 @@
 """
 The Settlements API allows you gain insights into payouts made by Paystack to your bank account.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class SettlementsAPI(BaseClient):
@@ -14,7 +14,7 @@ class SettlementsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def list_settlements(self, per_page: Optional[int] = None, page: Optional[int] = None, status: Optional[str] = None, subaccount: Optional[str] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_settlements(self, per_page: Optional[int] = None, page: Optional[int] = None, status: Optional[str] = None, subaccount: Optional[str] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List settlements made to your settlement accounts
 
@@ -27,7 +27,7 @@ class SettlementsAPI(BaseClient):
             to_date: A timestamp at which to stop listing settlements e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -45,7 +45,7 @@ class SettlementsAPI(BaseClient):
 
         return self.request("GET", "settlement", params=params)
 
-    def list_settlement_transactions(self, settlement_id: str, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_settlement_transactions(self, settlement_id: str, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get the transactions that make up a particular settlement
 
@@ -57,7 +57,7 @@ class SettlementsAPI(BaseClient):
             to_date: A timestamp at which to stop listing settlement transactions e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:

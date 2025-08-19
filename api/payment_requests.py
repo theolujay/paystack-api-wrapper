@@ -1,9 +1,9 @@
 """
 The Payment Requests API allows you manage requests for payment of goods and services.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class PaymentRequestsAPI(BaseClient):
@@ -14,7 +14,7 @@ class PaymentRequestsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_payment_request(self, customer: str, amount: Optional[int] = None, due_date: Optional[str] = None, description: Optional[str] = None, line_items: Optional[List[Dict[str, Any]]] = None, tax: Optional[List[Dict[str, Any]]] = None, currency: Optional[str] = None, send_notification: Optional[bool] = None, draft: Optional[bool] = None, has_invoice: Optional[bool] = None, invoice_number: Optional[int] = None, split_code: Optional[str] = None) -> PaystackResponse:
+    def create_payment_request(self, customer: str, amount: Optional[int] = None, due_date: Optional[str] = None, description: Optional[str] = None, line_items: Optional[List[Dict[str, Any]]] = None, tax: Optional[List[Dict[str, Any]]] = None, currency: Optional[str] = None, send_notification: Optional[bool] = None, draft: Optional[bool] = None, has_invoice: Optional[bool] = None, invoice_number: Optional[int] = None, split_code: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a payment request for a transaction on your integration
 
@@ -33,7 +33,7 @@ class PaymentRequestsAPI(BaseClient):
             split_code: The split code of the transaction split. e.g. SPL_98WF13Eb3w
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"customer": customer}
         if amount:
@@ -61,7 +61,7 @@ class PaymentRequestsAPI(BaseClient):
 
         return self.request("POST", "paymentrequest", json_data=payload)
 
-    def list_payment_requests(self, per_page: Optional[int] = None, page: Optional[int] = None, customer: Optional[str] = None, status: Optional[str] = None, currency: Optional[str] = None, include_archive: Optional[str] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_payment_requests(self, per_page: Optional[int] = None, page: Optional[int] = None, customer: Optional[str] = None, status: Optional[str] = None, currency: Optional[str] = None, include_archive: Optional[str] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the payment requests available on your integration
 
@@ -76,7 +76,7 @@ class PaymentRequestsAPI(BaseClient):
             to_date: A timestamp at which to stop listing payment requests e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -98,7 +98,7 @@ class PaymentRequestsAPI(BaseClient):
 
         return self.request("GET", "paymentrequest", params=params)
 
-    def fetch_payment_request(self, id_or_code: str) -> PaystackResponse:
+    def fetch_payment_request(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a payment request on your integration
 
@@ -106,11 +106,11 @@ class PaymentRequestsAPI(BaseClient):
             id_or_code: The payment request ID or code you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"paymentrequest/{id_or_code}")
 
-    def verify_payment_request(self, code: str) -> PaystackResponse:
+    def verify_payment_request(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Verify details of a payment request on your integration
 
@@ -118,11 +118,11 @@ class PaymentRequestsAPI(BaseClient):
             code: Payment Request code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"paymentrequest/verify/{code}")
 
-    def send_notification(self, code: str) -> PaystackResponse:
+    def send_notification(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Send notification of a payment request to your customers
 
@@ -130,20 +130,20 @@ class PaymentRequestsAPI(BaseClient):
             code: Payment Request code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("POST", f"paymentrequest/notify/{code}")
 
-    def payment_request_total(self) -> PaystackResponse:
+    def payment_request_total(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get payment requests metric
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", "paymentrequest/totals")
 
-    def finalize_payment_request(self, code: str, send_notification: Optional[bool] = None) -> PaystackResponse:
+    def finalize_payment_request(self, code: str, send_notification: Optional[bool] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Finalize a draft payment request
 
@@ -152,7 +152,7 @@ class PaymentRequestsAPI(BaseClient):
             send_notification: Indicates whether Paystack sends an email notification to customer. Defaults to true
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if send_notification is not None:
@@ -160,7 +160,7 @@ class PaymentRequestsAPI(BaseClient):
 
         return self.request("POST", f"paymentrequest/finalize/{code}", json_data=payload)
 
-    def update_payment_request(self, id_or_code: str, customer: Optional[str] = None, amount: Optional[int] = None, due_date: Optional[str] = None, description: Optional[str] = None, line_items: Optional[List[Dict[str, Any]]] = None, tax: Optional[List[Dict[str, Any]]] = None, currency: Optional[str] = None, send_notification: Optional[bool] = None, draft: Optional[bool] = None, invoice_number: Optional[int] = None, split_code: Optional[str] = None) -> PaystackResponse:
+    def update_payment_request(self, id_or_code: str, customer: Optional[str] = None, amount: Optional[int] = None, due_date: Optional[str] = None, description: Optional[str] = None, line_items: Optional[List[Dict[str, Any]]] = None, tax: Optional[List[Dict[str, Any]]] = None, currency: Optional[str] = None, send_notification: Optional[bool] = None, draft: Optional[bool] = None, invoice_number: Optional[int] = None, split_code: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a payment request details on your integration
 
@@ -179,7 +179,7 @@ class PaymentRequestsAPI(BaseClient):
             split_code: The split code of the transaction split. e.g. SPL_98WF13Eb3w
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if customer:
@@ -207,7 +207,7 @@ class PaymentRequestsAPI(BaseClient):
 
         return self.request("PUT", f"paymentrequest/{id_or_code}", json_data=payload)
 
-    def archive_payment_request(self, code: str) -> PaystackResponse:
+    def archive_payment_request(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Used to archive a payment request. A payment request will no longer be fetched on list or returned on verify
 
@@ -215,6 +215,6 @@ class PaymentRequestsAPI(BaseClient):
             code: Payment Request code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("POST", f"paymentrequest/archive/{code}")

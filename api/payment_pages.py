@@ -1,9 +1,9 @@
 """
 The Payment Pages API provides a quick and secure way to collect payment for products.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class PaymentPagesAPI(BaseClient):
@@ -14,7 +14,7 @@ class PaymentPagesAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_payment_page(self, name: str, description: Optional[str] = None, amount: Optional[int] = None, currency: Optional[str] = None, slug: Optional[str] = None, type: Optional[str] = None, plan: Optional[str] = None, fixed_amount: Optional[bool] = None, split_code: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None, redirect_url: Optional[str] = None, success_message: Optional[str] = None, notification_email: Optional[str] = None, collect_phone: Optional[bool] = None, custom_fields: Optional[List[Dict[str, Any]]] = None) -> PaystackResponse:
+    def create_payment_page(self, name: str, description: Optional[str] = None, amount: Optional[int] = None, currency: Optional[str] = None, slug: Optional[str] = None, type: Optional[str] = None, plan: Optional[str] = None, fixed_amount: Optional[bool] = None, split_code: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None, redirect_url: Optional[str] = None, success_message: Optional[str] = None, notification_email: Optional[str] = None, collect_phone: Optional[bool] = None, custom_fields: Optional[List[Dict[str, Any]]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a payment page on your integration
 
@@ -36,7 +36,7 @@ class PaymentPagesAPI(BaseClient):
             custom_fields: If you would like to accept custom fields, specify them here.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"name": name}
         if description:
@@ -70,7 +70,7 @@ class PaymentPagesAPI(BaseClient):
 
         return self.request("POST", "page", json_data=payload)
 
-    def list_payment_pages(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_payment_pages(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List payment pages available on your integration
 
@@ -81,7 +81,7 @@ class PaymentPagesAPI(BaseClient):
             to_date: A timestamp at which to stop listing page e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -95,7 +95,7 @@ class PaymentPagesAPI(BaseClient):
 
         return self.request("GET", "page", params=params)
 
-    def fetch_payment_page(self, id_or_slug: str) -> PaystackResponse:
+    def fetch_payment_page(self, id_or_slug: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a payment page on your integration
 
@@ -103,11 +103,11 @@ class PaymentPagesAPI(BaseClient):
             id_or_slug: The page ID or slug you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"page/{id_or_slug}")
 
-    def update_payment_page(self, id_or_slug: str, name: Optional[str] = None, description: Optional[str] = None, amount: Optional[int] = None, active: Optional[bool] = None) -> PaystackResponse:
+    def update_payment_page(self, id_or_slug: str, name: Optional[str] = None, description: Optional[str] = None, amount: Optional[int] = None, active: Optional[bool] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a payment page details on your integration
 
@@ -119,7 +119,7 @@ class PaymentPagesAPI(BaseClient):
             active: Set to false to deactivate page url
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if name:
@@ -133,7 +133,7 @@ class PaymentPagesAPI(BaseClient):
 
         return self.request("PUT", f"page/{id_or_slug}", json_data=payload)
 
-    def check_slug_availability(self, slug: str) -> PaystackResponse:
+    def check_slug_availability(self, slug: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Check the availability of a slug for a payment page
 
@@ -141,11 +141,11 @@ class PaymentPagesAPI(BaseClient):
             slug: URL slug to be confirmed
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"page/check_slug_availability/{slug}")
 
-    def add_products(self, page_id: int, product_ids: List[int]) -> PaystackResponse:
+    def add_products(self, page_id: int, product_ids: List[int]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Add products to a payment page
 
@@ -154,7 +154,7 @@ class PaymentPagesAPI(BaseClient):
             product_ids: Ids of all the products
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"product": product_ids}
         return self.request("POST", f"page/{page_id}/product", json_data=payload)

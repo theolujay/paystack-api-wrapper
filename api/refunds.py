@@ -1,6 +1,6 @@
 # refund.py
-from typing import Optional, Union
-from .core import BaseClient, PaystackResponse
+from typing import Optional, Union, Dict, Any, Tuple
+from .core import BaseClient
 from .exceptions import APIError
 
 
@@ -15,7 +15,7 @@ class RefundsAPI(BaseClient):
                amount: Optional[int] = None,
                currency: Optional[str] = None,
                customer_note: Optional[str] = None,
-               merchant_note: Optional[str] = None) -> PaystackResponse:
+               merchant_note: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Initiate a refund on your integration.
 
         Args:
@@ -27,7 +27,7 @@ class RefundsAPI(BaseClient):
             merchant_note (Optional[str]): Internal merchant reason for the refund
 
         Returns:
-            PaystackResponse: Contains refund details including status, ID, and expected processing time
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If transaction parameter is not provided
@@ -57,7 +57,7 @@ class RefundsAPI(BaseClient):
                     from_date: Optional[str] = None,
                     to_date: Optional[str] = None,
                     per_page: Optional[int] = None,
-                    page: Optional[int] = None) -> PaystackResponse:
+                    page: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """List refunds available on your integration.
 
         Args:
@@ -69,7 +69,7 @@ class RefundsAPI(BaseClient):
             page (Optional[int]): Page number to retrieve (default: 1)
 
         Returns:
-            PaystackResponse: Contains list of refunds and pagination metadata
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If per_page or page parameters are invalid
@@ -101,15 +101,14 @@ class RefundsAPI(BaseClient):
             
         return self.request("GET", "refund", json_data=payload)
 
-    def fetch(self, refund_id: Union[str, int]) -> PaystackResponse:
+    def fetch(self, refund_id: Union[str, int]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get details of a refund on your integration.
 
         Args:
             refund_id (Union[str, int]): The ID of the initiated refund
 
         Returns:
-            PaystackResponse: Contains detailed refund information including status,
-                            amounts, dates, and associated transaction details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If refund_id is not provided

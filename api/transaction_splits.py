@@ -1,9 +1,9 @@
 """
 The Transaction Splits API enables merchants split the settlement for a transaction across their payout account, and one or more subaccounts.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class TransactionSplitsAPI(BaseClient):
@@ -14,7 +14,7 @@ class TransactionSplitsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_split(self, name: str, type: str, currency: str, subaccounts: List[Dict[str, Any]], bearer_type: str, bearer_subaccount: Optional[str] = None) -> PaystackResponse:
+    def create_split(self, name: str, type: str, currency: str, subaccounts: List[Dict[str, Any]], bearer_type: str, bearer_subaccount: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a split payment on your integration
 
@@ -27,7 +27,7 @@ class TransactionSplitsAPI(BaseClient):
             bearer_subaccount: Subaccount code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "name": name,
@@ -41,7 +41,7 @@ class TransactionSplitsAPI(BaseClient):
 
         return self.request("POST", "split", json_data=payload)
 
-    def list_splits(self, name: Optional[str] = None, active: Optional[bool] = None, sort_by: Optional[str] = None, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_splits(self, name: Optional[str] = None, active: Optional[bool] = None, sort_by: Optional[str] = None, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the transaction splits available on your integration
 
@@ -55,7 +55,7 @@ class TransactionSplitsAPI(BaseClient):
             to_date: A timestamp at which to stop listing splits e.g. 2019-09-24T00:00:05.000Z, 2019-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if name:
@@ -75,7 +75,7 @@ class TransactionSplitsAPI(BaseClient):
 
         return self.request("GET", "split", params=params)
 
-    def fetch_split(self, split_id: str) -> PaystackResponse:
+    def fetch_split(self, split_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a split on your integration
 
@@ -83,11 +83,11 @@ class TransactionSplitsAPI(BaseClient):
             split_id: The id of the split
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"split/{split_id}")
 
-    def update_split(self, split_id: str, name: str, active: bool, bearer_type: Optional[str] = None, bearer_subaccount: Optional[str] = None) -> PaystackResponse:
+    def update_split(self, split_id: str, name: str, active: bool, bearer_type: Optional[str] = None, bearer_subaccount: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a transaction split details on your integration
 
@@ -99,7 +99,7 @@ class TransactionSplitsAPI(BaseClient):
             bearer_subaccount: Subaccount code of a subaccount in the split group. This should be specified only if the bearer_type is subaccount
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "name": name,
@@ -112,7 +112,7 @@ class TransactionSplitsAPI(BaseClient):
 
         return self.request("PUT", f"split/{split_id}", json_data=payload)
 
-    def add_update_subaccount_split(self, split_id: str, subaccount: str, share: int) -> PaystackResponse:
+    def add_update_subaccount_split(self, split_id: str, subaccount: str, share: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Add a Subaccount to a Transaction Split, or update the share of an existing Subaccount in a Transaction Split
 
@@ -122,7 +122,7 @@ class TransactionSplitsAPI(BaseClient):
             share: This is the transaction share for the subaccount
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "subaccount": subaccount,
@@ -130,7 +130,7 @@ class TransactionSplitsAPI(BaseClient):
         }
         return self.request("POST", f"split/{split_id}/subaccount/add", json_data=payload)
 
-    def remove_subaccount_from_split(self, split_id: str, subaccount: str) -> PaystackResponse:
+    def remove_subaccount_from_split(self, split_id: str, subaccount: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Remove a subaccount from a transaction split
 
@@ -139,7 +139,7 @@ class TransactionSplitsAPI(BaseClient):
             subaccount: This is the sub account code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"subaccount": subaccount}
         return self.request("POST", f"split/{split_id}/subaccount/remove", json_data=payload)

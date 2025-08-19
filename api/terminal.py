@@ -1,9 +1,9 @@
 """
 The Terminal API allows you to build delightful in-person payment experiences.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class TerminalAPI(BaseClient):
@@ -14,7 +14,7 @@ class TerminalAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def send_event(self, terminal_id: str, type: str, action: str, data: Dict[str, Any]) -> PaystackResponse:
+    def send_event(self, terminal_id: str, type: str, action: str, data: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Send an event from your application to the Paystack Terminal
 
@@ -25,7 +25,7 @@ class TerminalAPI(BaseClient):
             data: The paramters needed to perform the specified action. For the invoice type, you need to pass the invoice id and offline reference: {id: invoice_id, reference: offline_reference}. For the transaction type, you can pass the transaction id: {id: transaction_id}
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "type": type,
@@ -34,7 +34,7 @@ class TerminalAPI(BaseClient):
         }
         return self.request("POST", f"terminal/{terminal_id}/event", json_data=payload)
 
-    def fetch_event_status(self, terminal_id: str, event_id: str) -> PaystackResponse:
+    def fetch_event_status(self, terminal_id: str, event_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Check the status of an event sent to the Terminal
 
@@ -43,11 +43,11 @@ class TerminalAPI(BaseClient):
             event_id: The ID of the event that was sent to the Terminal
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"terminal/{terminal_id}/event/{event_id}")
 
-    def fetch_terminal_status(self, terminal_id: str) -> PaystackResponse:
+    def fetch_terminal_status(self, terminal_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Check the availiability of a Terminal before sending an event to it
 
@@ -55,11 +55,11 @@ class TerminalAPI(BaseClient):
             terminal_id: The ID of the Terminal you want to check
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"terminal/{terminal_id}/presence")
 
-    def list_terminals(self, per_page: Optional[int] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> PaystackResponse:
+    def list_terminals(self, per_page: Optional[int] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List the Terminals available on your integration
 
@@ -69,7 +69,7 @@ class TerminalAPI(BaseClient):
             previous_cursor: A cursor that indicates your place in the list. It should be used to fetch the previous page of the list after an intial next request
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -81,7 +81,7 @@ class TerminalAPI(BaseClient):
 
         return self.request("GET", "terminal", params=params)
 
-    def fetch_terminal(self, terminal_id: str) -> PaystackResponse:
+    def fetch_terminal(self, terminal_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get the details of a Terminal
 
@@ -89,11 +89,11 @@ class TerminalAPI(BaseClient):
             terminal_id: The ID of the Terminal the event was sent to.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"terminal/{terminal_id}")
 
-    def update_terminal(self, terminal_id: str, name: Optional[str] = None, address: Optional[str] = None) -> PaystackResponse:
+    def update_terminal(self, terminal_id: str, name: Optional[str] = None, address: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update the details of a Terminal
 
@@ -103,7 +103,7 @@ class TerminalAPI(BaseClient):
             address: The address of the Terminal
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if name:
@@ -113,7 +113,7 @@ class TerminalAPI(BaseClient):
 
         return self.request("PUT", f"terminal/{terminal_id}", json_data=payload)
 
-    def commission_terminal(self, serial_number: str) -> PaystackResponse:
+    def commission_terminal(self, serial_number: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Activate your debug device by linking it to your integration
 
@@ -121,12 +121,12 @@ class TerminalAPI(BaseClient):
             serial_number: Device Serial Number
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"serial_number": serial_number}
         return self.request("POST", "terminal/commission_device", json_data=payload)
 
-    def decommission_terminal(self, serial_number: str) -> PaystackResponse:
+    def decommission_terminal(self, serial_number: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Unlink your debug device from your integration
 
@@ -134,7 +134,7 @@ class TerminalAPI(BaseClient):
             serial_number: Device Serial Number
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"serial_number": serial_number}
         return self.request("POST", "terminal/decommission_device", json_data=payload)

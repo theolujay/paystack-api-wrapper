@@ -1,9 +1,9 @@
 """
 The Verification API allows you perform KYC processes.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class VerificationAPI(BaseClient):
@@ -14,7 +14,7 @@ class VerificationAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def resolve_account(self, account_number: str, bank_code: str) -> PaystackResponse:
+    def resolve_account(self, account_number: str, bank_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Confirm an account belongs to the right customer.
 
@@ -23,7 +23,7 @@ class VerificationAPI(BaseClient):
             bank_code: You can get the list of bank codes by calling the List Banks endpoint
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(account_number=account_number, bank_code=bank_code)
 
@@ -40,7 +40,7 @@ class VerificationAPI(BaseClient):
                          bank_code: str,
                          country_code: str,
                          document_type: str,
-                         document_number: Optional[str] = None) -> PaystackResponse:
+                         document_number: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Confirm the authenticity of a customer's account number before sending money.
 
@@ -54,7 +54,7 @@ class VerificationAPI(BaseClient):
             document_number: Customer’s mode of identity number
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(
             account_name=account_name,
@@ -78,7 +78,7 @@ class VerificationAPI(BaseClient):
 
         return self.request("POST", "bank/validate", json_data=payload)
 
-    def resolve_card_bin(self, card_bin: str) -> PaystackResponse:
+    def resolve_card_bin(self, card_bin: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get more information about a customer's card.
 
@@ -86,7 +86,7 @@ class VerificationAPI(BaseClient):
             card_bin: First 6 characters of card
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(card_bin=card_bin)
 

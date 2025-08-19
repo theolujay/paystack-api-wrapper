@@ -1,9 +1,9 @@
 """
 The Products API allows you create and manage inventories on your integration.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class ProductsAPI(BaseClient):
@@ -14,7 +14,7 @@ class ProductsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_product(self, name: str, description: str, price: int, currency: str, unlimited: Optional[bool] = None, quantity: Optional[int] = None) -> PaystackResponse:
+    def create_product(self, name: str, description: str, price: int, currency: str, unlimited: Optional[bool] = None, quantity: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a product on your integration
 
@@ -27,7 +27,7 @@ class ProductsAPI(BaseClient):
             quantity: Number of products in stock. Use if unlimited is false
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "name": name,
@@ -42,7 +42,7 @@ class ProductsAPI(BaseClient):
 
         return self.request("POST", "product", json_data=payload)
 
-    def list_products(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_products(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List products available on your integration
 
@@ -53,7 +53,7 @@ class ProductsAPI(BaseClient):
             to_date: A timestamp at which to stop listing product e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -67,7 +67,7 @@ class ProductsAPI(BaseClient):
 
         return self.request("GET", "product", params=params)
 
-    def fetch_product(self, product_id: str) -> PaystackResponse:
+    def fetch_product(self, product_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a product on your integration
 
@@ -75,11 +75,11 @@ class ProductsAPI(BaseClient):
             product_id: The product ID you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"product/{product_id}")
 
-    def update_product(self, product_id: str, name: Optional[str] = None, description: Optional[str] = None, price: Optional[int] = None, currency: Optional[str] = None, unlimited: Optional[bool] = None, quantity: Optional[int] = None) -> PaystackResponse:
+    def update_product(self, product_id: str, name: Optional[str] = None, description: Optional[str] = None, price: Optional[int] = None, currency: Optional[str] = None, unlimited: Optional[bool] = None, quantity: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a product details on your integration
 
@@ -93,7 +93,7 @@ class ProductsAPI(BaseClient):
             quantity: Number of products in stock. Use if unlimited is false
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if name:

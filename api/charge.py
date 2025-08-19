@@ -1,6 +1,6 @@
 # charge.py
-from typing import Optional, Dict, Any, Union
-from .core import BaseClient, PaystackResponse
+from typing import Optional, Dict, Any, Union, Tuple
+from .core import BaseClient
 from .exceptions import ValidationError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
@@ -28,7 +28,7 @@ class ChargeAPI(BaseClient):
                metadata: Optional[Dict[str, Any]] = None,
                reference: Optional[str] = None,
                device_id: Optional[str] = None,
-               birthday: Optional[str] = None) -> PaystackResponse:
+               birthday: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Initiate a payment by integrating the payment channel of your choice.
 
         Args:
@@ -51,7 +51,7 @@ class ChargeAPI(BaseClient):
             birthday (Optional[str]): Customer's birthday in YYYY-MM-DD format
 
         Returns:
-            PaystackResponse: Contains charge details, status, and any required next steps
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             ValidationError: If email or amount is invalid, or if conflicting payment methods are provided
@@ -104,7 +104,7 @@ class ChargeAPI(BaseClient):
             
         return self.request("POST", "charge", json_data=payload)
 
-    def submit_pin(self, pin: str, reference: str) -> PaystackResponse:
+    def submit_pin(self, pin: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit PIN to continue a charge.
 
         Args:
@@ -112,7 +112,7 @@ class ChargeAPI(BaseClient):
             reference (str): Reference for transaction that requested pin
 
         Returns:
-            PaystackResponse: Contains updated charge status and details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If pin or reference is not provided
@@ -126,7 +126,7 @@ class ChargeAPI(BaseClient):
         
         return self.request("POST", "charge/submit_pin", json_data=payload)
 
-    def submit_otp(self, otp: str, reference: str) -> PaystackResponse:
+    def submit_otp(self, otp: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit OTP to complete a charge.
 
         Args:
@@ -134,7 +134,7 @@ class ChargeAPI(BaseClient):
             reference (str): Reference for ongoing transaction
 
         Returns:
-            PaystackResponse: Contains updated charge status and details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If otp or reference is not provided
@@ -148,7 +148,7 @@ class ChargeAPI(BaseClient):
         
         return self.request("POST", "charge/submit_otp", json_data=payload)
 
-    def submit_phone(self, phone: str, reference: str) -> PaystackResponse:
+    def submit_phone(self, phone: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit phone number when requested.
 
         Args:
@@ -156,7 +156,7 @@ class ChargeAPI(BaseClient):
             reference (str): Reference for ongoing transaction
 
         Returns:
-            PaystackResponse: Contains updated charge status and details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If phone or reference is not provided
@@ -170,7 +170,7 @@ class ChargeAPI(BaseClient):
         
         return self.request("POST", "charge/submit_phone", json_data=payload)
 
-    def submit_birthday(self, birthday: str, reference: str) -> PaystackResponse:
+    def submit_birthday(self, birthday: str, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit birthday when requested.
 
         Args:
@@ -178,7 +178,7 @@ class ChargeAPI(BaseClient):
             reference (str): Reference for ongoing transaction
 
         Returns:
-            PaystackResponse: Contains updated charge status and details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If birthday or reference is not provided
@@ -197,7 +197,7 @@ class ChargeAPI(BaseClient):
                       reference: str,
                       city: str,
                       state: str,
-                      zip_code: str) -> PaystackResponse:
+                      zip_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Submit address to continue a charge.
 
         Args:
@@ -208,7 +208,7 @@ class ChargeAPI(BaseClient):
             zipcode (str): Zipcode submitted by user
 
         Returns:
-            PaystackResponse: Contains updated charge status and details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If any required parameter is not provided
@@ -231,7 +231,7 @@ class ChargeAPI(BaseClient):
         
         return self.request("POST", "charge/submit_address", json_data=payload)
 
-    def check_pending_charge(self, reference: str) -> PaystackResponse:
+    def check_pending_charge(self, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Check the status of a pending charge.
         
         When you get 'pending' as a charge status or if there was an exception when calling 
@@ -242,7 +242,7 @@ class ChargeAPI(BaseClient):
             reference (str): The reference to check
 
         Returns:
-            PaystackResponse: Contains current charge status and details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If reference is not provided

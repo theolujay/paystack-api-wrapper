@@ -1,9 +1,9 @@
 """
 The Apple Pay API allows you register your application's top-level domain or subdomain.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class ApplePayAPI(BaseClient):
@@ -14,7 +14,7 @@ class ApplePayAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def register_domain(self, domain_name: str) -> PaystackResponse:
+    def register_domain(self, domain_name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Register a top-level domain or subdomain for your Apple Pay integration.
 
@@ -22,12 +22,12 @@ class ApplePayAPI(BaseClient):
             domain_name: Domain name to be registered
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"domainName": domain_name}
         return self.request("POST", "apple-pay/domain", json_data=payload)
 
-    def list_domains(self, use_cursor: Optional[bool] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> PaystackResponse:
+    def list_domains(self, use_cursor: Optional[bool] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Lists all registered domains on your integration. Returns an empty array if no domains have been added.
 
@@ -37,7 +37,7 @@ class ApplePayAPI(BaseClient):
             previous_cursor: A cursor that indicates your place in the list. It should be used to fetch the previous page of the list after an intial next request
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if use_cursor is not None:
@@ -49,7 +49,7 @@ class ApplePayAPI(BaseClient):
 
         return self.request("GET", "apple-pay/domain", params=params)
 
-    def unregister_domain(self, domain_name: str) -> PaystackResponse:
+    def unregister_domain(self, domain_name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Unregister a top-level domain or subdomain previously used for your Apple Pay integration.
 
@@ -57,7 +57,7 @@ class ApplePayAPI(BaseClient):
             domain_name: Domain name to be registered
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"domainName": domain_name}
         return self.request("DELETE", "apple-pay/domain", json_data=payload)

@@ -1,7 +1,7 @@
 import os
 import re
 import requests
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 from requests.exceptions import JSONDecodeError
 
 from .exceptions import (
@@ -13,32 +13,6 @@ from .exceptions import (
     TransactionFailureError,
     create_error_from_response
 )
-
-class PaystackResponse:
-    """Wrapper for Paystack API responses to provide consistent interface.
-    
-    This class standardizes how we handle Paystack responses, making it easier
-    to work with paginated data and check response status.
-    """
-    
-    def __init__(self, data: Any, meta: Optional[Dict] = None, message: str = "", status: bool = True):
-        self.data = data
-        self.meta = meta
-        self.message = message
-        self.status = status
-        
-    @property
-    def is_paginated(self) -> bool:
-        """Check if this is a paginated response."""
-        return self.meta is not None
-    
-    @property
-    def is_success(self) -> bool:
-        """Check if the operation was successful."""
-        return self.status is True
-    
-    def __repr__(self):
-        return f"PaystackResponse(data={self.data}, meta={self.meta}, status={self.status})"
         
 class BaseClient:
     """Base client for interacting with the Paystack API.
@@ -78,7 +52,7 @@ class BaseClient:
                 json_data: Optional[Dict] = None,
                 params: Optional[Dict] = None,
                 private: bool = True, 
-                idempotency_key: Optional[str] = None) -> PaystackResponse:
+                idempotency_key: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Send an HTTP request to Paystack API with proper headers and error handling.
 
         Args:
@@ -90,7 +64,7 @@ class BaseClient:
             idempotency_key (Optional[str]): Idempotency key for POST requests.
 
         Returns:
-            PaystackResponse: Wrapped response with data, meta, and message.
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             PaystackError: Various subclasses depending on the error type.
@@ -147,7 +121,7 @@ class BaseClient:
         except requests.exceptions.RequestException as e:
             raise NetworkError(f"Request failed: {e}")
     
-    def _handle_success_response(self, resp_json: Dict, status_code: int, request_id: Optional[str]) -> PaystackResponse:
+    def _handle_success_response(self, resp_json: Dict, status_code: int, request_id: Optional[str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Handle successful HTTP responses (200, 201).
         
@@ -206,15 +180,9 @@ class BaseClient:
                 )
         
         # Extract response components
-        meta = resp_json.get("meta")
-        message = resp_json.get("message", "")
+        meta = resp_json.get("meta", {})
         
-        return PaystackResponse(
-            data=data,
-            meta=meta,
-            message=message,
-            status=paystack_status
-        )
+        return data, meta
 
     def _build_url(self, endpoint: str) -> str:
         """Build full URL from endpoint."""

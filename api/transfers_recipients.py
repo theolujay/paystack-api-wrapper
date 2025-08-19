@@ -1,9 +1,9 @@
 """
 The Transfer Recipients API allows you create and manage beneficiaries that you send money to.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class TransferRecipientsAPI(BaseClient):
@@ -14,7 +14,7 @@ class TransferRecipientsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_transfer_recipient(self, type: str, name: str, account_number: Optional[str] = None, bank_code: Optional[str] = None, description: Optional[str] = None, currency: Optional[str] = None, authorization_code: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> PaystackResponse:
+    def create_transfer_recipient(self, type: str, name: str, account_number: Optional[str] = None, bank_code: Optional[str] = None, description: Optional[str] = None, currency: Optional[str] = None, authorization_code: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Creates a new recipient. A duplicate account number will lead to the retrieval of the existing record.
 
@@ -29,7 +29,7 @@ class TransferRecipientsAPI(BaseClient):
             metadata: Store additional information about your recipient in a structured format, JSON
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "type": type,
@@ -50,7 +50,7 @@ class TransferRecipientsAPI(BaseClient):
 
         return self.request("POST", "transferrecipient", json_data=payload)
 
-    def bulk_create_transfer_recipient(self, batch: List[Dict[str, Any]]) -> PaystackResponse:
+    def bulk_create_transfer_recipient(self, batch: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create multiple transfer recipients in batches. A duplicate account number will lead to the retrieval of the existing record.
 
@@ -58,12 +58,12 @@ class TransferRecipientsAPI(BaseClient):
             batch: A list of transfer recipient object. Each object should contain type, name, and bank_code. Any Create Transfer Recipient param can also be passed.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"batch": batch}
         return self.request("POST", "transferrecipient/bulk", json_data=payload)
 
-    def list_transfer_recipients(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> PaystackResponse:
+    def list_transfer_recipients(self, per_page: Optional[int] = None, page: Optional[int] = None, from_date: Optional[str] = None, to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List transfer recipients available on your integration
 
@@ -74,7 +74,7 @@ class TransferRecipientsAPI(BaseClient):
             to_date: A timestamp at which to stop listing transfer recipients e.g. 2016-09-24T00:00:05.000Z, 2016-09-21
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -88,7 +88,7 @@ class TransferRecipientsAPI(BaseClient):
 
         return self.request("GET", "transferrecipient", params=params)
 
-    def fetch_transfer_recipient(self, id_or_code: str) -> PaystackResponse:
+    def fetch_transfer_recipient(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Fetch the details of a transfer recipient
 
@@ -96,11 +96,11 @@ class TransferRecipientsAPI(BaseClient):
             id_or_code: An ID or code for the recipient whose details you want to receive.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"transferrecipient/{id_or_code}")
 
-    def update_transfer_recipient(self, id_or_code: str, name: Optional[str] = None, email: Optional[str] = None) -> PaystackResponse:
+    def update_transfer_recipient(self, id_or_code: str, name: Optional[str] = None, email: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update transfer recipients available on your integration
 
@@ -110,7 +110,7 @@ class TransferRecipientsAPI(BaseClient):
             email: Email address of the recipient
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if name:
@@ -120,7 +120,7 @@ class TransferRecipientsAPI(BaseClient):
 
         return self.request("PUT", f"transferrecipient/{id_or_code}", json_data=payload)
 
-    def delete_transfer_recipient(self, id_or_code: str) -> PaystackResponse:
+    def delete_transfer_recipient(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Delete a transfer recipient (sets the transfer recipient to inactive)
 
@@ -128,6 +128,6 @@ class TransferRecipientsAPI(BaseClient):
             id_or_code: An ID or code for the recipient who you want to delete.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("DELETE", f"transferrecipient/{id_or_code}")

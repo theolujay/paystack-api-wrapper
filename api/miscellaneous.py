@@ -1,6 +1,6 @@
 # miscellaneous.py
-from typing import Optional, Union
-from .core import BaseClient, PaystackResponse
+from typing import Optional, Union, Dict, Any, Tuple
+from .core import BaseClient
 from .exceptions import APIError
 
 
@@ -22,7 +22,7 @@ class MiscellaneousAPI(BaseClient):
                    gateway: Optional[str] = None,
                    type: Optional[str] = None,
                    currency: Optional[str] = None,
-                   include_nip_sort_code: Optional[bool] = None) -> PaystackResponse:
+                   include_nip_sort_code: Optional[bool] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get a list of all supported banks and their properties.
 
         Args:
@@ -42,7 +42,7 @@ class MiscellaneousAPI(BaseClient):
             include_nip_sort_code (Optional[bool]): Flag to return Nigerian banks with NIP institution code
 
         Returns:
-            PaystackResponse: Contains list of banks with their properties and metadata
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If country value is invalid or per_page exceeds limits
@@ -99,19 +99,18 @@ class MiscellaneousAPI(BaseClient):
             
         return self.request("GET", "bank", payload=payload)
 
-    def list_countries(self) -> PaystackResponse:
+    def list_countries(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get a list of countries that Paystack currently supports.
 
         Returns:
-            PaystackResponse: Contains list of supported countries with their properties,
-                            including ISO codes, default currencies, and supported features
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Note:
             This endpoint has no parameters - it returns all supported countries
         """
         return self.request("GET", "country")
 
-    def list_states(self, country: Union[str, int]) -> PaystackResponse:
+    def list_states(self, country: Union[str, int]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get a list of states for a country for address verification.
 
         Args:
@@ -120,7 +119,7 @@ class MiscellaneousAPI(BaseClient):
                                      either a country code string (e.g., 'CA') or integer ID
 
         Returns:
-            PaystackResponse: Contains list of states/provinces with names, slugs, and abbreviations
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If country parameter is not provided
@@ -134,78 +133,78 @@ class MiscellaneousAPI(BaseClient):
         
         return self.request("GET", "address_verification/states", params=params)
 
-    def get_nigerian_banks(self, include_nip_sort_code: bool = False) -> PaystackResponse:
+    def get_nigerian_banks(self, include_nip_sort_code: bool = False) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get all Nigerian banks.
 
         Args:
             include_nip_sort_code (bool): Whether to include NIP institution codes
 
         Returns:
-            PaystackResponse: Contains list of Nigerian banks
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
             country="nigeria",
             include_nip_sort_code=include_nip_sort_code
         )
 
-    def get_ghanaian_mobile_money_providers(self) -> PaystackResponse:
+    def get_ghanaian_mobile_money_providers(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get Ghanaian mobile money providers.
 
         Returns:
-            PaystackResponse: Contains list of Ghanaian mobile money providers
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
             country="ghana",
             type="mobile_money"
         )
 
-    def get_ghanaian_banks(self) -> PaystackResponse:
+    def get_ghanaian_banks(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get Ghanaian banks.
 
         Returns:
-            PaystackResponse: Contains list of Ghanaian banks
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
             country="ghana",
             type="ghipps"
         )
 
-    def get_banks_for_transfer(self, country: str) -> PaystackResponse:
+    def get_banks_for_transfer(self, country: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get banks that support bank transfers.
 
         Args:
             country (Optional[str]): Country to filter by
 
         Returns:
-            PaystackResponse: Contains list of banks that support transfer payments
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
             country=country,
             pay_with_bank_transfer=True
         )
 
-    def get_banks_for_direct_payment(self, country: str) -> PaystackResponse:
+    def get_banks_for_direct_payment(self, country: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get banks that support direct payments.
 
         Args:
             country (Optional[str]): Country to filter by
 
         Returns:
-            PaystackResponse: Contains list of banks that support direct payments
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
             country=country,
             pay_with_bank=True
         )
 
-    def get_south_african_verification_banks(self, currency: Optional[str] = None) -> PaystackResponse:
+    def get_south_african_verification_banks(self, currency: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get South African banks that support account verification.
 
         Args:
             currency (Optional[str]): Currency to filter by
 
         Returns:
-            PaystackResponse: Contains list of South African banks for verification
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
             country="south africa",

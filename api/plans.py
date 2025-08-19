@@ -1,9 +1,9 @@
 """
 The Plans API allows you create and manage installment payment options on your integration.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class PlansAPI(BaseClient):
@@ -14,7 +14,7 @@ class PlansAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_plan(self, name: str, amount: int, interval: str, description: Optional[str] = None, send_invoices: Optional[bool] = None, send_sms: Optional[bool] = None, currency: Optional[str] = None, invoice_limit: Optional[int] = None) -> PaystackResponse:
+    def create_plan(self, name: str, amount: int, interval: str, description: Optional[str] = None, send_invoices: Optional[bool] = None, send_sms: Optional[bool] = None, currency: Optional[str] = None, invoice_limit: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a plan on your integration
 
@@ -29,7 +29,7 @@ class PlansAPI(BaseClient):
             invoice_limit: Number of invoices to raise during subscription to this plan. Can be overridden by specifying an invoice_limit while subscribing.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "name": name,
@@ -49,7 +49,7 @@ class PlansAPI(BaseClient):
 
         return self.request("POST", "plan", json_data=payload)
 
-    def list_plans(self, per_page: Optional[int] = None, page: Optional[int] = None, status: Optional[str] = None, interval: Optional[str] = None, amount: Optional[int] = None) -> PaystackResponse:
+    def list_plans(self, per_page: Optional[int] = None, page: Optional[int] = None, status: Optional[str] = None, interval: Optional[str] = None, amount: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List plans available on your integration
 
@@ -61,7 +61,7 @@ class PlansAPI(BaseClient):
             amount: Filter list by plans with specified amount using the supported currency
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -77,7 +77,7 @@ class PlansAPI(BaseClient):
 
         return self.request("GET", "plan", params=params)
 
-    def fetch_plan(self, id_or_code: str) -> PaystackResponse:
+    def fetch_plan(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a plan on your integration
 
@@ -85,11 +85,11 @@ class PlansAPI(BaseClient):
             id_or_code: The plan ID or code you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"plan/{id_or_code}")
 
-    def update_plan(self, id_or_code: str, name: Optional[str] = None, amount: Optional[int] = None, interval: Optional[str] = None, description: Optional[str] = None, send_invoices: Optional[bool] = None, send_sms: Optional[bool] = None, currency: Optional[str] = None, invoice_limit: Optional[int] = None, update_existing_subscriptions: Optional[bool] = None) -> PaystackResponse:
+    def update_plan(self, id_or_code: str, name: Optional[str] = None, amount: Optional[int] = None, interval: Optional[str] = None, description: Optional[str] = None, send_invoices: Optional[bool] = None, send_sms: Optional[bool] = None, currency: Optional[str] = None, invoice_limit: Optional[int] = None, update_existing_subscriptions: Optional[bool] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a plan details on your integration
 
@@ -106,7 +106,7 @@ class PlansAPI(BaseClient):
             update_existing_subscriptions: Set to true if you want the existing subscriptions to use the new changes. Set to false and only new subscriptions will be changed. Defaults to true when not set.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {}
         if name:

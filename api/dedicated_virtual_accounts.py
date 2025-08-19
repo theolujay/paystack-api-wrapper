@@ -1,9 +1,9 @@
 """
 The Dedicated Virtual Account API enables Nigerian and Ghanaian merchants to manage unique payment accounts of their customers.
 """
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class DedicatedVirtualAccountsAPI(BaseClient):
@@ -14,7 +14,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_dedicated_virtual_account(self, customer: str, preferred_bank: Optional[str] = None, subaccount: Optional[str] = None, split_code: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, phone: Optional[str] = None) -> PaystackResponse:
+    def create_dedicated_virtual_account(self, customer: str, preferred_bank: Optional[str] = None, subaccount: Optional[str] = None, split_code: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, phone: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a dedicated virtual account for an existing customer
 
@@ -28,7 +28,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             phone: Customer's phone number
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"customer": customer}
         if preferred_bank:
@@ -46,7 +46,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("POST", "dedicated_account", json_data=payload)
 
-    def assign_dedicated_virtual_account(self, email: str, first_name: str, last_name: str, phone: str, preferred_bank: str, country: str, account_number: Optional[str] = None, bvn: Optional[str] = None, bank_code: Optional[str] = None, subaccount: Optional[str] = None, split_code: Optional[str] = None) -> PaystackResponse:
+    def assign_dedicated_virtual_account(self, email: str, first_name: str, last_name: str, phone: str, preferred_bank: str, country: str, account_number: Optional[str] = None, bvn: Optional[str] = None, bank_code: Optional[str] = None, subaccount: Optional[str] = None, split_code: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         With this endpoint, you can create a customer, validate the customer, and assign a DVA to the customer.
 
@@ -64,7 +64,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             split_code: Split code consisting of the lists of accounts you want to split the transaction with
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "email": email,
@@ -87,7 +87,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("POST", "dedicated_account/assign", json_data=payload)
 
-    def list_dedicated_virtual_accounts(self, active: Optional[bool] = None, currency: Optional[str] = None, provider_slug: Optional[str] = None, bank_id: Optional[str] = None, customer: Optional[str] = None) -> PaystackResponse:
+    def list_dedicated_virtual_accounts(self, active: Optional[bool] = None, currency: Optional[str] = None, provider_slug: Optional[str] = None, bank_id: Optional[str] = None, customer: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List dedicated virtual accounts available on your integration.
 
@@ -99,7 +99,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             customer: The customer's ID
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if active is not None:
@@ -115,7 +115,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("GET", "dedicated_account", params=params)
 
-    def fetch_dedicated_virtual_account(self, dedicated_account_id: int) -> PaystackResponse:
+    def fetch_dedicated_virtual_account(self, dedicated_account_id: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a dedicated virtual account on your integration.
 
@@ -123,11 +123,11 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             dedicated_account_id: ID of dedicated virtual account
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"dedicated_account/{dedicated_account_id}")
 
-    def requery_dedicated_account(self, account_number: str, provider_slug: str, date: Optional[str] = None) -> PaystackResponse:
+    def requery_dedicated_account(self, account_number: str, provider_slug: str, date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Requery Dedicated Virtual Account for new transactions
 
@@ -137,7 +137,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             date: The day the transfer was made in YYYY-MM-DD format
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {
             "account_number": account_number,
@@ -148,7 +148,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("GET", "dedicated_account/requery", params=params)
 
-    def deactivate_dedicated_account(self, dedicated_account_id: int) -> PaystackResponse:
+    def deactivate_dedicated_account(self, dedicated_account_id: int) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Deactivate a dedicated virtual account on your integration.
 
@@ -156,11 +156,11 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             dedicated_account_id: ID of dedicated virtual account
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("DELETE", f"dedicated_account/{dedicated_account_id}")
 
-    def split_dedicated_account_transaction(self, customer: str, subaccount: Optional[str] = None, split_code: Optional[str] = None, preferred_bank: Optional[str] = None) -> PaystackResponse:
+    def split_dedicated_account_transaction(self, customer: str, subaccount: Optional[str] = None, split_code: Optional[str] = None, preferred_bank: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Split a dedicated virtual account transaction with one or more accounts
 
@@ -171,7 +171,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             preferred_bank: The bank slug for preferred bank. To get a list of available banks, use the List Providers endpoint
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"customer": customer}
         if subaccount:
@@ -183,7 +183,7 @@ class DedicatedVirtualAccountsAPI(BaseClient):
 
         return self.request("POST", "dedicated_account/split", json_data=payload)
 
-    def remove_split_from_dedicated_account(self, account_number: str) -> PaystackResponse:
+    def remove_split_from_dedicated_account(self, account_number: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         If you've previously set up split payment for transactions on a dedicated virtual account, you can remove it with this endpoint
 
@@ -191,16 +191,16 @@ class DedicatedVirtualAccountsAPI(BaseClient):
             account_number: Dedicated virtual account number
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"account_number": account_number}
         return self.request("DELETE", "dedicated_account/split", json_data=payload)
 
-    def fetch_bank_providers(self) -> PaystackResponse:
+    def fetch_bank_providers(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get available bank providers for a dedicated virtual account
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", "dedicated_account/available_providers")

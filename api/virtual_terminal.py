@@ -1,9 +1,9 @@
 """
 The Virtual Terminal API allows you to accept in-person payments without a POS device.
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class VirtualTerminalAPI(BaseClient):
@@ -14,7 +14,7 @@ class VirtualTerminalAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_virtual_terminal(self, name: str, destinations: List[Dict[str, Any]], metadata: Optional[List[Dict[str, Any]]] = None, currency: Optional[List[str]] = None, custom_fields: Optional[List[Dict[str, Any]]] = None) -> PaystackResponse:
+    def create_virtual_terminal(self, name: str, destinations: List[Dict[str, Any]], metadata: Optional[List[Dict[str, Any]]] = None, currency: Optional[List[str]] = None, custom_fields: Optional[List[Dict[str, Any]]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a Virtual Terminal on your integration
 
@@ -26,7 +26,7 @@ class VirtualTerminalAPI(BaseClient):
             custom_fields: An array of objects representing custom fields to display on the form. Each object contains a display_name parameter, representing what will be displayed on the Virtual Terminal page, and variable_name parameter for referencing the custom field programmatically
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "name": name,
@@ -41,7 +41,7 @@ class VirtualTerminalAPI(BaseClient):
 
         return self.request("POST", "virtual_terminal", json_data=payload)
 
-    def list_virtual_terminals(self, status: Optional[str] = None, per_page: Optional[int] = None, search: Optional[str] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> PaystackResponse:
+    def list_virtual_terminals(self, status: Optional[str] = None, per_page: Optional[int] = None, search: Optional[str] = None, next_cursor: Optional[str] = None, previous_cursor: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List Virtual Terminals on your integration
 
@@ -53,7 +53,7 @@ class VirtualTerminalAPI(BaseClient):
             previous_cursor: Cursor for previous page
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if status:
@@ -69,7 +69,7 @@ class VirtualTerminalAPI(BaseClient):
 
         return self.request("GET", "virtual_terminal", params=params)
 
-    def fetch_virtual_terminal(self, code: str) -> PaystackResponse:
+    def fetch_virtual_terminal(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Fetch a Virtual Terminal on your integration
 
@@ -77,11 +77,11 @@ class VirtualTerminalAPI(BaseClient):
             code: Code of the Virtual Terminal
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"virtual_terminal/{code}")
 
-    def update_virtual_terminal(self, code: str, name: str) -> PaystackResponse:
+    def update_virtual_terminal(self, code: str, name: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update a Virtual Terminal on your integration
 
@@ -90,12 +90,12 @@ class VirtualTerminalAPI(BaseClient):
             name: Name of the Virtual Terminal
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"name": name}
         return self.request("PUT", f"virtual_terminal/{code}", json_data=payload)
 
-    def deactivate_virtual_terminal(self, code: str) -> PaystackResponse:
+    def deactivate_virtual_terminal(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Deactivate a Virtual Terminal on your integration
 
@@ -103,11 +103,11 @@ class VirtualTerminalAPI(BaseClient):
             code: Code of the Virtual Terminal to deactivate
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("PUT", f"virtual_terminal/{code}/deactivate")
 
-    def assign_destination_to_virtual_terminal(self, code: str, destinations: List[Dict[str, Any]]) -> PaystackResponse:
+    def assign_destination_to_virtual_terminal(self, code: str, destinations: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Add a destination (WhatsApp number) to a Virtual Terminal on your integration
 
@@ -116,12 +116,12 @@ class VirtualTerminalAPI(BaseClient):
             destinations: An array of objects containing the notification recipients for payments to the Virtual Terminal. Each object includes a target parameter for the Whatsapp phone number to send notifications to, and a name parameter for a descriptive label.
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"destinations": destinations}
         return self.request("POST", f"virtual_terminal/{code}/destination/assign", json_data=payload)
 
-    def unassign_destination_from_virtual_terminal(self, code: str, targets: List[str]) -> PaystackResponse:
+    def unassign_destination_from_virtual_terminal(self, code: str, targets: List[str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Unassign a destination (WhatsApp Number) summary of transactions from a Virtual Terminal on your integration
 
@@ -130,12 +130,12 @@ class VirtualTerminalAPI(BaseClient):
             targets: Array of destination targets to unassign
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"targets": targets}
         return self.request("POST", f"virtual_terminal/{code}/destination/unassign", json_data=payload)
 
-    def add_split_code_to_virtual_terminal(self, code: str, split_code: str) -> PaystackResponse:
+    def add_split_code_to_virtual_terminal(self, code: str, split_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Add a split code to a Virtual Terminal on your integration
 
@@ -144,12 +144,12 @@ class VirtualTerminalAPI(BaseClient):
             split_code: Split code to be added to the Virtual Terminal
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"split_code": split_code}
         return self.request("PUT", f"virtual_terminal/{code}/split_code", json_data=payload)
 
-    def remove_split_code_from_virtual_terminal(self, code: str, split_code: str) -> PaystackResponse:
+    def remove_split_code_from_virtual_terminal(self, code: str, split_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Remove a split code from a Virtual Terminal on your integration
 
@@ -158,7 +158,7 @@ class VirtualTerminalAPI(BaseClient):
             split_code: Split code to be removed from the Virtual Terminal
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {"split_code": split_code}
         return self.request("DELETE", f"virtual_terminal/{code}/split_code", json_data=payload)

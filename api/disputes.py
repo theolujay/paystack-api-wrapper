@@ -1,9 +1,9 @@
 """
 The Disputes API allows you manage transaction disputes.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class DisputesAPI(BaseClient):
@@ -14,7 +14,7 @@ class DisputesAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def list_disputes(self, from_date: str, to_date: str, per_page: Optional[int] = None, page: Optional[int] = None, transaction_id: Optional[str] = None, status: Optional[str] = None) -> PaystackResponse:
+    def list_disputes(self, from_date: str, to_date: str, per_page: Optional[int] = None, page: Optional[int] = None, transaction_id: Optional[str] = None, status: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List disputes filed against you.
 
@@ -27,7 +27,7 @@ class DisputesAPI(BaseClient):
             status: Dispute Status. Acceptable values: { awaiting-merchant-feedback | awaiting-bank-feedback | pending | resolved }
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(from_date, to_date)
         payload = {
@@ -49,7 +49,7 @@ class DisputesAPI(BaseClient):
 
         return self.request("GET", "dispute", json_data=payload)
 
-    def fetch_dispute(self, dispute_id: str) -> PaystackResponse:
+    def fetch_dispute(self, dispute_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get more details about a dispute.
 
@@ -57,11 +57,11 @@ class DisputesAPI(BaseClient):
             dispute_id: The dispute ID you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"dispute/{dispute_id}")
 
-    def list_transaction_disputes(self, transaction_id: str) -> PaystackResponse:
+    def list_transaction_disputes(self, transaction_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This endpoint retrieves disputes for a particular transaction
 
@@ -69,11 +69,11 @@ class DisputesAPI(BaseClient):
             transaction_id: The transaction ID you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"dispute/transaction/{transaction_id}")
 
-    def update_dispute(self, dispute_id: str, refund_amount: int, uploaded_filename: Optional[str] = None) -> PaystackResponse:
+    def update_dispute(self, dispute_id: str, refund_amount: int, uploaded_filename: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Update details of a dispute on your integration
 
@@ -83,7 +83,7 @@ class DisputesAPI(BaseClient):
             uploaded_filename: filename of attachment returned via response from upload url(GET /dispute/:id/upload_url)
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(dispute_id, refund_amount)
         payload = {"refund_amount": refund_amount}
@@ -92,7 +92,7 @@ class DisputesAPI(BaseClient):
 
         return self.request("PUT", f"dispute/{dispute_id}", json_data=payload)
 
-    def add_evidence(self, dispute_id: str, customer_email: str, customer_name: str, customer_phone: str, service_details: str, delivery_address: Optional[str] = None, delivery_date: Optional[str] = None) -> PaystackResponse:
+    def add_evidence(self, dispute_id: str, customer_email: str, customer_name: str, customer_phone: str, service_details: str, delivery_address: Optional[str] = None, delivery_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Provide evidence for a dispute
 
@@ -106,7 +106,7 @@ class DisputesAPI(BaseClient):
             delivery_date: ISO 8601 representation of delivery date (YYYY-MM-DD)
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(customer_email, customer_name, customer_phone, service_details)
         payload = {
@@ -122,7 +122,7 @@ class DisputesAPI(BaseClient):
 
         return self.request("POST", f"dispute/{dispute_id}/evidence", json_data=payload)
 
-    def get_upload_url(self, dispute_id: str, upload_filename: str) -> PaystackResponse:
+    def get_upload_url(self, dispute_id: str, upload_filename: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         This endpoint retrieves disputes for a particular transaction
 
@@ -131,13 +131,13 @@ class DisputesAPI(BaseClient):
             upload_filename: The file name, with its extension, that you want to upload. e.g filename.pdf
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(dispute_id, upload_filename)
         params = {"upload_filename": upload_filename}
         return self.request("GET", f"dispute/{dispute_id}/upload_url", params=params)
 
-    def resolve_dispute(self, dispute_id: str, resolution: str, message: str, refund_amount: int, uploaded_filename: str, evidence: Optional[int] = None) -> PaystackResponse:
+    def resolve_dispute(self, dispute_id: str, resolution: str, message: str, refund_amount: int, uploaded_filename: str, evidence: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Resolve a dispute on your integration
 
@@ -150,7 +150,7 @@ class DisputesAPI(BaseClient):
             evidence: Evidence Id for fraud claims
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         self._validate_required_params(dispute_id, resolution, message, refund_amount, uploaded_filename)
         payload = {
@@ -164,7 +164,7 @@ class DisputesAPI(BaseClient):
 
         return self.request("PUT", f"dispute/{dispute_id}/resolve", json_data=payload)
 
-    def export_disputes(self, from_date: str, to_date: str, per_page: Optional[int] = None, page: Optional[int] = None, transaction_id: Optional[str] = None, status: Optional[str] = None) -> PaystackResponse:
+    def export_disputes(self, from_date: str, to_date: str, per_page: Optional[int] = None, page: Optional[int] = None, transaction_id: Optional[str] = None, status: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Export disputes available on your integration
 
@@ -177,7 +177,7 @@ class DisputesAPI(BaseClient):
             status: Dispute Status. Acceptable values: { awaiting-merchant-feedback | awaiting-bank-feedback | pending | resolved }
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload= {
             "from": from_date,

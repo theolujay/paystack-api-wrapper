@@ -1,5 +1,5 @@
-from typing import Optional, Dict, Any, Union
-from .core import BaseClient, PaystackResponse
+from typing import Optional, Dict, Any, Union, Tuple
+from .core import BaseClient
 from .exceptions import APIError
 from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
@@ -23,7 +23,7 @@ class TransactionsAPI(BaseClient):
                   split_code: Optional[str] = None,
                   subaccount: Optional[str] = None,
                   transaction_charge: Optional[int] = None,
-                  bearer: Optional[str] = None) -> PaystackResponse:
+                  bearer: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Initialize a transaction for payment.
 
         Args:
@@ -42,7 +42,7 @@ class TransactionsAPI(BaseClient):
             bearer (Optional[str]): Who bears Paystack charges ('account' or 'subaccount')
 
         Returns:
-            PaystackResponse: Contains authorization_url, access_code, and reference
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If email or amount is invalid
@@ -78,14 +78,14 @@ class TransactionsAPI(BaseClient):
             
         return self.request("POST", "transaction/initialize", json_data=payload)
 
-    def verify(self, reference: str) -> PaystackResponse:
+    def verify(self, reference: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Verify a transaction status.
 
         Args:
             reference (str): Transaction reference to verify
 
         Returns:
-            PaystackResponse: Contains complete transaction details and status
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If reference is not provided
@@ -101,7 +101,7 @@ class TransactionsAPI(BaseClient):
                          status: Optional[str] = None,
                          from_date: Optional[str] = None,
                          to_date: Optional[str] = None,
-                         amount: Optional[Union[int, str]] = None) -> PaystackResponse:
+                         amount: Optional[Union[int, str]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """List transactions with optional filtering.
 
         Args:
@@ -115,7 +115,7 @@ class TransactionsAPI(BaseClient):
             amount (Optional[Union[int, str]]): Amount to filter by
 
         Returns:
-            PaystackResponse: Contains list of transactions and pagination metadata
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         
@@ -140,14 +140,14 @@ class TransactionsAPI(BaseClient):
             
         return self.request("GET", "transaction", params=params)
 
-    def fetch(self, transaction_id: Union[int, str]) -> PaystackResponse:
+    def fetch(self, transaction_id: Union[int, str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Fetch details of a single transaction.
 
         Args:
             transaction_id (Union[int, str]): The ID of the transaction to fetch
 
         Returns:
-            PaystackResponse: Contains detailed transaction information
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If transaction_id is not provided
@@ -166,7 +166,7 @@ class TransactionsAPI(BaseClient):
                            transaction_charge: Optional[int] = None,
                            bearer: Optional[str] = None,
                            queue: Optional[bool] = None,
-                           metadata: Optional[Dict[str, Any]] = None) -> PaystackResponse:
+                           metadata: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Charge a customer's authorization (for recurring payments).
 
         Args:
@@ -183,7 +183,7 @@ class TransactionsAPI(BaseClient):
             metadata (Optional[Dict]): Additional data to store
 
         Returns:
-            PaystackResponse: Contains transaction details and status
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If required parameters are invalid
@@ -215,14 +215,14 @@ class TransactionsAPI(BaseClient):
             
         return self.request("POST", "transaction/charge_authorization", json_data=payload)
 
-    def view_timeline(self, id_or_reference: Union[int, str]) -> PaystackResponse:
+    def view_timeline(self, id_or_reference: Union[int, str]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """View the timeline/history of a transaction.
 
         Args:
             id_or_reference (Union[int, str]): Transaction ID or reference
 
         Returns:
-            PaystackResponse: Contains transaction timeline events
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If id_or_reference is not provided
@@ -234,7 +234,7 @@ class TransactionsAPI(BaseClient):
                    per_page: Optional[int] = None,
                    page: Optional[int] = None,
                    from_date: Optional[str] = None,
-                   to_date: Optional[str] = None) -> PaystackResponse:
+                   to_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Get transaction totals for your integration.
 
         Args:
@@ -244,7 +244,7 @@ class TransactionsAPI(BaseClient):
             to_date (Optional[str]): End date for totals calculation
 
         Returns:
-            PaystackResponse: Contains total transaction values and counts
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         
@@ -270,7 +270,7 @@ class TransactionsAPI(BaseClient):
                           amount: Optional[Union[int, str]] = None,
                           settled: Optional[bool] = None,
                           settlement: Optional[int] = None,
-                          payment_page: Optional[int] = None) -> PaystackResponse:
+                          payment_page: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Export transactions as CSV.
 
         Args:
@@ -287,7 +287,7 @@ class TransactionsAPI(BaseClient):
             payment_page (Optional[int]): Payment page ID filter
 
         Returns:
-            PaystackResponse: Contains export path and expiration details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         
@@ -322,7 +322,7 @@ class TransactionsAPI(BaseClient):
                      amount: Union[int, str],
                      email: str,
                      reference: Optional[str] = None,
-                     at_least: Optional[Union[int, str]] = None) -> PaystackResponse:
+                     at_least: Optional[Union[int, str]] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Perform a partial debit transaction.
         
         This allows you to charge a customer but if the amount on their card/account
@@ -337,7 +337,7 @@ class TransactionsAPI(BaseClient):
             at_least (Optional[Union[int, str]]): Minimum acceptable amount in kobo
 
         Returns:
-            PaystackResponse: Contains partial debit transaction details
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
 
         Raises:
             APIError: If required parameters are missing or invalid

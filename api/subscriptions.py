@@ -1,9 +1,9 @@
 """
 The Subscriptions API allows you create and manage recurring payment on your integration.
 """
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient, PaystackResponse
+from .core import BaseClient
 
 
 class SubscriptionsAPI(BaseClient):
@@ -14,7 +14,7 @@ class SubscriptionsAPI(BaseClient):
     def __init__(self, secret_key: Optional[str] = None):
         super().__init__(secret_key)
 
-    def create_subscription(self, customer: str, plan: str, authorization: Optional[str] = None, start_date: Optional[str] = None) -> PaystackResponse:
+    def create_subscription(self, customer: str, plan: str, authorization: Optional[str] = None, start_date: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create a subscription on your integration
 
@@ -25,7 +25,7 @@ class SubscriptionsAPI(BaseClient):
             start_date: Set the date for the first debit. (ISO 8601 format) e.g. 2017-05-16T00:30:13+01:00
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "customer": customer,
@@ -38,7 +38,7 @@ class SubscriptionsAPI(BaseClient):
 
         return self.request("POST", "subscription", json_data=payload)
 
-    def list_subscriptions(self, per_page: Optional[int] = None, page: Optional[int] = None, customer: Optional[int] = None, plan: Optional[int] = None) -> PaystackResponse:
+    def list_subscriptions(self, per_page: Optional[int] = None, page: Optional[int] = None, customer: Optional[int] = None, plan: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         List subscriptions available on your integration
 
@@ -49,7 +49,7 @@ class SubscriptionsAPI(BaseClient):
             plan: Filter by Plan ID
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         params = {}
         if per_page:
@@ -63,7 +63,7 @@ class SubscriptionsAPI(BaseClient):
 
         return self.request("GET", "subscription", params=params)
 
-    def fetch_subscription(self, id_or_code: str) -> PaystackResponse:
+    def fetch_subscription(self, id_or_code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Get details of a subscription on your integration
 
@@ -71,11 +71,11 @@ class SubscriptionsAPI(BaseClient):
             id_or_code: The subscription ID or code you want to fetch
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"subscription/{id_or_code}")
 
-    def enable_subscription(self, code: str, token: str) -> PaystackResponse:
+    def enable_subscription(self, code: str, token: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Enable a subscription on your integration
 
@@ -84,7 +84,7 @@ class SubscriptionsAPI(BaseClient):
             token: Email token
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "code": code,
@@ -92,7 +92,7 @@ class SubscriptionsAPI(BaseClient):
         }
         return self.request("POST", "subscription/enable", json_data=payload)
 
-    def disable_subscription(self, code: str, token: str) -> PaystackResponse:
+    def disable_subscription(self, code: str, token: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Disable a subscription on your integration
 
@@ -101,7 +101,7 @@ class SubscriptionsAPI(BaseClient):
             token: Email token
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         payload = {
             "code": code,
@@ -109,7 +109,7 @@ class SubscriptionsAPI(BaseClient):
         }
         return self.request("POST", "subscription/disable", json_data=payload)
 
-    def generate_update_subscription_link(self, code: str) -> PaystackResponse:
+    def generate_update_subscription_link(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Generate a link for updating the card on a subscription
 
@@ -117,11 +117,11 @@ class SubscriptionsAPI(BaseClient):
             code: Subscription code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("GET", f"subscription/{code}/manage/link")
 
-    def send_update_subscription_link(self, code: str) -> PaystackResponse:
+    def send_update_subscription_link(self, code: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Email a customer a link for updating the card on their subscription
 
@@ -129,6 +129,6 @@ class SubscriptionsAPI(BaseClient):
             code: Subscription code
 
         Returns:
-            PaystackResponse: The response from the API
+            Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.request("POST", f"subscription/{code}/manage/email")
