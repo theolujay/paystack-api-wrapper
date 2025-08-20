@@ -112,7 +112,7 @@ class BaseClient:
                 # For RateLimitError, pass the original response object to access headers
                 if response.status_code == 429:
                     raise create_error_from_response(
-                        response=response, # Pass the original response object
+                        response=response,  # Pass the original response object
                         status_code=response.status_code,
                         request_id=request_id,
                     )

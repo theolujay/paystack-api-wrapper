@@ -135,7 +135,9 @@ def test_list_plans_with_filter_params(plans_client):
         status=200,
     )
 
-    data, meta = plans_client.list_plans(status="active", interval="monthly", amount=10000)
+    data, meta = plans_client.list_plans(
+        status="active", interval="monthly", amount=10000
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

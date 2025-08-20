@@ -13,7 +13,9 @@ class SubscriptionsAPI(BaseClient):
     The Subscriptions API allows you create and manage recurring payment on your integration.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_subscription(

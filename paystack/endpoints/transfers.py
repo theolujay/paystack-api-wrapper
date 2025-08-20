@@ -13,7 +13,9 @@ class TransfersAPI(BaseClient):
     The Transfers API allows you automate sending money to your customers.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def initiate_transfer(

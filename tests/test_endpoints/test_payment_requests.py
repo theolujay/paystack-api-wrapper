@@ -305,7 +305,9 @@ def test_finalize_payment_request_with_send_notification_false(payment_requests_
         status=200,
     )
 
-    data, meta = payment_requests_client.finalize_payment_request(code=code, send_notification=False)
+    data, meta = payment_requests_client.finalize_payment_request(
+        code=code, send_notification=False
+    )
 
     assert data["code"] == code
     assert data["status"] == "finalized"

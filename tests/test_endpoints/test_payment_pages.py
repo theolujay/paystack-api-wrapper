@@ -47,7 +47,13 @@ def test_create_payment_page_with_all_params(payment_pages_client):
         "success_message": "Payment successful!",
         "notification_email": "test@example.com",
         "collect_phone": False,
-        "custom_fields": [{"display_name": "Custom Field", "variable_name": "custom_field", "type": "text"}],
+        "custom_fields": [
+            {
+                "display_name": "Custom Field",
+                "variable_name": "custom_field",
+                "type": "text",
+            }
+        ],
     }
     mock_response = {
         "status": True,

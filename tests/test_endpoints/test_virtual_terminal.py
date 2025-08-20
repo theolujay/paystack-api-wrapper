@@ -36,7 +36,9 @@ def test_create_virtual_terminal_with_all_optional_params(virtual_terminal_clien
         "destinations": [{"target": "2348012345678", "name": "John Doe"}],
         "metadata": [{"key": "value"}],
         "currency": ["NGN"],
-        "custom_fields": [{"display_name": "Field", "variable_name": "field", "value": "test"}],
+        "custom_fields": [
+            {"display_name": "Field", "variable_name": "field", "value": "test"}
+        ],
     }
     mock_response = {
         "status": True,

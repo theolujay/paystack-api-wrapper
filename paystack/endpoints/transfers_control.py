@@ -13,7 +13,9 @@ class TransfersControlAPI(BaseClient):
     The Transfers Control API allows you manage settings of your transfers.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def check_balance(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:

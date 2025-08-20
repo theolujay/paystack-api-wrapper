@@ -13,7 +13,9 @@ class SettlementsAPI(BaseClient):
     The Settlements API allows you gain insights into payouts made by Paystack to your bank account.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def list_settlements(

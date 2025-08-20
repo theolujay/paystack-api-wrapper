@@ -67,4 +67,6 @@ def test_update_timeout_invalid_key(integration_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(integration_client.update_timeout, "Invalid API key", timeout=timeout)
+    assert_api_error_contains(
+        integration_client.update_timeout, "Invalid API key", timeout=timeout
+    )

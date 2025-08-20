@@ -8,7 +8,9 @@ from ..exceptions import APIError
 class MiscellaneousAPI(BaseClient):
     """Miscellaneous API client for supporting APIs that provide additional details to other APIs."""
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def list_banks(
@@ -150,7 +152,10 @@ class MiscellaneousAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
-            country="nigeria", use_cursor=False, per_page=50, include_nip_sort_code=include_nip_sort_code
+            country="nigeria",
+            use_cursor=False,
+            per_page=50,
+            include_nip_sort_code=include_nip_sort_code,
         )
 
     def get_ghanaian_mobile_money_providers(
@@ -161,7 +166,9 @@ class MiscellaneousAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        return self.list_banks(country="ghana", use_cursor=False, per_page=50, type="mobile_money")
+        return self.list_banks(
+            country="ghana", use_cursor=False, per_page=50, type="mobile_money"
+        )
 
     def get_ghanaian_banks(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """Convenience method to get Ghanaian banks.
@@ -169,7 +176,9 @@ class MiscellaneousAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        return self.list_banks(country="ghana", use_cursor=False, per_page=50, type="ghipps")
+        return self.list_banks(
+            country="ghana", use_cursor=False, per_page=50, type="ghipps"
+        )
 
     def get_banks_for_transfer(
         self, country: str
@@ -182,7 +191,9 @@ class MiscellaneousAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        return self.list_banks(country=country, use_cursor=False, per_page=50, pay_with_bank_transfer=True)
+        return self.list_banks(
+            country=country, use_cursor=False, per_page=50, pay_with_bank_transfer=True
+        )
 
     def get_banks_for_direct_payment(
         self, country: str
@@ -195,7 +206,9 @@ class MiscellaneousAPI(BaseClient):
         Returns:
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
-        return self.list_banks(country=country, use_cursor=False, per_page=50, pay_with_bank=True)
+        return self.list_banks(
+            country=country, use_cursor=False, per_page=50, pay_with_bank=True
+        )
 
     def get_south_african_verification_banks(
         self, currency: Optional[str] = None
@@ -209,5 +222,9 @@ class MiscellaneousAPI(BaseClient):
             Tuple[Dict[str, Any], Dict[str, Any]]: A tuple containing the response data and metadata.
         """
         return self.list_banks(
-            country="south africa", use_cursor=False, per_page=50, enabled_for_verification=True, currency=currency
+            country="south africa",
+            use_cursor=False,
+            per_page=50,
+            enabled_for_verification=True,
+            currency=currency,
         )

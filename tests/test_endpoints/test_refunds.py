@@ -125,7 +125,10 @@ def test_list_refunds_with_date_params(refunds_client):
     )
 
     data, meta = refunds_client.list_refunds(
-        transaction=transaction, currency=currency, from_date="2023-01-01", to_date="2023-01-31"
+        transaction=transaction,
+        currency=currency,
+        from_date="2023-01-01",
+        to_date="2023-01-31",
     )
 
     assert isinstance(data, list)
@@ -159,9 +162,7 @@ def test_list_refunds_invalid_page(refunds_client):
     transaction = "TRN_test"
     currency = "NGN"
     with pytest.raises(APIError, match="page must be greater than 0"):
-        refunds_client.list_refunds(
-            transaction=transaction, currency=currency, page=0
-        )
+        refunds_client.list_refunds(transaction=transaction, currency=currency, page=0)
 
 
 @responses.activate
@@ -169,9 +170,7 @@ def test_list_refunds_invalid_page_negative(refunds_client):
     transaction = "TRN_test"
     currency = "NGN"
     with pytest.raises(APIError, match="page must be greater than 0"):
-        refunds_client.list_refunds(
-            transaction=transaction, currency=currency, page=-1
-        )
+        refunds_client.list_refunds(transaction=transaction, currency=currency, page=-1)
 
 
 @responses.activate

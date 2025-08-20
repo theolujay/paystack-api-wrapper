@@ -83,13 +83,17 @@ def test_create_customer_with_required_fields_validation(customers_client):
 
 
 @responses.activate
-def test_create_customer_with_required_fields_validation_missing_fields(customers_client):
+def test_create_customer_with_required_fields_validation_missing_fields(
+    customers_client,
+):
     payload = {
         "email": "customer@example.com",
         "first_name": "John",
         # Missing last_name and phone
     }
-    with pytest.raises(ValidationError, match="Missing required parameters: last_name, phone"):
+    with pytest.raises(
+        ValidationError, match="Missing required parameters: last_name, phone"
+    ):
         customers_client.create(**payload, validate_required_fields=True)
 
 
@@ -528,7 +532,9 @@ def test_initialize_direct_debit_invalid_account_missing_bank_code(customers_cli
         "account": {"number": "0123456789"},  # Missing bank_code
         "address": {"street": "123 Main St", "city": "Lagos", "state": "Lagos"},
     }
-    with pytest.raises(ValidationError, match="account must contain 'number' and 'bank_code'"):
+    with pytest.raises(
+        ValidationError, match="account must contain 'number' and 'bank_code'"
+    ):
         customers_client.initialize_direct_debit(**payload)
 
 
@@ -539,7 +545,9 @@ def test_initialize_direct_debit_invalid_account_missing_number(customers_client
         "account": {"bank_code": "044"},  # Missing number
         "address": {"street": "123 Main St", "city": "Lagos", "state": "Lagos"},
     }
-    with pytest.raises(ValidationError, match="account must contain 'number' and 'bank_code'"):
+    with pytest.raises(
+        ValidationError, match="account must contain 'number' and 'bank_code'"
+    ):
         customers_client.initialize_direct_debit(**payload)
 
 
@@ -550,7 +558,9 @@ def test_initialize_direct_debit_invalid_address_missing_street(customers_client
         "account": {"number": "0123456789", "bank_code": "044"},
         "address": {"city": "Lagos", "state": "Lagos"},  # Missing street
     }
-    with pytest.raises(ValidationError, match="address must contain 'street', 'city', and 'state'"):
+    with pytest.raises(
+        ValidationError, match="address must contain 'street', 'city', and 'state'"
+    ):
         customers_client.initialize_direct_debit(**payload)
 
 
@@ -561,7 +571,9 @@ def test_initialize_direct_debit_invalid_address_missing_city(customers_client):
         "account": {"number": "0123456789", "bank_code": "044"},
         "address": {"street": "123 Main St", "state": "Lagos"},  # Missing city
     }
-    with pytest.raises(ValidationError, match="address must contain 'street', 'city', and 'state'"):
+    with pytest.raises(
+        ValidationError, match="address must contain 'street', 'city', and 'state'"
+    ):
         customers_client.initialize_direct_debit(**payload)
 
 
@@ -572,7 +584,9 @@ def test_initialize_direct_debit_invalid_address_missing_state(customers_client)
         "account": {"number": "0123456789", "bank_code": "044"},
         "address": {"street": "123 Main St", "city": "Lagos"},  # Missing state
     }
-    with pytest.raises(ValidationError, match="address must contain 'street', 'city', and 'state'"):
+    with pytest.raises(
+        ValidationError, match="address must contain 'street', 'city', and 'state'"
+    ):
         customers_client.initialize_direct_debit(**payload)
 
 

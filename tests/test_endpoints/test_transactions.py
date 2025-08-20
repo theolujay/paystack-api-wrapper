@@ -92,7 +92,10 @@ def test_charge_authorization_with_all_params(transaction_client):
                 "brand": "visa",
                 "reusable": True,
             },
-            "customer": {"email": "customer@email.com", "customer_code": "CUS_1rkzaqsv4rrhqo6"},
+            "customer": {
+                "email": "customer@email.com",
+                "customer_code": "CUS_1rkzaqsv4rrhqo6",
+            },
             "id": 4099490251,
         },
     }
@@ -465,7 +468,7 @@ def test_initialize_transaction_with_empty_metadata(transaction_client):
     request_payload = json.loads(request.body)
 
     # The metadata field is expected to be a JSON string in the request payload
-    print(f"request_payload: {request_payload}") # Debug print
+    print(f"request_payload: {request_payload}")  # Debug print
     assert "metadata" in request_payload
     assert request_payload["metadata"] == json.dumps(payload["metadata"])
 
@@ -631,7 +634,9 @@ def test_list_transactions_with_all_params(transaction_client):
 
 @responses.activate
 def test_list_transactions_invalid_status(transaction_client):
-    with pytest.raises(APIError, match="status must be one of: 'failed', 'success', 'abandoned'"):
+    with pytest.raises(
+        APIError, match="status must be one of: 'failed', 'success', 'abandoned'"
+    ):
         transaction_client.list_transactions(status="invalid_status")
 
 
@@ -726,7 +731,9 @@ def test_partial_debit_invalid_key(transaction_client):
 
 @responses.activate
 def test_partial_debit_invalid_currency(transaction_client):
-    with pytest.raises(ValidationError, match="currency must be 'NGN' or 'GHS' for partial debit"):
+    with pytest.raises(
+        ValidationError, match="currency must be 'NGN' or 'GHS' for partial debit"
+    ):
         transaction_client.partial_debit(
             authorization_code="AUTH_test",
             currency="USD",

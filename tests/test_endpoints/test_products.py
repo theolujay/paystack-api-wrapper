@@ -138,7 +138,9 @@ def test_list_products_with_date_params(products_client):
         status=200,
     )
 
-    data, meta = products_client.list_products(from_date="2023-01-01", to_date="2023-01-31")
+    data, meta = products_client.list_products(
+        from_date="2023-01-01", to_date="2023-01-31"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

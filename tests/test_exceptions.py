@@ -172,7 +172,7 @@ class TestCreateErrorFromResponse:
 
     def test_429_rate_limit_error_no_headers_attribute(self):
         mock_response = Mock()
-        del mock_response.headers # Remove the headers attribute
+        del mock_response.headers  # Remove the headers attribute
         mock_response.json.return_value = {
             "status": False,
             "message": "Too many requests",

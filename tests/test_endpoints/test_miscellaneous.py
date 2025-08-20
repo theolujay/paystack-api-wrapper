@@ -67,7 +67,9 @@ def test_list_banks_with_all_optional_params(miscellaneous_client):
 
 @responses.activate
 def test_list_banks_invalid_country(miscellaneous_client):
-    with pytest.raises(APIError, match="country must be one of: ghana, kenya, nigeria, south africa"):
+    with pytest.raises(
+        APIError, match="country must be one of: ghana, kenya, nigeria, south africa"
+    ):
         miscellaneous_client.list_banks(
             country="invalid", use_cursor=False, per_page=10
         )
@@ -85,7 +87,9 @@ def test_list_banks_invalid_per_page(miscellaneous_client):
 
 @responses.activate
 def test_list_banks_invalid_gateway(miscellaneous_client):
-    with pytest.raises(APIError, match="gateway must be one of: emandate, digitalbankmandate"):
+    with pytest.raises(
+        APIError, match="gateway must be one of: emandate, digitalbankmandate"
+    ):
         miscellaneous_client.list_banks(
             country="nigeria", use_cursor=False, per_page=10, gateway="invalid"
         )
@@ -315,7 +319,9 @@ def test_get_south_african_verification_banks_with_currency(miscellaneous_client
         status=200,
     )
 
-    data, meta = miscellaneous_client.get_south_african_verification_banks(currency="USD")
+    data, meta = miscellaneous_client.get_south_african_verification_banks(
+        currency="USD"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

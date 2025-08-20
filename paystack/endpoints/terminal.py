@@ -13,7 +13,9 @@ class TerminalAPI(BaseClient):
     The Terminal API allows you to build delightful in-person payment experiences.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def send_event(

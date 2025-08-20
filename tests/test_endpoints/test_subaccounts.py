@@ -45,7 +45,11 @@ def test_create_subaccount_with_all_optional_params(subaccounts_client):
         "primary_contact_email": "contact@example.com",
         "primary_contact_name": "John Doe",
         "primary_contact_phone": "08012345678",
-        "metadata": {"custom_fields":[{"display_name":"Cart ID","variable_name": "cart_id","value": "8393"}]},
+        "metadata": {
+            "custom_fields": [
+                {"display_name": "Cart ID", "variable_name": "cart_id", "value": "8393"}
+            ]
+        },
     }
     mock_response = {
         "status": True,
@@ -147,7 +151,9 @@ def test_list_subaccounts_with_date_params(subaccounts_client):
         status=200,
     )
 
-    data, meta = subaccounts_client.list_subaccounts(from_date="2023-01-01", to_date="2023-01-31")
+    data, meta = subaccounts_client.list_subaccounts(
+        from_date="2023-01-01", to_date="2023-01-31"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -220,7 +226,15 @@ def test_update_subaccount_with_all_optional_params(subaccounts_client):
         "primary_contact_name": "Jane Doe",
         "primary_contact_phone": "09098765432",
         "settlement_schedule": "monthly",
-        "metadata": {"custom_fields":[{"display_name":"Order ID","variable_name": "order_id","value": "XYZ"}]},
+        "metadata": {
+            "custom_fields": [
+                {
+                    "display_name": "Order ID",
+                    "variable_name": "order_id",
+                    "value": "XYZ",
+                }
+            ]
+        },
     }
     mock_response = {
         "status": True,

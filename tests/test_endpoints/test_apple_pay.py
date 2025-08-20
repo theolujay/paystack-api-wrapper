@@ -100,9 +100,7 @@ def test_list_domains_with_previous_cursor(apple_pay_client):
         status=200,
     )
 
-    data, meta = apple_pay_client.list_domains(
-        previous_cursor="cursor_previous"
-    )
+    data, meta = apple_pay_client.list_domains(previous_cursor="cursor_previous")
 
     assert isinstance(data, list)
     assert len(data) == 1

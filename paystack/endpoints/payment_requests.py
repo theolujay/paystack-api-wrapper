@@ -13,7 +13,9 @@ class PaymentRequestsAPI(BaseClient):
     The Payment Requests API allows you manage requests for payment of goods and services.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_payment_request(

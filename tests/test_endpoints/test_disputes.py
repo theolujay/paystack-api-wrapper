@@ -149,7 +149,9 @@ def test_update_dispute_with_uploaded_filename(disputes_client):
     )
 
     data, meta = disputes_client.update_dispute(
-        dispute_id=dispute_id, refund_amount=refund_amount, uploaded_filename=uploaded_filename
+        dispute_id=dispute_id,
+        refund_amount=refund_amount,
+        uploaded_filename=uploaded_filename,
     )
 
     assert data["id"] == dispute_id

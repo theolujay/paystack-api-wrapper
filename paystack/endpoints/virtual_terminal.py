@@ -13,7 +13,9 @@ class VirtualTerminalAPI(BaseClient):
     The Virtual Terminal API allows you to accept in-person payments without a POS device.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_virtual_terminal(

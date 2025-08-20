@@ -3,13 +3,18 @@ from typing import Optional, Dict, Any, Union, Tuple
 import requests
 from ..core import BaseClient
 from ..exceptions import APIError, ValidationError
-from ..utils.validators import _validate_amount_and_email, _validate_charge_authorization
+from ..utils.validators import (
+    _validate_amount_and_email,
+    _validate_charge_authorization,
+)
 
 
 class TransactionsAPI(BaseClient):
     """Transaction API client for processing payments and managing transactions."""
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def initialize(

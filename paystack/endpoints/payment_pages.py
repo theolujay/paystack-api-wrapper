@@ -13,7 +13,9 @@ class PaymentPagesAPI(BaseClient):
     The Payment Pages API provides a quick and secure way to collect payment for products.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_payment_page(

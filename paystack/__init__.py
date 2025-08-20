@@ -19,7 +19,7 @@ from .exceptions import (
 )
 
 __version__ = "1.0.0"
-__author__ = "Joseph Ezekiel"  
+__author__ = "Joseph Ezekiel"
 __email__ = "theolujay@gmail.com"
 __description__ = "A modern Python client for Paystack API"
 
@@ -27,11 +27,11 @@ __all__ = [
     "PaystackClient",
     "BaseClient",
     "PaystackError",
-    "APIError", 
+    "APIError",
     "AuthenticationError",
     "ValidationError",
     "NotFoundError",
-    "RateLimitError", 
+    "RateLimitError",
     "ServerError",
     "NetworkError",
     "InvalidResponseError",

@@ -13,7 +13,9 @@ class IntegrationAPI(BaseClient):
     The Integration API allows you manage some settings on your integration.
     """
 
-    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+    def __init__(
+        self, secret_key: str, session: requests.Session = None, base_url: str = None
+    ):
         super().__init__(secret_key, session=session, base_url=base_url)
 
     def fetch_timeout(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:

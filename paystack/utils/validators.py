@@ -27,7 +27,9 @@ def _validate_amount_and_email(email: str, amount: Union[int, str]):
         if amount_int <= 0:
             raise ValidationError("Amount must be a positive number")
     except (ValueError, TypeError):
-        raise ValidationError("Amount must be a valid number string without comma or decimal")
+        raise ValidationError(
+            "Amount must be a valid number string without comma or decimal"
+        )
 
 
 def _validate_charge_authorization(

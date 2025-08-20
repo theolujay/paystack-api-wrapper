@@ -75,7 +75,9 @@ def test_create_charge_invalid_bearer(charge_client):
         "amount": "10000",
         "bearer": "invalid",
     }
-    with pytest.raises(ValidationError, match="bearer must be either 'account' or 'subaccount'"):
+    with pytest.raises(
+        ValidationError, match="bearer must be either 'account' or 'subaccount'"
+    ):
         charge_client.create(**payload)
 
 

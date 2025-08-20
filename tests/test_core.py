@@ -27,32 +27,41 @@ def test_baseclient_sets_authorization_header(base_client, secret_key):
 
 
 def test_baseclient_removes_authorization_header_for_private_false(base_client, mocker):
-    mock_request = mocker.patch.object(base_client.session, 'request')
+    mock_request = mocker.patch.object(base_client.session, "request")
     mock_request.return_value = mocker.Mock(
         status_code=200,
         json=lambda: {"status": True, "message": "ok", "data": {"x": 1}},
-        headers={"x-amzn-requestid": "test-request-id"}
+        headers={"x-amzn-requestid": "test-request-id"},
     )
 
     data, meta = base_client.request("GET", "test", private=False)
 
     # Assert that the 'Authorization' header was removed before the request was sent
-    called_headers = mock_request.call_args[1]['headers']
+    called_headers = mock_request.call_args[1]["headers"]
     assert "Authorization" not in called_headers
     assert data == {"x": 1}
 
+
 def test_baseclient_repr_with_empty_secret_key():
     from paystack.core import BaseClient
-    client = BaseClient(secret_key="sk_test_12345") # Initialize with a valid key
-    client.secret_key = "" # Then set it to empty for repr test
-    assert repr(client) == "BaseClient(secret_key=None, base_url='https://api.paystack.co/')"
+
+    client = BaseClient(secret_key="sk_test_12345")  # Initialize with a valid key
+    client.secret_key = ""  # Then set it to empty for repr test
+    assert (
+        repr(client)
+        == "BaseClient(secret_key=None, base_url='https://api.paystack.co/')"
+    )
+
 
 def test_baseclient_repr_with_none_secret_key():
     from paystack.core import BaseClient
-    client = BaseClient(secret_key="sk_test_12345") # Initialize with a valid key
-    client.secret_key = None # Then set it to None for repr test
-    assert repr(client) == "BaseClient(secret_key=None, base_url='https://api.paystack.co/')"
 
+    client = BaseClient(secret_key="sk_test_12345")  # Initialize with a valid key
+    client.secret_key = None  # Then set it to None for repr test
+    assert (
+        repr(client)
+        == "BaseClient(secret_key=None, base_url='https://api.paystack.co/')"
+    )
 
 
 @responses.activate
@@ -99,7 +108,9 @@ def test_request_read_timeout(base_client):
         content_type="application/json",
     )
 
-    with pytest.raises(NetworkError, match=f"Request timed out after {base_client.timeout} seconds"):
+    with pytest.raises(
+        NetworkError, match=f"Request timed out after {base_client.timeout} seconds"
+    ):
         base_client.request("GET", "test")
 
 
@@ -146,7 +157,9 @@ def test_invalid_response_not_dict(base_client):
         json=["not", "a", "dict"],
         status=200,
     )
-    with pytest.raises(InvalidResponseError, match="Expected JSON object, got <class 'list'>"):
+    with pytest.raises(
+        InvalidResponseError, match="Expected JSON object, got <class 'list'>"
+    ):
         base_client.request("GET", "test")
 
 
@@ -176,9 +189,7 @@ def test_invalid_json(base_client):
         body="not json",
         status=200,
         content_type="application/json",
-        headers={
-            "x-amzn-requestid": "test-request-id"
-        }
+        headers={"x-amzn-requestid": "test-request-id"},
     )
     with pytest.raises(InvalidResponseError) as excinfo:
         base_client.request("GET", "test")
@@ -188,7 +199,11 @@ def test_invalid_json(base_client):
 
 def test_baseclient_invalid_secret_key_format():
     from paystack.core import BaseClient
-    with pytest.raises(AuthenticationError, match="PaystackError - Invalid Paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"):
+
+    with pytest.raises(
+        AuthenticationError,
+        match="PaystackError - Invalid Paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'",
+    ):
         BaseClient(secret_key="invalid_key")
 
 
@@ -250,13 +265,18 @@ def test_handle_success_response_missing_status_or_message(base_client):
         },
         status=200,
     )
-    with pytest.raises(InvalidResponseError, match="Invalid Paystack response structure: missing 'status' or 'message'"):
+    with pytest.raises(
+        InvalidResponseError,
+        match="Invalid Paystack response structure: missing 'status' or 'message'",
+    ):
         base_client.request("GET", "test")
 
 
 @responses.activate
 def test_validate_required_params_positional_arguments(base_client):
-    with pytest.raises(TypeError, match="Positional arguments are not allowed for this method."):
+    with pytest.raises(
+        TypeError, match="Positional arguments are not allowed for this method."
+    ):
         base_client._validate_required_params("arg1", param="value")
 
 
@@ -268,7 +288,10 @@ def test_validate_amount_invalid_type(base_client):
         json={"status": True, "message": "ok", "data": {"x": 1}},
         status=200,
     )
-    with pytest.raises(ValidationError, match="Amount must be a valid integer or string representation of an integer"):
+    with pytest.raises(
+        ValidationError,
+        match="Amount must be a valid integer or string representation of an integer",
+    ):
         base_client._validate_amount(amount="abc")
 
 

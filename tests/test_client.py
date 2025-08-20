@@ -1,6 +1,7 @@
 import pytest
 from paystack import PaystackClient
 
+
 def test_paystack_client_initialization():
     client = PaystackClient(secret_key="sk_test_abcdefghijklmnopqrstuvwxyz1234567890")
     assert client.base_url == "https://api.paystack.co/"
@@ -32,6 +33,7 @@ def test_paystack_client_initialization():
 
     # Access the integration attribute to ensure it's covered
     assert client.integration is not None
+
 
 def test_paystack_client_repr():
     client = PaystackClient(secret_key="sk_test_abcdefghijklmnopqrstuvwxyz1234567890")
