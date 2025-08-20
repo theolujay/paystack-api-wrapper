@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import AuthenticationError
-from paystack_client.virtual_terminal import VirtualTerminalAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -86,7 +83,9 @@ def test_list_virtual_terminals_with_params(virtual_terminal_client):
         status=200,
     )
 
-    data, meta = virtual_terminal_client.list_virtual_terminals(status="active", per_page=1)
+    data, meta = virtual_terminal_client.list_virtual_terminals(
+        status="active", per_page=1
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

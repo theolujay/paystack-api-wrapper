@@ -1,9 +1,6 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.plans import PlansAPI
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate

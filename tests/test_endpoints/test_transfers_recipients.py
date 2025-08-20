@@ -1,9 +1,6 @@
-import pytest
 import responses
-from paystack_client.exceptions import AuthenticationError
-from paystack_client.transfers_recipients import TransferRecipientsAPI
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -49,15 +46,27 @@ def test_create_transfer_recipient_invalid_key(transfer_recipients_client):
         status=401,
     )
     assert_api_error_contains(
-        transfer_recipients_client.create_transfer_recipient, "Invalid API key", **payload
+        transfer_recipients_client.create_transfer_recipient,
+        "Invalid API key",
+        **payload,
     )
 
 
 @responses.activate
 def test_bulk_create_transfer_recipient(transfer_recipients_client):
     batch = [
-        {"type": "nuban", "name": "Recipient 1", "account_number": "0123", "bank_code": "044"},
-        {"type": "nuban", "name": "Recipient 2", "account_number": "0456", "bank_code": "044"},
+        {
+            "type": "nuban",
+            "name": "Recipient 1",
+            "account_number": "0123",
+            "bank_code": "044",
+        },
+        {
+            "type": "nuban",
+            "name": "Recipient 2",
+            "account_number": "0456",
+            "bank_code": "044",
+        },
     ]
     mock_response = {
         "status": True,
@@ -136,7 +145,9 @@ def test_fetch_transfer_recipient(transfer_recipients_client):
         status=200,
     )
 
-    data, meta = transfer_recipients_client.fetch_transfer_recipient(id_or_code=id_or_code)
+    data, meta = transfer_recipients_client.fetch_transfer_recipient(
+        id_or_code=id_or_code
+    )
 
     assert data["name"] == "Test Recipient"
     assert data["recipient_code"] == id_or_code
@@ -162,7 +173,9 @@ def test_update_transfer_recipient(transfer_recipients_client):
         status=200,
     )
 
-    data, meta = transfer_recipients_client.update_transfer_recipient(id_or_code=id_or_code, **payload)
+    data, meta = transfer_recipients_client.update_transfer_recipient(
+        id_or_code=id_or_code, **payload
+    )
 
     assert data["name"] == payload["name"]
     assert data["recipient_code"] == id_or_code
@@ -184,7 +197,9 @@ def test_delete_transfer_recipient(transfer_recipients_client):
         status=200,
     )
 
-    data, meta = transfer_recipients_client.delete_transfer_recipient(id_or_code=id_or_code)
+    data, meta = transfer_recipients_client.delete_transfer_recipient(
+        id_or_code=id_or_code
+    )
 
     assert data["recipient_code"] == id_or_code
     assert meta == {}

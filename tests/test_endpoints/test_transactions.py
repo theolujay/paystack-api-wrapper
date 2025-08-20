@@ -1,12 +1,11 @@
 import pytest
 import responses
 import json
-import re
 import requests
-from paystack_client.exceptions import APIError, NetworkError, InvalidResponseError, ValidationError, PaystackError
+from paystack_client import NetworkError, ValidationError
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 # --- test_charge_authorization.py ---
@@ -76,14 +75,18 @@ def test_charge_authorization_invalid_key(transaction_client):
         "authorization_code": "AUTH_72btv547",
     }
     mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_charge_authorization_response(transaction_client, payload, mock_response, status_code=401)
+    setup_mock_charge_authorization_response(
+        transaction_client, payload, mock_response, status_code=401
+    )
     assert_api_error_contains(
         transaction_client.charge_authorization, "Invalid API key", **payload
     )
 
 
 # --- test_export_transactions.py ---
-def setup_mock_export_transactions_response(transaction_client, response_data=None, status_code=200):
+def setup_mock_export_transactions_response(
+    transaction_client, response_data=None, status_code=200
+):
     if response_data is None:
         response_data = {
             "status": True,
@@ -116,7 +119,9 @@ def test_export_transactions(transaction_client):
 @responses.activate
 def test_export_transactions_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_export_transactions_response(transaction_client, mock_response, status_code=401)
+    setup_mock_export_transactions_response(
+        transaction_client, mock_response, status_code=401
+    )
     assert_api_error_contains(transaction_client.export_transactions, "Invalid API key")
 
 
@@ -170,7 +175,9 @@ def test_fetch_transaction_invalid_key(transaction_client):
 
 
 # --- test_get_totals.py ---
-def setup_mock_get_totals_response(transaction_client, response_data=None, status_code=200):
+def setup_mock_get_totals_response(
+    transaction_client, response_data=None, status_code=200
+):
     if response_data is None:
         response_data = {
             "status": True,
@@ -217,7 +224,9 @@ def test_transaction_totals_invalid_key(transaction_client):
 
 
 # --- test_initialize.py ---
-def setup_mock_initialize_response(transaction_client, response_data=None, status_code=200):
+def setup_mock_initialize_response(
+    transaction_client, response_data=None, status_code=200
+):
     """Helper to set up a mock response"""
     if response_data is None:
         response_data = {
@@ -280,7 +289,10 @@ def test_initialize_transaction_invalid_api_key(transaction_client):
     }
     setup_mock_initialize_response(transaction_client, mock_response, 401)
     assert_api_error_contains(
-        transaction_client.initialize, "invalid api key", email="customer@email.com", amount=20000
+        transaction_client.initialize,
+        "invalid api key",
+        email="customer@email.com",
+        amount=20000,
     )
 
 
@@ -295,6 +307,7 @@ def test_initialize_transaction_timeout(transaction_client):
         transaction_client.initialize(email="customer@email.com", amount=20000)
         expected_keyword = "Request failed:"
         assert str(expected_keyword).lower() in str(excinfo.value).lower
+
 
 # === Invalid Email Tests ===
 @pytest.mark.parametrize(
@@ -334,7 +347,9 @@ def test_invalid_amounts(transaction_client, invalid_amount, expected_keyword):
 
 
 # --- test_list_transactions.py ---
-def setup_mock_list_transactions_response(transaction_client, response_data=None, status_code=200):
+def setup_mock_list_transactions_response(
+    transaction_client, response_data=None, status_code=200
+):
     if response_data is None:
         response_data = {
             "status": True,
@@ -375,12 +390,16 @@ def test_list_transactions(transaction_client):
 @responses.activate
 def test_list_transactions_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_list_transactions_response(transaction_client, mock_response, status_code=401)
+    setup_mock_list_transactions_response(
+        transaction_client, mock_response, status_code=401
+    )
     assert_api_error_contains(transaction_client.list_transactions, "invalid api key")
 
 
 # --- test_partial_debit.py ---
-def setup_mock_partial_debit_response(transaction_client, response_data=None, status_code=200):
+def setup_mock_partial_debit_response(
+    transaction_client, response_data=None, status_code=200
+):
     if response_data is None:
         response_data = {
             "status": True,
@@ -445,7 +464,9 @@ def test_partial_debit_success(transaction_client):
 @responses.activate
 def test_partial_debit_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_partial_debit_response(transaction_client, mock_response, status_code=401)
+    setup_mock_partial_debit_response(
+        transaction_client, mock_response, status_code=401
+    )
 
     payload = {
         "authorization_code": "AUTH_invalid",
@@ -503,7 +524,9 @@ def test_verify_transaction(transaction_client):
 def test_verify_transaction_invalid_key(transaction_client):
     reference = "adhvousgtsnsl"
     mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_verify_response(transaction_client, reference, mock_response, status_code=401)
+    setup_mock_verify_response(
+        transaction_client, reference, mock_response, status_code=401
+    )
 
     assert_api_error_contains(transaction_client.verify, "invalid api key", reference)
 

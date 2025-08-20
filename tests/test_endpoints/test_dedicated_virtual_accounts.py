@@ -1,9 +1,6 @@
-import pytest
 import responses
 
-from .utils import assert_api_error_contains
-from paystack_client.exceptions import APIError
-from paystack_client.dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -24,7 +21,9 @@ def test_create_dedicated_virtual_account(dedicated_virtual_accounts_client):
         status=200,
     )
 
-    data, meta = dedicated_virtual_accounts_client.create_dedicated_virtual_account(**payload)
+    data, meta = dedicated_virtual_accounts_client.create_dedicated_virtual_account(
+        **payload
+    )
 
     assert data["customer"] == payload["customer"]
     assert data["account_number"] == "0123456789"
@@ -32,7 +31,9 @@ def test_create_dedicated_virtual_account(dedicated_virtual_accounts_client):
 
 
 @responses.activate
-def test_create_dedicated_virtual_account_invalid_key(dedicated_virtual_accounts_client):
+def test_create_dedicated_virtual_account_invalid_key(
+    dedicated_virtual_accounts_client,
+):
     payload = {
         "customer": "CUS_test",
         "preferred_bank": "wema-bank",
@@ -73,7 +74,9 @@ def test_assign_dedicated_virtual_account(dedicated_virtual_accounts_client):
         status=200,
     )
 
-    data, meta = dedicated_virtual_accounts_client.assign_dedicated_virtual_account(**payload)
+    data, meta = dedicated_virtual_accounts_client.assign_dedicated_virtual_account(
+        **payload
+    )
 
     assert data["customer"] == payload["email"]
     assert data["account_number"] == "0123456789"
@@ -81,7 +84,9 @@ def test_assign_dedicated_virtual_account(dedicated_virtual_accounts_client):
 
 
 @responses.activate
-def test_assign_dedicated_virtual_account_invalid_key(dedicated_virtual_accounts_client):
+def test_assign_dedicated_virtual_account_invalid_key(
+    dedicated_virtual_accounts_client,
+):
     payload = {
         "email": "customer@example.com",
         "first_name": "John",
@@ -239,7 +244,9 @@ def test_split_dedicated_account_transaction(dedicated_virtual_accounts_client):
         status=200,
     )
 
-    data, meta = dedicated_virtual_accounts_client.split_dedicated_account_transaction(**payload)
+    data, meta = dedicated_virtual_accounts_client.split_dedicated_account_transaction(
+        **payload
+    )
 
     assert data["customer"] == payload["customer"]
     assert meta == {}

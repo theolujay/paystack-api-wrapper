@@ -1,10 +1,4 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.settlements import SettlementsAPI
-
-
-from .utils import assert_api_error_contains
 
 
 @responses.activate
@@ -43,7 +37,9 @@ def test_list_settlements_with_params(settlements_client):
         status=200,
     )
 
-    data, meta = settlements_client.list_settlements(per_page=1, page=1, status="success")
+    data, meta = settlements_client.list_settlements(
+        per_page=1, page=1, status="success"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -66,7 +62,9 @@ def test_list_settlement_transactions(settlements_client):
         status=200,
     )
 
-    data, meta = settlements_client.list_settlement_transactions(settlement_id=settlement_id)
+    data, meta = settlements_client.list_settlement_transactions(
+        settlement_id=settlement_id
+    )
 
     assert isinstance(data, list)
     assert len(data) == 2

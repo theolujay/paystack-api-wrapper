@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.payment_pages import PaymentPagesAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -137,7 +134,9 @@ def test_update_payment_page(payment_pages_client):
         status=200,
     )
 
-    data, meta = payment_pages_client.update_payment_page(id_or_slug=id_or_slug, **payload)
+    data, meta = payment_pages_client.update_payment_page(
+        id_or_slug=id_or_slug, **payload
+    )
 
     assert data["name"] == payload["name"]
     assert data["slug"] == id_or_slug
@@ -181,7 +180,9 @@ def test_add_products(payment_pages_client):
         status=200,
     )
 
-    data, meta = payment_pages_client.add_products(page_id=page_id, product_ids=product_ids)
+    data, meta = payment_pages_client.add_products(
+        page_id=page_id, product_ids=product_ids
+    )
 
     assert data["page_id"] == page_id
     assert meta == {}

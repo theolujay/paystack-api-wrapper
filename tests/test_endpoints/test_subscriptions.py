@@ -1,10 +1,8 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.subscriptions import SubscriptionsAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
+
 
 @responses.activate
 def test_create_subscription(subscriptions_client):
@@ -44,7 +42,9 @@ def test_create_subscription_invalid_key(subscriptions_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(subscriptions_client.create_subscription, "Invalid API key", **payload)
+    assert_api_error_contains(
+        subscriptions_client.create_subscription, "Invalid API key", **payload
+    )
 
 
 @responses.activate

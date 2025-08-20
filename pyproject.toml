@@ -33,6 +33,7 @@ keywords = ["paystack", "payment", "api", "django", "python", "fintech", "nigeri
 dependencies = [
     "requests>=2.25.0",
     "python-dotenv>=1.0.0",
+    "pytest>=8.4.1",
 ]
 
 [project.optional-dependencies]

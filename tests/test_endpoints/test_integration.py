@@ -4,7 +4,7 @@ from paystack_client.exceptions import APIError
 from paystack_client.integration import IntegrationAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate

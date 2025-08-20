@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import AuthenticationError
-from paystack_client.transfers_control import TransfersControlAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate

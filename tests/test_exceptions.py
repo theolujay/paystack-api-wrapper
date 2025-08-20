@@ -1,8 +1,7 @@
-import pytest
 import json
 from unittest.mock import Mock
 
-from paystack_client.exceptions import (
+from paystack_client import (
     PaystackError,
     APIError,
     AuthenticationError,
@@ -27,14 +26,20 @@ class TestPaystackError:
 
     def test_str_representation(self):
         error = PaystackError("Test message", 400, request_id="req_123")
-        assert str(error) == "PaystackError - HTTP 400 - Request ID: req_123 - Test message"
+        assert (
+            str(error)
+            == "PaystackError - HTTP 400 - Request ID: req_123 - Test message"
+        )
 
         error_no_id = PaystackError("Test message")
         assert str(error_no_id) == "PaystackError - Test message"
 
     def test_repr_representation(self):
         error = PaystackError("Test message", 400, request_id="req_123")
-        assert repr(error) == "PaystackError(message='Test message', status_code=400, request_id='req_123')"
+        assert (
+            repr(error)
+            == "PaystackError(message='Test message', status_code=400, request_id='req_123')"
+        )
 
 
 class TestSpecificExceptions:
@@ -109,12 +114,16 @@ class TestRateLimitError:
 
 class TestTransactionFailureError:
     def test_initialization(self):
-        error = TransactionFailureError("Transaction failed", gateway_response="Declined")
+        error = TransactionFailureError(
+            "Transaction failed", gateway_response="Declined"
+        )
         assert error.message == "Transaction failed"
         assert error.gateway_response == "Declined"
 
     def test_str_representation_with_gateway_response(self):
-        error = TransactionFailureError("Transaction failed", gateway_response="Declined")
+        error = TransactionFailureError(
+            "Transaction failed", gateway_response="Declined"
+        )
         assert (
             str(error)
             == "PaystackError - Transaction failed | Gateway response: Declined"
@@ -127,7 +136,11 @@ class TestTransactionFailureError:
 
 class TestCreateErrorFromResponse:
     def test_400_validation_error(self):
-        response_data = {"status": False, "message": "Invalid data", "errors": {"name": "required"}}
+        response_data = {
+            "status": False,
+            "message": "Invalid data",
+            "errors": {"name": "required"},
+        }
         error = create_error_from_response(response_data, 400)
         assert isinstance(error, ValidationError)
         assert error.message == "Invalid data"
@@ -147,7 +160,10 @@ class TestCreateErrorFromResponse:
 
     def test_429_rate_limit_error(self):
         mock_response = Mock()
-        mock_response.json.return_value = {"status": False, "message": "Too many requests"}
+        mock_response.json.return_value = {
+            "status": False,
+            "message": "Too many requests",
+        }
         mock_response.headers = {"Retry-After": "120"}
         error = create_error_from_response(mock_response, 429)
         assert isinstance(error, RateLimitError)
@@ -170,9 +186,15 @@ class TestCreateErrorFromResponse:
         # This scenario is handled by the client, not create_error_from_response directly
         # create_error_from_response will return an APIError for 200 status
         # The client code then checks the 'status' field in the response data
-        response_data = {"status": False, "message": "Transaction failed", "data": {"gateway_response": "Declined"}}
+        response_data = {
+            "status": False,
+            "message": "Transaction failed",
+            "data": {"gateway_response": "Declined"},
+        }
         error = create_error_from_response(response_data, 200)
-        assert isinstance(error, APIError) # It's an APIError from this function's perspective
+        assert isinstance(
+            error, APIError
+        )  # It's an APIError from this function's perspective
         assert error.message == "Transaction failed"
 
     def test_response_without_json_method(self):
@@ -183,7 +205,9 @@ class TestCreateErrorFromResponse:
 
     def test_invalid_json_response(self):
         mock_response = Mock()
-        mock_response.json.side_effect = json.JSONDecodeError("Expecting value", "doc", 0)
+        mock_response.json.side_effect = json.JSONDecodeError(
+            "Expecting value", "doc", 0
+        )
         mock_response.headers = {}
         error = create_error_from_response(mock_response, 400)
         assert isinstance(error, ValidationError)
@@ -191,8 +215,11 @@ class TestCreateErrorFromResponse:
 
     def test_rate_limit_error_no_retry_after_header(self):
         mock_response = Mock()
-        mock_response.json.return_value = {"status": False, "message": "Too many requests"}
-        mock_response.headers = {} # No Retry-After header
+        mock_response.json.return_value = {
+            "status": False,
+            "message": "Too many requests",
+        }
+        mock_response.headers = {}  # No Retry-After header
         error = create_error_from_response(mock_response, 429)
         assert isinstance(error, RateLimitError)
         assert error.message == "Too many requests"
@@ -200,8 +227,11 @@ class TestCreateErrorFromResponse:
 
     def test_rate_limit_error_invalid_retry_after_header(self):
         mock_response = Mock()
-        mock_response.json.return_value = {"status": False, "message": "Too many requests"}
-        mock_response.headers = {"Retry-After": "abc"} # Invalid Retry-After header
+        mock_response.json.return_value = {
+            "status": False,
+            "message": "Too many requests",
+        }
+        mock_response.headers = {"Retry-After": "abc"}  # Invalid Retry-After header
         error = create_error_from_response(mock_response, 429)
         assert isinstance(error, RateLimitError)
         assert error.message == "Too many requests"

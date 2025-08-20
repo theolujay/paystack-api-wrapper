@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.products import ProductsAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -49,7 +46,9 @@ def test_create_product_invalid_key(products_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(products_client.create_product, "Invalid API key", **payload)
+    assert_api_error_contains(
+        products_client.create_product, "Invalid API key", **payload
+    )
 
 
 @responses.activate

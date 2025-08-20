@@ -1,10 +1,8 @@
-import pytest
 import responses
-from paystack_client.exceptions import AuthenticationError
-from paystack_client.terminal import TerminalAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
+
 
 @responses.activate
 def test_send_event(terminal_client):
@@ -47,7 +45,12 @@ def test_send_event_invalid_key(terminal_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(terminal_client.send_event, "Invalid API key", terminal_id=terminal_id, **payload)
+    assert_api_error_contains(
+        terminal_client.send_event,
+        "Invalid API key",
+        terminal_id=terminal_id,
+        **payload,
+    )
 
 
 @responses.activate
@@ -66,7 +69,9 @@ def test_fetch_event_status(terminal_client):
         status=200,
     )
 
-    data, meta = terminal_client.fetch_event_status(terminal_id=terminal_id, event_id=event_id)
+    data, meta = terminal_client.fetch_event_status(
+        terminal_id=terminal_id, event_id=event_id
+    )
 
     assert data["status"] == "processed"
     assert meta == {}

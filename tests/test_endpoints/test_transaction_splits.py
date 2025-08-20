@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import AuthenticationError
-from paystack_client.transaction_splits import TransactionSplitsAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -51,7 +48,9 @@ def test_create_split_invalid_key(transaction_splits_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(transaction_splits_client.create_split, "Invalid API key", **payload)
+    assert_api_error_contains(
+        transaction_splits_client.create_split, "Invalid API key", **payload
+    )
 
 
 @responses.activate
@@ -165,7 +164,9 @@ def test_add_update_subaccount_split(transaction_splits_client):
         status=200,
     )
 
-    data, meta = transaction_splits_client.add_update_subaccount_split(split_id=split_id, **payload)
+    data, meta = transaction_splits_client.add_update_subaccount_split(
+        split_id=split_id, **payload
+    )
 
     assert data["split_id"] == split_id
     assert meta == {}

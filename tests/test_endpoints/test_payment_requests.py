@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.payment_requests import PaymentRequestsAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -146,7 +143,6 @@ def test_send_notification(payment_requests_client):
         "status": True,
         "message": "Notification sent",
         "data": {"code": code},
-
     }
     responses.add(
         responses.POST,
@@ -223,7 +219,9 @@ def test_update_payment_request(payment_requests_client):
         status=200,
     )
 
-    data, meta = payment_requests_client.update_payment_request(id_or_code=id_or_code, **payload)
+    data, meta = payment_requests_client.update_payment_request(
+        id_or_code=id_or_code, **payload
+    )
 
     assert data["code"] == id_or_code
     assert data["description"] == payload["description"]

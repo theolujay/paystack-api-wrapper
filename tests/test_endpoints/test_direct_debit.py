@@ -1,9 +1,7 @@
-import pytest
 import responses
 
-from paystack_client.exceptions import APIError
-from paystack_client.direct_debit import DirectDebitAPI
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
+
 
 @responses.activate
 def test_trigger_activation_charge(direct_debit_client):
@@ -20,7 +18,9 @@ def test_trigger_activation_charge(direct_debit_client):
         status=200,
     )
 
-    data, meta = direct_debit_client.trigger_activation_charge(customer_ids=customer_ids)
+    data, meta = direct_debit_client.trigger_activation_charge(
+        customer_ids=customer_ids
+    )
 
     assert data["customer_ids"] == customer_ids
     assert meta == {}
@@ -37,7 +37,9 @@ def test_trigger_activation_charge_invalid_key(direct_debit_client):
         status=401,
     )
     assert_api_error_contains(
-        direct_debit_client.trigger_activation_charge, "Invalid API key", customer_ids=customer_ids
+        direct_debit_client.trigger_activation_charge,
+        "Invalid API key",
+        customer_ids=customer_ids,
     )
 
 
@@ -77,7 +79,9 @@ def test_list_mandate_authorizations_with_params(direct_debit_client):
         status=200,
     )
 
-    data, meta = direct_debit_client.list_mandate_authorizations(status="active", per_page=1)
+    data, meta = direct_debit_client.list_mandate_authorizations(
+        status="active", per_page=1
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -94,4 +98,6 @@ def test_list_mandate_authorizations_invalid_key(direct_debit_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(direct_debit_client.list_mandate_authorizations, "Invalid API key")
+    assert_api_error_contains(
+        direct_debit_client.list_mandate_authorizations, "Invalid API key"
+    )

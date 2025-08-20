@@ -1,8 +1,9 @@
 import pytest
 import responses
 
-from paystack_client.exceptions import ValidationError
-from .utils import assert_api_error_contains
+from paystack_client import ValidationError
+from tests.utils import assert_api_error_contains
+
 
 @responses.activate
 def test_create_charge(charge_client):
@@ -231,7 +232,9 @@ def test_submit_birthday_invalid_key(charge_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(charge_client.submit_birthday, "Invalid API key", **payload)
+    assert_api_error_contains(
+        charge_client.submit_birthday, "Invalid API key", **payload
+    )
 
 
 @responses.activate
@@ -277,7 +280,9 @@ def test_submit_address_invalid_key(charge_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(charge_client.submit_address, "Invalid API key", **payload)
+    assert_api_error_contains(
+        charge_client.submit_address, "Invalid API key", **payload
+    )
 
 
 @responses.activate
@@ -312,4 +317,6 @@ def test_check_pending_charge_invalid_key(charge_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(charge_client.check_pending_charge, "Invalid API key", reference=reference)
+    assert_api_error_contains(
+        charge_client.check_pending_charge, "Invalid API key", reference=reference
+    )

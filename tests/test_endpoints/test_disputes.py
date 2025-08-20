@@ -1,10 +1,4 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.disputes import DisputesAPI
-
-
-from .utils import assert_api_error_contains
 
 
 @responses.activate
@@ -94,7 +88,9 @@ def test_list_transaction_disputes(disputes_client):
         status=200,
     )
 
-    data, meta = disputes_client.list_transaction_disputes(transaction_id=transaction_id)
+    data, meta = disputes_client.list_transaction_disputes(
+        transaction_id=transaction_id
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

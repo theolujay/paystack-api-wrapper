@@ -1,10 +1,7 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.subaccounts import SubaccountsAPI
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -18,7 +15,10 @@ def test_create_subaccount(subaccounts_client):
     mock_response = {
         "status": True,
         "message": "Subaccount created",
-        "data": {"business_name": payload["business_name"], "subaccount_code": "SUB_test"},
+        "data": {
+            "business_name": payload["business_name"],
+            "subaccount_code": "SUB_test",
+        },
     }
     responses.add(
         responses.POST,
@@ -49,7 +49,9 @@ def test_create_subaccount_invalid_key(subaccounts_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(subaccounts_client.create_subaccount, "Invalid API key", **payload)
+    assert_api_error_contains(
+        subaccounts_client.create_subaccount, "Invalid API key", **payload
+    )
 
 
 @responses.activate
@@ -128,7 +130,10 @@ def test_update_subaccount(subaccounts_client):
     mock_response = {
         "status": True,
         "message": "Subaccount updated",
-        "data": {"business_name": payload["business_name"], "subaccount_code": id_or_code},
+        "data": {
+            "business_name": payload["business_name"],
+            "subaccount_code": id_or_code,
+        },
     }
     responses.add(
         responses.PUT,

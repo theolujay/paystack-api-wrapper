@@ -1,6 +1,7 @@
 import responses
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
+
 
 @responses.activate
 def test_initiate_bulk_charge(bulk_charges_client):
@@ -96,7 +97,9 @@ def test_list_bulk_charge_batches_invalid_key(bulk_charges_client):
         json=mock_response,
         status=401,
     )
-    assert_api_error_contains(bulk_charges_client.list_bulk_charge_batches, "Invalid API key")
+    assert_api_error_contains(
+        bulk_charges_client.list_bulk_charge_batches, "Invalid API key"
+    )
 
 
 @responses.activate
@@ -132,7 +135,9 @@ def test_fetch_bulk_charge_batch_invalid_key(bulk_charges_client):
         status=401,
     )
     assert_api_error_contains(
-        bulk_charges_client.fetch_bulk_charge_batch, "Invalid API key", id_or_code=id_or_code
+        bulk_charges_client.fetch_bulk_charge_batch,
+        "Invalid API key",
+        id_or_code=id_or_code,
     )
 
 
@@ -195,7 +200,9 @@ def test_fetch_charges_in_batch_invalid_key(bulk_charges_client):
         status=401,
     )
     assert_api_error_contains(
-        bulk_charges_client.fetch_charges_in_batch, "Invalid API key", id_or_code=id_or_code
+        bulk_charges_client.fetch_charges_in_batch,
+        "Invalid API key",
+        id_or_code=id_or_code,
     )
 
 
@@ -231,7 +238,9 @@ def test_pause_bulk_charge_batch_invalid_key(bulk_charges_client):
         status=401,
     )
     assert_api_error_contains(
-        bulk_charges_client.pause_bulk_charge_batch, "Invalid API key", batch_code=batch_code
+        bulk_charges_client.pause_bulk_charge_batch,
+        "Invalid API key",
+        batch_code=batch_code,
     )
 
 
@@ -267,5 +276,7 @@ def test_resume_bulk_charge_batch_invalid_key(bulk_charges_client):
         status=401,
     )
     assert_api_error_contains(
-        bulk_charges_client.resume_bulk_charge_batch, "Invalid API key", batch_code=batch_code
+        bulk_charges_client.resume_bulk_charge_batch,
+        "Invalid API key",
+        batch_code=batch_code,
     )

@@ -1,7 +1,7 @@
 import pytest
 import responses
-from paystack_client.exceptions import APIError, ValidationError
-from paystack_client.customers import CustomersAPI
+from paystack_client import ValidationError
+
 
 @responses.activate
 def test_create_customer(customers_client):
@@ -72,7 +72,10 @@ def test_list_customers(customers_client):
     mock_response = {
         "status": True,
         "message": "Customers retrieved",
-        "data": [{"email": "customer1@example.com"}, {"email": "customer2@example.com"}],
+        "data": [
+            {"email": "customer1@example.com"},
+            {"email": "customer2@example.com"},
+        ],
     }
     responses.add(
         responses.GET,
@@ -202,7 +205,10 @@ def test_set_risk_action(customers_client):
     mock_response = {
         "status": True,
         "message": "Risk action set",
-        "data": {"customer": payload["customer"], "risk_action": payload["risk_action"]},
+        "data": {
+            "customer": payload["customer"],
+            "risk_action": payload["risk_action"],
+        },
     }
     responses.add(
         responses.POST,
@@ -237,7 +243,10 @@ def test_initialize_authorization(customers_client):
     mock_response = {
         "status": True,
         "message": "Authorization initialized",
-        "data": {"authorization_url": "http://example.com/auth", "reference": "auth_ref"},
+        "data": {
+            "authorization_url": "http://example.com/auth",
+            "reference": "auth_ref",
+        },
     }
     responses.add(
         responses.POST,

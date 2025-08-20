@@ -3,8 +3,13 @@ import responses
 import json
 import requests
 
-from paystack_client.transfers import TransfersAPI
-from paystack_client.exceptions import APIError, NetworkError, ValidationError, AuthenticationError, NotFoundError, ServerError
+from paystack_client import (
+    NetworkError,
+    ValidationError,
+    AuthenticationError,
+    NotFoundError,
+    ServerError,
+)
 
 
 class TestInitiateTransfer:
@@ -55,7 +60,9 @@ class TestInitiateTransfer:
         assert json.loads(responses.calls[0].request.body) == payload
 
     def test_initiate_transfer_missing_required_fields(self, transfers_client):
-        with pytest.raises(TypeError, match="missing 1 required positional argument: 'recipient'"):
+        with pytest.raises(
+            TypeError, match="missing 1 required positional argument: 'recipient'"
+        ):
             transfers_client.initiate_transfer(source="balance", amount=100)
 
     @responses.activate
@@ -127,7 +134,9 @@ class TestFinalizeTransfer:
         assert json.loads(responses.calls[0].request.body) == payload
 
     def test_finalize_transfer_missing_required_fields(self, transfers_client):
-        with pytest.raises(TypeError, match="missing 1 required positional argument: 'otp'"):
+        with pytest.raises(
+            TypeError, match="missing 1 required positional argument: 'otp'"
+        ):
             transfers_client.finalize_transfer(transfer_code="TRF_testcode")
 
     @responses.activate
@@ -179,7 +188,9 @@ class TestInitiateBulkTransfer:
         assert json.loads(responses.calls[0].request.body) == payload
 
     def test_initiate_bulk_transfer_missing_required_fields(self, transfers_client):
-        with pytest.raises(TypeError, match="missing 1 required positional argument: 'transfers'"):
+        with pytest.raises(
+            TypeError, match="missing 1 required positional argument: 'transfers'"
+        ):
             transfers_client.initiate_bulk_transfer(source="balance")
 
     @responses.activate
@@ -239,7 +250,11 @@ class TestListTransfers:
         self.setup_mock_response(transfers_client)
 
         data, meta = transfers_client.list_transfers(
-            per_page=10, page=2, recipient=123, from_date="2023-01-01", to_date="2023-01-31"
+            per_page=10,
+            page=2,
+            recipient=123,
+            from_date="2023-01-01",
+            to_date="2023-01-31",
         )
 
         assert len(data) == 2
@@ -266,7 +281,9 @@ class TestListTransfers:
 
 
 class TestFetchTransfer:
-    def setup_mock_response(self, client, id_or_code, response_data=None, status_code=200):
+    def setup_mock_response(
+        self, client, id_or_code, response_data=None, status_code=200
+    ):
         if response_data is None:
             response_data = {
                 "status": True,
@@ -290,7 +307,10 @@ class TestFetchTransfer:
         assert data["transfer_code"] == id_or_code
         assert data["amount"] == 50000
         assert responses.calls[0].request.method == "GET"
-        assert responses.calls[0].request.url == f"{transfers_client.base_url}/transfer/{id_or_code}"
+        assert (
+            responses.calls[0].request.url
+            == f"{transfers_client.base_url}/transfer/{id_or_code}"
+        )
 
     def test_fetch_transfer_missing_required_fields(self, transfers_client):
         with pytest.raises(TypeError, match="id_or_code"):
@@ -314,7 +334,9 @@ class TestFetchTransfer:
 
 
 class TestVerifyTransfer:
-    def setup_mock_response(self, client, reference, response_data=None, status_code=200):
+    def setup_mock_response(
+        self, client, reference, response_data=None, status_code=200
+    ):
         if response_data is None:
             response_data = {
                 "status": True,
@@ -338,7 +360,10 @@ class TestVerifyTransfer:
         assert data["reference"] == reference
         assert data["status"] == "success"
         assert responses.calls[0].request.method == "GET"
-        assert responses.calls[0].request.url == f"{transfers_client.base_url}/transfer/verify/{reference}"
+        assert (
+            responses.calls[0].request.url
+            == f"{transfers_client.base_url}/transfer/verify/{reference}"
+        )
 
     def test_verify_transfer_missing_required_fields(self, transfers_client):
         with pytest.raises(TypeError, match="reference"):

@@ -1,10 +1,9 @@
 import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.miscellaneous import MiscellaneousAPI
+from paystack_client import APIError
 
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -21,7 +20,9 @@ def test_list_banks(miscellaneous_client):
         status=200,
     )
 
-    data, meta = miscellaneous_client.list_banks(country="nigeria", use_cursor=False, per_page=10)
+    data, meta = miscellaneous_client.list_banks(
+        country="nigeria", use_cursor=False, per_page=10
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -32,7 +33,9 @@ def test_list_banks(miscellaneous_client):
 @responses.activate
 def test_list_banks_invalid_country(miscellaneous_client):
     with pytest.raises(APIError):
-        miscellaneous_client.list_banks(country="invalid", use_cursor=False, per_page=10)
+        miscellaneous_client.list_banks(
+            country="invalid", use_cursor=False, per_page=10
+        )
 
 
 @responses.activate
@@ -40,7 +43,9 @@ def test_list_banks_invalid_per_page(miscellaneous_client):
     with pytest.raises(APIError):
         miscellaneous_client.list_banks(country="nigeria", use_cursor=False, per_page=0)
     with pytest.raises(APIError):
-        miscellaneous_client.list_banks(country="nigeria", use_cursor=False, per_page=101)
+        miscellaneous_client.list_banks(
+            country="nigeria", use_cursor=False, per_page=101
+        )
 
 
 @responses.activate

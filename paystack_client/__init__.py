@@ -1,4 +1,8 @@
-# Core imports
+"""
+Paystack Client - A Python wrapper for the Paystack API
+"""
+
+from .client import PaystackClient
 from .core import BaseClient
 from .exceptions import (
     PaystackError,
@@ -14,69 +18,27 @@ from .exceptions import (
     create_error_from_response,
 )
 
-# API Client imports
-from .apple_pay import ApplePayAPI
-from .bulk_charges import BulkChargesAPI
-from .charge import ChargeAPI
-from .customers import CustomersAPI
-from .dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
-from .direct_debit import DirectDebitAPI
-from .disputes import DisputesAPI
-from .integration import IntegrationAPI
-from .miscellaneous import MiscellaneousAPI
-from .payment_pages import PaymentPagesAPI
-from .payment_requests import PaymentRequestsAPI
-from .plans import PlansAPI
-from .products import ProductsAPI
-from .refunds import RefundsAPI
-from .settlements import SettlementsAPI
-from .subaccounts import SubaccountsAPI
-from .subscriptions import SubscriptionsAPI
-from .terminal import TerminalAPI
-from .transaction_splits import TransactionSplitsAPI
-from .transactions import TransactionsAPI
-from .transfers import TransfersAPI
-from .transfers_control import TransfersControlAPI
-from .transfers_recipients import TransferRecipientsAPI
-from .verification import VerificationAPI
-from .virtual_terminal import VirtualTerminalAPI
+__version__ = "1.0.0"
+__author__ = "Joseph Ezekiel"  
+__email__ = "theolujay@gmail.com"
+__description__ = "A modern Python client for Paystack API"
 
 __all__ = [
+    "PaystackClient",
     "BaseClient",
-    "APIError",
     "PaystackError",
+    "APIError", 
     "AuthenticationError",
     "ValidationError",
     "NotFoundError",
-    "RateLimitError",
+    "RateLimitError", 
     "ServerError",
     "NetworkError",
     "InvalidResponseError",
     "TransactionFailureError",
     "create_error_from_response",
-    "ApplePayAPI",
-    "BulkChargesAPI",
-    "ChargeAPI",
-    "CustomersAPI",
-    "DedicatedVirtualAccountsAPI",
-    "DirectDebitAPI",
-    "DisputesAPI",
-    "IntegrationAPI",
-    "MiscellaneousAPI",
-    "PaymentPagesAPI",
-    "PaymentRequestsAPI",
-    "PlansAPI",
-    "ProductsAPI",
-    "RefundsAPI",
-    "SettlementsAPI",
-    "SubaccountsAPI",
-    "SubscriptionsAPI",
-    "TerminalAPI",
-    "TransactionSplitsAPI",
-    "TransactionsAPI",
-    "TransfersAPI",
-    "TransfersControlAPI",
-    "TransferRecipientsAPI",
-    "VerificationAPI",
-    "VirtualTerminalAPI",
+    "__version__",
+    "__author__",
+    "__email__",
+    "__description__",
 ]

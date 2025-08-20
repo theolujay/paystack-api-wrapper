@@ -1,9 +1,8 @@
 import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.refunds import RefundsAPI
+from paystack_client import APIError
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
 
 
 @responses.activate
@@ -86,7 +85,9 @@ def test_list_refunds_invalid_per_page(refunds_client):
     transaction = "TRN_test"
     currency = "NGN"
     with pytest.raises(APIError):
-        refunds_client.list_refunds(transaction=transaction, currency=currency, per_page=0)
+        refunds_client.list_refunds(
+            transaction=transaction, currency=currency, per_page=0
+        )
 
 
 @responses.activate

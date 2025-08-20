@@ -1,6 +1,7 @@
 import responses
 
-from .utils import assert_api_error_contains
+from tests.utils import assert_api_error_contains
+
 
 @responses.activate
 def test_register_domain(apple_pay_client):
@@ -75,7 +76,9 @@ def test_list_domains_with_cursor(apple_pay_client):
         status=200,
     )
 
-    data, meta = apple_pay_client.list_domains(use_cursor=True, next_cursor="cursor_next")
+    data, meta = apple_pay_client.list_domains(
+        use_cursor=True, next_cursor="cursor_next"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
