@@ -8,7 +8,7 @@ Thanks for your interest in contributing. Contributions, issues, and feature req
 1. **Fork the repository** and clone your fork:
 
    ```bash
-   git clone https://github.com/<your-username>/paystack_client.git
+   git clone https://github.com/theolujay/paystack-api-wrapper.git
    cd paystack_client
    ```
 

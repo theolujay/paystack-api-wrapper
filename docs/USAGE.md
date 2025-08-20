@@ -1,6 +1,6 @@
 # Paystack Python Client: Full Usage Guide
 
-This guide provides a detailed walkthrough of the `paystack` library, covering initialization, making API calls, handling responses, robust error management, and other advanced topics.
+This guide provides a detailed walkthrough of the `paystack-api-wrapper` library, covering initialization, making API calls, handling responses, robust error management, and other advanced topics.
 
 For a brief overview, see the main [README.md](../README.md).
 

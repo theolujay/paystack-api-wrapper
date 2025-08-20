@@ -2,9 +2,9 @@
 
 [![PyPI Version](https://img.shields.io/pypi/v/paystack-api-wrapper.svg)](https://pypi.org/project/paystack-api-wrapper/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/paystack-api-wrapper.svg)](https://pypi.org/project/paystack-api-wrapper/)
-[![License](https://img.shields.io/github/license/theolujay/paystack.svg)](https://github.com/theolujay/paystack/blob/main/LICENSE)
-[![Build](https://github.com/theolujay/paystack/actions/workflows/tests.yml/badge.svg)](https://github.com/theolujay/paystack/actions) 
-[![Coverage](https://codecov.io/gh/theolujay/paystack/branch/main/graph/badge.svg)](https://codecov.io/gh/theolujay/paystack)
+[![License](https://img.shields.io/github/license/theolujay/paystack-api-wrapper.svg)](https://github.com/theolujay/paystack/blob/main/LICENSE)
+[![Build](https://github.com/theolujay/paystack-api-wrapper/actions/workflows/tests.yml/badge.svg)](https://github.com/theolujay/paystack/actions) 
+[![Coverage](https://codecov.io/gh/theolujay/paystack-api-wrapper/branch/main/graph/badge.svg)](https://codecov.io/gh/theolujay/paystack-api-wrapper)
 
 A clean, intuitive, and reliable Python wrapper for the Paystack API.
 
