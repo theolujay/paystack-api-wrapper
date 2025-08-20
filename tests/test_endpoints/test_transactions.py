@@ -2,7 +2,8 @@ import pytest
 import responses
 import json
 import requests
-from paystack_client import NetworkError, ValidationError
+from paystack_client import NetworkError
+from paystack_client.exceptions import APIError, ValidationError
 
 
 from tests.utils import assert_api_error_contains
@@ -68,6 +69,71 @@ def test_charge_authorization(transaction_client):
 
 
 @responses.activate
+def test_charge_authorization_with_all_params(transaction_client):
+    mock_response = {
+        "status": True,
+        "message": "Charge attempted",
+        "data": {
+            "amount": 35247,
+            "currency": "NGN",
+            "transaction_date": "2024-08-22T10:53:49.000Z",
+            "status": "success",
+            "reference": "0m7frfnr47ezyxl",
+            "authorization": {
+                "authorization_code": "AUTH_72btv547",
+                "bin": "408408",
+                "last4": "4081",
+                "exp_month": "12",
+                "exp_year": "2030",
+                "channel": "card",
+                "card_type": "visa",
+                "bank": "TEST BANK",
+                "country_code": "NG",
+                "brand": "visa",
+                "reusable": True,
+            },
+            "customer": {"email": "customer@email.com", "customer_code": "CUS_1rkzaqsv4rrhqo6"},
+            "id": 4099490251,
+        },
+    }
+    setup_mock_charge_authorization_response(transaction_client, {}, mock_response)
+
+    payload = {
+        "email": "customer@email.com",
+        "amount": "20000",
+        "authorization_code": "AUTH_72btv547",
+        "currency": "NGN",
+        "reference": "test_ref",
+        "channels": ["card"],
+        "subaccount": "SUB_test",
+        "transaction_charge": 100,
+        "bearer": "account",
+        "queue": True,
+        "metadata": {"custom_fields": "value"},
+    }
+    data, meta = transaction_client.charge_authorization(**payload)
+
+    assert data["reference"] == "0m7frfnr47ezyxl"
+    assert data["status"] == "success"
+    assert data["authorization"]["authorization_code"] == payload["authorization_code"]
+    request = responses.calls[0].request
+    request_payload = json.loads(request.body)
+
+    assert request.method == "POST"
+    assert request_payload["email"] == payload["email"]
+    assert request_payload["amount"] == payload["amount"]
+    assert request_payload["authorization_code"] == payload["authorization_code"]
+    assert request_payload["currency"] == payload["currency"]
+    assert request_payload["reference"] == payload["reference"]
+    assert request_payload["channels"] == payload["channels"]
+    assert request_payload["subaccount"] == payload["subaccount"]
+    assert request_payload["transaction_charge"] == payload["transaction_charge"]
+    assert request_payload["bearer"] == payload["bearer"]
+    assert request_payload["queue"] == payload["queue"]
+    assert json.loads(request_payload["metadata"]) == payload["metadata"]
+
+
+@responses.activate
 def test_charge_authorization_invalid_key(transaction_client):
     payload = {
         "email": "customer@email.com",
@@ -114,6 +180,42 @@ def test_export_transactions(transaction_client):
     assert "path" in data
     assert data["path"].startswith("https://s3.")
     assert "expiresAt" in data
+
+
+@responses.activate
+def test_export_transactions_with_all_params(transaction_client):
+    setup_mock_export_transactions_response(transaction_client)
+    params = {
+        "per_page": 5,
+        "page": 2,
+        "from_date": "2024-01-01",
+        "to_date": "2024-01-31",
+        "customer": 123,
+        "status": "success",
+        "currency": "NGN",
+        "amount": 10000,
+        "settled": True,
+        "settlement": 456,
+        "payment_page": 789,
+    }
+    data, meta = transaction_client.export_transactions(**params)
+
+    assert "path" in data
+    assert data["path"].startswith("https://s3.")
+    assert "expiresAt" in data
+    request = responses.calls[0].request
+    assert request.method == "GET"
+    assert "perPage=5" in request.url
+    assert "page=2" in request.url
+    assert "from=2024-01-01" in request.url
+    assert "to=2024-01-31" in request.url
+    assert "customer=123" in request.url
+    assert "status=success" in request.url
+    assert "currency=NGN" in request.url
+    assert "amount=10000" in request.url
+    assert "settled=true" in request.url
+    assert "settlement=456" in request.url
+    assert "payment_page=789" in request.url
 
 
 @responses.activate
@@ -217,6 +319,28 @@ def test_transaction_totals(transaction_client):
 
 
 @responses.activate
+def test_get_totals_with_all_params(transaction_client):
+    setup_mock_get_totals_response(transaction_client)
+    params = {
+        "per_page": 5,
+        "page": 2,
+        "from_date": "2024-01-01",
+        "to_date": "2024-01-31",
+    }
+    data, meta = transaction_client.get_totals(**params)
+
+    assert data["total_transactions"] == 42670
+    assert isinstance(data["total_volume_by_currency"], list)
+    assert data["total_volume_by_currency"][0]["currency"] == "NGN"
+    request = responses.calls[0].request
+    assert request.method == "GET"
+    assert "perPage=5" in request.url
+    assert "page=2" in request.url
+    assert "from=2024-01-01" in request.url
+    assert "to=2024-01-31" in request.url
+
+
+@responses.activate
 def test_transaction_totals_invalid_key(transaction_client):
     mock_response = {"status": False, "message": "Invalid API key"}
     setup_mock_get_totals_response(transaction_client, mock_response, status_code=401)
@@ -266,6 +390,56 @@ def test_initialize_transaction(transaction_client):
     assert request.method == "POST"
     assert response_data["reference"] == "re4lyvq3s3"
     assert payload == data
+
+
+@responses.activate
+def test_initialize_transaction_with_all_params(transaction_client):
+    mock_response = {
+        "status": True,
+        "message": "Authorization URL created",
+        "data": {
+            "authorization_url": "https://checkout.paystack.com/3ni8kdavz62431k",
+            "access_code": "3ni8kdavz62431k",
+            "reference": "re4lyvq3s3",
+        },
+    }
+    setup_mock_initialize_response(transaction_client, mock_response)
+    payload = {
+        "email": "customer@email.com",
+        "amount": "20000",
+        "currency": "NGN",
+        "reference": "test_ref",
+        "callback_url": "https://example.com/callback",
+        "plan": "PLN_test",
+        "invoice_limit": 5,
+        "metadata": {"custom_fields": "value"},
+        "channels": ["card", "bank"],
+        "split_code": "SPL_test",
+        "subaccount": "SUB_test",
+        "transaction_charge": 100,
+        "bearer": "account",
+    }
+
+    response_data, response_meta = transaction_client.initialize(**payload)
+    request = responses.calls[0].request
+    request_payload = json.loads(request.body)
+
+    assert request.method == "POST"
+    assert response_data["reference"] == "re4lyvq3s3"
+    assert request_payload["email"] == payload["email"]
+    assert request_payload["amount"] == payload["amount"]
+    assert request_payload["currency"] == payload["currency"]
+    assert request_payload["reference"] == payload["reference"]
+    assert request_payload["callback_url"] == payload["callback_url"]
+    assert request_payload["plan"] == payload["plan"]
+    assert request_payload["invoice_limit"] == payload["invoice_limit"]
+    assert json.loads(request_payload["metadata"]) == payload["metadata"]
+    assert request_payload["channels"] == payload["channels"]
+    assert request_payload["split_code"] == payload["split_code"]
+    assert request_payload["subaccount"] == payload["subaccount"]
+    assert request_payload["transaction_charge"] == payload["transaction_charge"]
+    assert request_payload["bearer"] == payload["bearer"]
+
 
 
 @pytest.mark.parametrize(
@@ -396,6 +570,45 @@ def test_list_transactions_invalid_key(transaction_client):
     assert_api_error_contains(transaction_client.list_transactions, "invalid api key")
 
 
+@responses.activate
+def test_list_transactions_with_all_params(transaction_client):
+    setup_mock_list_transactions_response(transaction_client)
+    params = {
+        "per_page": 5,
+        "page": 2,
+        "customer": 123,
+        "terminal_id": "T123",
+        "status": "success",
+        "from_date": "2024-01-01",
+        "to_date": "2024-01-31",
+        "amount": 10000,
+    }
+    data, meta = transaction_client.list_transactions(**params)
+
+    assert isinstance(data, list)
+    assert data[0]["reference"] == "ps_ref_12345"
+    assert isinstance(meta, dict)
+    assert meta["total"] == 50
+    request = responses.calls[0].request
+    assert request.method == "GET"
+    assert "perPage=5" in request.url
+    assert "page=2" in request.url
+    assert "customer=123" in request.url
+    assert "terminalid=T123" in request.url
+    assert "status=success" in request.url
+    assert "from=2024-01-01" in request.url
+    assert "to=2024-01-31" in request.url
+    assert "amount=10000" in request.url
+
+
+def test_list_transactions_invalid_status(transaction_client):
+    with pytest.raises(APIError) as excinfo:
+        transaction_client.list_transactions(status="invalid_status")
+    assert "status must be one of: 'failed', 'success', 'abandoned'" in str(
+        excinfo.value
+    )
+
+
 # --- test_partial_debit.py ---
 def setup_mock_partial_debit_response(
     transaction_client, response_data=None, status_code=200
@@ -451,6 +664,8 @@ def test_partial_debit_success(transaction_client):
         "currency": "NGN",
         "amount": "20000",
         "email": "customer@email.com",
+        "reference": "test_ref",
+        "at_least": "10000",
     }
     data, meta = transaction_client.partial_debit(**payload)
 
@@ -459,6 +674,10 @@ def test_partial_debit_success(transaction_client):
     assert data["amount"] == 50000
     assert "authorization" in data
     assert data["authorization"]["reusable"] is True
+    request = responses.calls[0].request
+    request_payload = json.loads(request.body)
+    assert request_payload["reference"] == payload["reference"]
+    assert request_payload["at_least"] == payload["at_least"]
 
 
 @responses.activate
@@ -477,6 +696,133 @@ def test_partial_debit_invalid_key(transaction_client):
     assert_api_error_contains(
         transaction_client.partial_debit, "invalid api key", **payload
     )
+
+
+def test_partial_debit_invalid_currency(transaction_client):
+    with pytest.raises(ValidationError) as excinfo:
+        transaction_client.partial_debit(
+            authorization_code="AUTH_test",
+            currency="USD",
+            amount="20000",
+            email="customer@email.com",
+        )
+    assert "currency must be 'NGN' or 'GHS' for partial debit" in str(excinfo.value)
+
+
+# --- test_verify.py ---
+def setup_mock_verify_response(
+    transaction_client, reference, response_data=None, status_code=200
+):
+    """Helper to set up a mock GET response for transaction verification"""
+    if response_data is None:
+        response_data = {
+            "status": True,
+            "message": "Success",
+            "data": {"reference": reference},
+        }
+
+    responses.add(
+        responses.GET,
+        f"{transaction_client.base_url}/transaction/verify/{reference}",
+        json=response_data,
+        status=status_code,
+    )
+
+
+@responses.activate
+def test_verify_transaction(transaction_client):
+    reference = "adhvousgtsnsl"
+    mock_response = {
+        "status": True,
+        "message": "Verification successful",
+        "data": {
+            "reference": reference,
+            "status": "success",
+            "amount": 40333,
+            "gateway_response": "Successful",
+        },
+    }
+    setup_mock_verify_response(transaction_client, reference, mock_response)
+
+    data, meta = transaction_client.verify(reference)
+
+    assert data["reference"] == reference
+    assert data["status"] == "success"
+
+
+@responses.activate
+def test_verify_transaction_invalid_key(transaction_client):
+    reference = "adhvousgtsnsl"
+    mock_response = {"status": False, "message": "Invalid API key"}
+    setup_mock_verify_response(
+        transaction_client, reference, mock_response, status_code=401
+    )
+
+    assert_api_error_contains(transaction_client.verify, "invalid api key", reference)
+
+
+# --- test_view_timeline.py ---
+def setup_mock_view_timeline_response(
+    transaction_client, id_or_reference, response_data=None, status_code=200
+):
+    if response_data is None:
+        response_data = {
+            "status": True,
+            "message": "Timeline retrieved",
+            "data": {
+                "start_time": 1724318098,
+                "time_spent": 4,
+                "attempts": 1,
+                "errors": 0,
+                "success": True,
+                "mobile": False,
+                "input": [],
+                "history": [
+                    {
+                        "type": "action",
+                        "message": "Attempted to pay with card",
+                        "time": 3,
+                    },
+                    {
+                        "type": "success",
+                        "message": "Successfully paid with card",
+                        "time": 4,
+                    },
+                ],
+            },
+        }
+
+    responses.add(
+        responses.GET,
+        f"{transaction_client.base_url}/transaction/timeline/{id_or_reference}",
+        json=response_data,
+        status=status_code,
+    )
+
+
+@responses.activate
+def test_view_timeline(transaction_client):
+    id_or_reference = "0m7frfnr47ezyxl"
+    setup_mock_view_timeline_response(transaction_client, id_or_reference)
+
+    data, meta = transaction_client.view_timeline(id_or_reference)
+
+    assert data["success"] is True
+    assert isinstance(data["history"], list)
+    assert data["history"][0]["message"] == "Attempted to pay with card"
+
+
+@responses.activate
+def test_view_timeline_invalid_key(transaction_client):
+    id_or_reference = "0m7frfnr47ezyxl"
+    mock_response = {"status": False, "message": "Invalid API key"}
+    setup_mock_view_timeline_response(
+        transaction_client, id_or_reference, mock_response, status_code=401
+    )
+    assert_api_error_contains(
+        transaction_client.view_timeline, "invalid api key", id_or_reference
+    )
+
 
 
 # --- test_verify.py ---
