@@ -1,4 +1,4 @@
-# Paystack Python Client: Full Usage Guide
+# Paystack API Wrapper: Full Usage Guide
 
 This guide provides a detailed walkthrough of the `paystack-api-wrapper` library, covering initialization, making API calls, handling responses, robust error management, and other advanced topics.
 
