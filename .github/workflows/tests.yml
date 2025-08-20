@@ -25,10 +25,8 @@ jobs:
             
             - name: Install dependencies
               run: |
-                python -m pip install --upgrade pip
                 pip install uv
                 uv venv
-                uv source .venv/bin/activate
                 uv pip install -e ".[dev]"
                 uv pip install pytest pytest-cov
 
