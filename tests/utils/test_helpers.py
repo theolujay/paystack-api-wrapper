@@ -1,7 +1,7 @@
 import pytest
 import re
-from paystack_client.exceptions import ValidationError
-from paystack_client.utils.helpers import validate_email
+from paystack.exceptions import ValidationError
+from paystack.utils.helpers import validate_email
 
 def test_validate_email_valid():
     validate_email("test@example.com")

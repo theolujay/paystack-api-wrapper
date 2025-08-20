@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "paystack-client"
+name = "paystack-api-wrapper"
 version = "1.0.0"
 description = "A Python wrapper for the Paystack API"
 authors = [
@@ -54,17 +54,17 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/theolujay/paystack-client"
-Repository = "https://github.com/theolujay/paystack-client"
-Documentation = "https://paystack-client.readthedocs.io"
-"Bug Tracker" = "https://github.com/theolujay/paystack-client/issues"
+Homepage = "https://github.com/theolujay/paystack"
+Repository = "https://github.com/theolujay/paystack"
+Documentation = "https://paystack.readthedocs.io"
+"Bug Tracker" = "https://github.com/theolujay/paystack/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["paystack_client"]
+packages = ["paystack"]
 
 [tool.pytest.ini_options]
 python_files = ["test_*.py", "*_test.py", "tests.py"]
-addopts = ["--tb=short", "--cov=paystack_client", "--cov-report=term-missing"]
+addopts = ["--tb=short", "--cov=paystack", "--cov-report=term-missing"]
 testpaths = ["tests"]
 
 [tool.black]

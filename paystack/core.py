@@ -32,7 +32,7 @@ class BaseClient:
         self.secret_key = secret_key
         if not self.secret_key.startswith(("sk_test", "sk_live")):
             raise AuthenticationError(
-                "Invalid paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"
+                "Invalid Paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"
             )
         self.base_url = base_url
         self.timeout = timeout

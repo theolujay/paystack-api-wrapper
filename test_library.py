@@ -8,9 +8,9 @@ def test_import():
     """Test basic imports"""
     print("1. Testing basic import...")
     try:
-        import paystack_client
-        print("✓ paystack_client imported successfully")
-        print(f"✓ Available attributes: {dir(paystack_client)}")
+        import paystack
+        print("✓ paystack imported successfully")
+        print(f"✓ Available attributes: {dir(paystack)}")
     except ImportError as e:
         print(f"✗ Import failed: {e}")
         return False
@@ -30,7 +30,7 @@ def test_modules():
     
     for module in modules_to_test:
         try:
-            exec(f"from paystack_client import {module}")
+            exec(f"from paystack import {module}")
             print(f"✓ {module} module imported successfully")
         except ImportError as e:
             print(f"✗ {module} module failed: {e}")
@@ -39,7 +39,7 @@ def test_client_creation():
     """Test creating a client instance"""
     print("\n3. Testing client creation...")
     try:
-        from paystack_client import PaystackClient
+        from paystack import PaystackClient
         
         client = PaystackClient("test_sk_dummy_key_for_testing")
         print("✓ Client created successfully")
@@ -61,9 +61,9 @@ def test_version():
     """Test version information"""
     print("\n4. Testing version...")
     try:
-        import paystack_client
-        if hasattr(paystack_client, '__version__'):
-            print(f"✓ Version: {paystack_client.__version__}")
+        import paystack
+        if hasattr(paystack, '__version__'):
+            print(f"✓ Version: {paystack.__version__}")
         else:
             print("⚠ No version information found")
     except Exception as e:
@@ -71,7 +71,7 @@ def test_version():
 
 def main():
     """Run all tests"""
-    print("Testing paystack-client library")
+    print("Testing paystack library")
     print("=" * 40)
     
     tests = [

@@ -3,7 +3,7 @@ import responses
 import json
 import requests
 
-from paystack_client import (
+from paystack import (
     NetworkError,
     ValidationError,
     AuthenticationError,

@@ -1,9 +1,9 @@
 import pytest
 import os
 
-from paystack_client.core import BaseClient
-from paystack_client.client import PaystackClient
-from paystack_client.endpoints import *
+from paystack.core import BaseClient
+from paystack.client import PaystackClient
+from paystack.endpoints import *
 
 
 

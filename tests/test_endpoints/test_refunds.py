@@ -1,6 +1,6 @@
 import pytest
 import responses
-from paystack_client import APIError
+from paystack import APIError
 
 from tests.utils import assert_api_error_contains
 

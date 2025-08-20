@@ -2,7 +2,7 @@ import pytest
 import responses
 from requests.exceptions import Timeout, ConnectTimeout, ReadTimeout
 
-from paystack_client import (
+from paystack import (
     APIError,
     NetworkError,
     InvalidResponseError,
@@ -42,13 +42,13 @@ def test_baseclient_removes_authorization_header_for_private_false(base_client, 
     assert data == {"x": 1}
 
 def test_baseclient_repr_with_empty_secret_key():
-    from paystack_client.core import BaseClient
+    from paystack.core import BaseClient
     client = BaseClient(secret_key="sk_test_12345") # Initialize with a valid key
     client.secret_key = "" # Then set it to empty for repr test
     assert repr(client) == "BaseClient(secret_key=None, base_url='https://api.paystack.co/')"
 
 def test_baseclient_repr_with_none_secret_key():
-    from paystack_client.core import BaseClient
+    from paystack.core import BaseClient
     client = BaseClient(secret_key="sk_test_12345") # Initialize with a valid key
     client.secret_key = None # Then set it to None for repr test
     assert repr(client) == "BaseClient(secret_key=None, base_url='https://api.paystack.co/')"
@@ -187,8 +187,8 @@ def test_invalid_json(base_client):
 
 
 def test_baseclient_invalid_secret_key_format():
-    from paystack_client.core import BaseClient
-    with pytest.raises(AuthenticationError, match="Invalid paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"):
+    from paystack.core import BaseClient
+    with pytest.raises(AuthenticationError, match="PaystackError - Invalid Paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"):
         BaseClient(secret_key="invalid_key")
 
 

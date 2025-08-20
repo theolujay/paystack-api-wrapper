@@ -1,10 +1,10 @@
 # Paystack Python Client
 
-[![PyPI Version](https://img.shields.io/pypi/v/paystack-client.svg)](https://pypi.org/project/paystack-client/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/paystack-client.svg)](https://pypi.org/project/paystack-client/)
-[![License](https://img.shields.io/github/license/theolujay/paystack_client.svg)](https://github.com/theolujay/paystack_client/blob/main/LICENSE)
-[![Build](https://github.com/theolujay/paystack_client/actions/workflows/tests.yml/badge.svg)](https://github.com/theolujay/paystack_client/actions) 
-[![Coverage](https://codecov.io/gh/theolujay/paystack_client/branch/main/graph/badge.svg)](https://codecov.io/gh/theolujay/paystack_client)
+[![PyPI Version](https://img.shields.io/pypi/v/paystack-api-wrapper.svg)](https://pypi.org/project/paystack-api-wrapper/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/paystack-api-wrapper.svg)](https://pypi.org/project/paystack-api-wrapper/)
+[![License](https://img.shields.io/github/license/theolujay/paystack.svg)](https://github.com/theolujay/paystack/blob/main/LICENSE)
+[![Build](https://github.com/theolujay/paystack/actions/workflows/tests.yml/badge.svg)](https://github.com/theolujay/paystack/actions) 
+[![Coverage](https://codecov.io/gh/theolujay/paystack/branch/main/graph/badge.svg)](https://codecov.io/gh/theolujay/paystack)
 
 A clean, intuitive, and reliable Python wrapper for the Paystack API.
 
@@ -17,7 +17,7 @@ See the [Paystack API docs](https://paystack.com/docs/api/) for reference, and e
 ## Installation
 
 ```bash
-pip install paystack-client
+pip install paystack-api-wrapper
 ```
 
 ---
@@ -30,7 +30,7 @@ pip install paystack-client
 
    ```python
    import os
-   from paystack_client import PaystackClient, APIError
+   from paystack import PaystackClient, APIError
 
    secret_key = os.getenv("PAYSTACK_SECRET_KEY")
    client = PaystackClient(secret_key=secret_key)

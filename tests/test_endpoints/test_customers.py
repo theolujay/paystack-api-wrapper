@@ -1,7 +1,7 @@
 import pytest
 import responses
-from paystack_client import ValidationError
-from paystack_client.exceptions import APIError
+from paystack import ValidationError
+from paystack.exceptions import APIError
 
 
 @responses.activate

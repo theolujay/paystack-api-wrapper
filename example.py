@@ -1,7 +1,7 @@
 import os
 
-from paystack_client import PaystackClient
-from paystack_client.exceptions import APIError, ValidationError
+from paystack import PaystackClient
+from paystack.exceptions import APIError, ValidationError
 
 secret_key = os.getenv("PAYSTACK_SECRET_KEY")
 

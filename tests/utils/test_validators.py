@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
-from paystack_client.exceptions import APIError, ValidationError
-from paystack_client.utils.validators import _validate_amount_and_email, _validate_charge_authorization
+from paystack.exceptions import APIError, ValidationError
+from paystack.utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 def test_validate_amount_and_email_missing_email():
     with pytest.raises(ValidationError, match="Email is required"):

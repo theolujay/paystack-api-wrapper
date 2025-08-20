@@ -2,8 +2,8 @@ import pytest
 import responses
 import json
 import requests
-from paystack_client import NetworkError
-from paystack_client.exceptions import APIError, ValidationError
+from paystack import NetworkError
+from paystack.exceptions import APIError, ValidationError
 
 
 from tests.utils import assert_api_error_contains

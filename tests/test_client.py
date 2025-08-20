@@ -1,5 +1,5 @@
 import pytest
-from paystack_client import PaystackClient
+from paystack import PaystackClient
 
 def test_paystack_client_initialization():
     client = PaystackClient(secret_key="sk_test_abcdefghijklmnopqrstuvwxyz1234567890")

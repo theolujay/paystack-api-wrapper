@@ -1,7 +1,7 @@
 import json
 from unittest.mock import Mock
 
-from paystack_client import (
+from paystack import (
     PaystackError,
     APIError,
     AuthenticationError,

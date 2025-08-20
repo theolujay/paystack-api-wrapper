@@ -1,7 +1,7 @@
 import pytest
 import responses
 
-from paystack_client import ValidationError
+from paystack import ValidationError
 from tests.utils import assert_api_error_contains
 
 

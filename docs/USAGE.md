@@ -1,6 +1,6 @@
 # Paystack Python Client: Full Usage Guide
 
-This guide provides a detailed walkthrough of the `paystack-client` library, covering initialization, making API calls, handling responses, robust error management, and other advanced topics.
+This guide provides a detailed walkthrough of the `paystack` library, covering initialization, making API calls, handling responses, robust error management, and other advanced topics.
 
 For a brief overview, see the main [README.md](../README.md).
 
@@ -10,7 +10,7 @@ First, instantiate the `PaystackClient` with your secret key. It is strongly rec
 
 ```python
 import os
-from paystack_client import PaystackClient
+from paystack import PaystackClient
 
 # Best practice: load your secret key from environment variables
 secret_key = os.getenv("PAYSTACK_SECRET_KEY")
@@ -33,7 +33,7 @@ For example, to access the **Transactions API**, you use `client.transactions`. 
 ### Example: Creating a Customer
 
 ```python
-from paystack_client.exceptions import APIError
+from paystack.exceptions import APIError
 
 try:
     data, meta = client.customers.create(
@@ -52,7 +52,7 @@ except APIError as e:
 ### Example: Fetching a Transaction
 
 ```python
-from paystack_client.exceptions import APIError
+from paystack.exceptions import APIError
 
 try:
     # Replace with a real transaction ID from your integration
@@ -109,7 +109,7 @@ print(f"Customers on this page: {len(data)}")
 
 The library raises specific, custom exceptions for different types of API and client-side errors. All exceptions inherit from a base `PaystackError`, so you can catch it to handle any error from the library.
 
-Here is the hierarchy of exceptions, found in `paystack_client.exceptions`:
+Here is the hierarchy of exceptions, found in `paystack.exceptions`:
 
 -   `PaystackError` (Base class)
     -   `APIError`: A generic error returned by the Paystack API (e.g., for non-2xx status codes that don't fit other categories).
@@ -125,7 +125,7 @@ Here is the hierarchy of exceptions, found in `paystack_client.exceptions`:
 ### Example: Handling Different Errors
 
 ```python
-from paystack_client.exceptions import (
+from paystack.exceptions import (
     PaystackError,
     AuthenticationError,
     ValidationError,
@@ -172,7 +172,7 @@ except Exception as e:
 For endpoints that return a list of items, you can navigate through pages using the `per_page` and `page` parameters. The `meta` object in the response provides the necessary details to build your pagination logic.
 
 ```python
-from paystack_client.exceptions import APIError
+from paystack.exceptions import APIError
 
 # Fetch all customers, 50 at a time (Paystack's default and max is 50)
 page = 1
@@ -211,7 +211,7 @@ The library performs basic validation on some required fields before sending a r
 For example, the `transactions.initialize` method requires a valid email format and a numeric amount.
 
 ```python
-from paystack_client.exceptions import ValidationError
+from paystack.exceptions import ValidationError
 
 # Example of invalid email
 try:
