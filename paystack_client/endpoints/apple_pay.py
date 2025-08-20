@@ -2,9 +2,10 @@
 The Apple Pay API allows you register your application's top-level domain or subdomain.
 """
 
+import requests
 from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class ApplePayAPI(BaseClient):
@@ -12,8 +13,8 @@ class ApplePayAPI(BaseClient):
     The Apple Pay API allows you register your application's top-level domain or subdomain.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def register_domain(
         self, domain_name: str

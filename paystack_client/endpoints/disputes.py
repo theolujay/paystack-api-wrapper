@@ -2,9 +2,10 @@
 The Disputes API allows you manage transaction disputes.
 """
 
+import requests
 from typing import Optional, Dict, Any, Tuple, Union
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class DisputesAPI(BaseClient):
@@ -12,8 +13,8 @@ class DisputesAPI(BaseClient):
     The Disputes API allows you manage transaction disputes.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def list_disputes(
         self,

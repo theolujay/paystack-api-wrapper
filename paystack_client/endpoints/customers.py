@@ -1,17 +1,18 @@
 """The Customers API to create and manage customers."""
 
+import requests
 from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient
-from .exceptions import ValidationError
-from .utils.helpers import validate_email
+from ..core import BaseClient
+from ..exceptions import ValidationError
+from ..utils.helpers import validate_email
 
 
 class CustomersAPI(BaseClient):
     """Customer API client for creating and managing customers."""
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create(
         self,

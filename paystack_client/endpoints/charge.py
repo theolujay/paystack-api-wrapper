@@ -1,15 +1,16 @@
 # charge.py
+import requests
 from typing import Optional, Dict, Any, Union, Tuple
-from .core import BaseClient
-from .exceptions import ValidationError
-from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
+from ..core import BaseClient
+from ..exceptions import ValidationError
+from ..utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 
 class ChargeAPI(BaseClient):
     """Charge API client for processing payments with specific payment channels."""
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create(
         self,

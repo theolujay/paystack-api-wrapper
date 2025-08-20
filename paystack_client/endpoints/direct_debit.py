@@ -2,9 +2,10 @@
 The Direct Debit API allows you manage the authorization on your customer's bank accounts.
 """
 
+import requests
 from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class DirectDebitAPI(BaseClient):
@@ -12,8 +13,8 @@ class DirectDebitAPI(BaseClient):
     The Direct Debit API allows you manage the authorization on your customer's bank accounts.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def trigger_activation_charge(
         self, customer_ids: List[int]

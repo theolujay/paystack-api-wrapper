@@ -24,25 +24,19 @@ class BaseClient:
 
     def __init__(
         self,
-        secret_key: Optional[str] = None,
-        base_url: Optional[str] = None,
+        secret_key: str,
+        base_url: str = "https://api.paystack.co/",
+        session: requests.Session = None,
         timeout: int = 10,
     ):
-        self.secret_key = secret_key or os.environ.get("PAYSTACK_SECRET_KEY")
-        self.base_url = base_url or "https://api.paystack.co"
-        self.timeout = timeout
-
-        if not self.secret_key:
-            raise AuthenticationError(
-                "Paystack secret key is required. Set PAYSTACK_SERCRET_KEY environment variable or pass secret_key parameter."
-            )
-
+        self.secret_key = secret_key
         if not self.secret_key.startswith(("sk_test", "sk_live")):
             raise AuthenticationError(
                 "Invalid paystack secret key format. Key should start with 'sk_test_' or 'sk_live_'"
             )
-
-        self.session = requests.Session()
+        self.base_url = base_url
+        self.timeout = timeout
+        self.session = session or requests.Session()
         self.session.headers.update(
             {
                 "Authorization": f"Bearer {self.secret_key}",

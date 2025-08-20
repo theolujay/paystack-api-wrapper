@@ -1,14 +1,16 @@
 from typing import Optional, Dict, Any, Union, Tuple
-from .core import BaseClient
-from .exceptions import APIError, ValidationError
-from .utils.validators import _validate_amount_and_email, _validate_charge_authorization
+
+import requests
+from ..core import BaseClient
+from ..exceptions import APIError, ValidationError
+from ..utils.validators import _validate_amount_and_email, _validate_charge_authorization
 
 
 class TransactionsAPI(BaseClient):
     """Transaction API client for processing payments and managing transactions."""
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def initialize(
         self,
@@ -341,7 +343,8 @@ class TransactionsAPI(BaseClient):
         reference: Optional[str] = None,
         at_least: Optional[Union[int, str]] = None,
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        """Perform a partial debit transaction.
+        """
+        Perform a partial debit transaction.
 
         This allows you to charge a customer but if the amount on their card/account
         is less than what you're trying to charge, it charges the available amount.

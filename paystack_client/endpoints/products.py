@@ -2,9 +2,10 @@
 The Products API allows you create and manage inventories on your integration.
 """
 
+import requests
 from typing import Optional, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class ProductsAPI(BaseClient):
@@ -12,8 +13,8 @@ class ProductsAPI(BaseClient):
     The Products API allows you create and manage inventories on your integration.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_product(
         self,

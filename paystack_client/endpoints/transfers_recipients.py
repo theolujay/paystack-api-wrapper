@@ -2,9 +2,10 @@
 The Transfer Recipients API allows you create and manage beneficiaries that you send money to.
 """
 
+import requests
 from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class TransferRecipientsAPI(BaseClient):
@@ -12,8 +13,8 @@ class TransferRecipientsAPI(BaseClient):
     The Transfer Recipients API allows you create and manage beneficiaries that you send money to.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_transfer_recipient(
         self,

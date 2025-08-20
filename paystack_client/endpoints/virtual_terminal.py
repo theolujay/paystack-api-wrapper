@@ -2,9 +2,10 @@
 The Virtual Terminal API allows you to accept in-person payments without a POS device.
 """
 
+import requests
 from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class VirtualTerminalAPI(BaseClient):
@@ -12,8 +13,8 @@ class VirtualTerminalAPI(BaseClient):
     The Virtual Terminal API allows you to accept in-person payments without a POS device.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_virtual_terminal(
         self,

@@ -1,7 +1,4 @@
-import pytest
 import responses
-from paystack_client.exceptions import APIError
-from paystack_client.integration import IntegrationAPI
 
 
 from tests.utils import assert_api_error_contains

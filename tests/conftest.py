@@ -3,32 +3,8 @@ import os
 from dotenv import load_dotenv
 
 from paystack_client.core import BaseClient
-from paystack_client.transactions import TransactionsAPI
-from paystack_client.apple_pay import ApplePayAPI
-from paystack_client.bulk_charges import BulkChargesAPI
-from paystack_client.charge import ChargeAPI
-from paystack_client.customers import CustomersAPI
-from paystack_client.dedicated_virtual_accounts import DedicatedVirtualAccountsAPI
-from paystack_client.direct_debit import DirectDebitAPI
-from paystack_client.disputes import DisputesAPI
-from paystack_client.integration import IntegrationAPI
-from paystack_client.miscellaneous import MiscellaneousAPI
-from paystack_client.payment_pages import PaymentPagesAPI
-from paystack_client.payment_requests import PaymentRequestsAPI
-from paystack_client.plans import PlansAPI
-from paystack_client.products import ProductsAPI
-from paystack_client.refunds import RefundsAPI
-from paystack_client.settlements import SettlementsAPI
-from paystack_client.subaccounts import SubaccountsAPI
-from paystack_client.subscriptions import SubscriptionsAPI
-from paystack_client.terminal import TerminalAPI
-from paystack_client.transaction_splits import TransactionSplitsAPI
-from paystack_client.transfers_control import TransfersControlAPI
-from paystack_client.transfers_recipients import TransferRecipientsAPI
-from paystack_client.transfers import TransfersAPI
-from paystack_client.verification import VerificationAPI
-from paystack_client.virtual_terminal import VirtualTerminalAPI
-
+from paystack_client.client import PaystackClient
+from paystack_client.endpoints import *
 
 @pytest.fixture(autouse=True)
 def load_test_env():
@@ -48,6 +24,12 @@ def secret_key(request):
     request.addfinalizer(teardown)
     return key
 
+@pytest.fixture
+def client(secret_key):
+    return PaystackClient(secret_key=secret_key)
+
+
+
 
 @pytest.fixture
 def base_client(secret_key):
@@ -55,125 +37,102 @@ def base_client(secret_key):
 
 
 @pytest.fixture
-def transaction_client(secret_key):
-    return TransactionsAPI(secret_key=secret_key)
+def transaction_client(client):
+    return client.transactions
 
 
 @pytest.fixture
-def apple_pay_client(secret_key):
-    return ApplePayAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def bulk_charges_client(secret_key):
-    return BulkChargesAPI(secret_key=secret_key)
-
+def apple_pay_client(client):
+    return client.apple_pay
 
 @pytest.fixture
-def charge_client(secret_key):
-    return ChargeAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def customers_client(secret_key):
-    return CustomersAPI(secret_key=secret_key)
-
+def bulk_charges_client(client):
+    return client.bulk_charges
 
 @pytest.fixture
-def dedicated_virtual_accounts_client(secret_key):
-    return DedicatedVirtualAccountsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def direct_debit_client(secret_key):
-    return DirectDebitAPI(secret_key=secret_key)
-
+def charge_client(client):
+    return client.charge
 
 @pytest.fixture
-def disputes_client(secret_key):
-    return DisputesAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def integration_client(secret_key):
-    return IntegrationAPI(secret_key=secret_key)
-
+def customers_client(client):
+    return client.customers
 
 @pytest.fixture
-def miscellaneous_client(secret_key):
-    return MiscellaneousAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def payment_pages_client(secret_key):
-    return PaymentPagesAPI(secret_key=secret_key)
-
+def dedicated_virtual_accounts_client(client):
+    return client.dedicated_virtual_accounts
 
 @pytest.fixture
-def payment_requests_client(secret_key):
-    return PaymentRequestsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def plans_client(secret_key):
-    return PlansAPI(secret_key=secret_key)
-
+def direct_debit_client(client):
+    return client.direct_debit
 
 @pytest.fixture
-def products_client(secret_key):
-    return ProductsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def refunds_client(secret_key):
-    return RefundsAPI(secret_key=secret_key)
-
+def disputes_client(client):
+    return client.disputes
 
 @pytest.fixture
-def settlements_client(secret_key):
-    return SettlementsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def subaccounts_client(secret_key):
-    return SubaccountsAPI(secret_key=secret_key)
-
+def integration_client(client):
+    return client.integration
 
 @pytest.fixture
-def subscriptions_client(secret_key):
-    return SubscriptionsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def terminal_client(secret_key):
-    return TerminalAPI(secret_key=secret_key)
-
+def miscellaneous_client(client):
+    return client.miscellaneous
 
 @pytest.fixture
-def transaction_splits_client(secret_key):
-    return TransactionSplitsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def transfers_control_client(secret_key):
-    return TransfersControlAPI(secret_key=secret_key)
-
+def payment_pages_client(client):
+    return client.payment_pages
 
 @pytest.fixture
-def transfer_recipients_client(secret_key):
-    return TransferRecipientsAPI(secret_key=secret_key)
-
-
-@pytest.fixture
-def transfers_client(secret_key):
-    return TransfersAPI(secret_key=secret_key)
-
+def payment_requests_client(client):
+    return client.payment_requests
 
 @pytest.fixture
-def verification_client(secret_key):
-    return VerificationAPI(secret_key=secret_key)
-
+def plans_client(client):
+    return client.plans 
 
 @pytest.fixture
-def virtual_terminal_client(secret_key):
-    return VirtualTerminalAPI(secret_key=secret_key)
+def products_client(client):
+    return client.products
+
+@pytest.fixture
+def refunds_client(client):
+    return client.refunds
+
+@pytest.fixture
+def settlements_client(client):
+    return client.settlements
+
+@pytest.fixture
+def subaccounts_client(client):
+    return client.subaccounts
+
+@pytest.fixture
+def subscriptions_client(client):
+    return client.subscriptions
+
+@pytest.fixture
+def terminal_client(client):
+    return client.terminal
+
+@pytest.fixture
+def transaction_splits_client(client):
+    return client.transaction_splits
+
+@pytest.fixture
+def transfers_control_client(client):
+    return client.transfers_control
+
+@pytest.fixture
+def transfer_recipients_client(client):
+    return client.transfer_recipients
+
+@pytest.fixture
+def transfers_client(client):
+    return client.transfers
+
+@pytest.fixture
+def verification_client(client):
+    return client.verification
+
+@pytest.fixture
+def virtual_terminal_client(client):
+    return client.virtual_terminal

@@ -2,9 +2,10 @@
 The Transaction Splits API enables merchants split the settlement for a transaction across their payout account, and one or more subaccounts.
 """
 
+import requests
 from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class TransactionSplitsAPI(BaseClient):
@@ -12,8 +13,8 @@ class TransactionSplitsAPI(BaseClient):
     The Transaction Splits API enables merchants split the settlement for a transaction across their payout account, and one or more subaccounts.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_split(
         self,

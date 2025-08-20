@@ -2,9 +2,10 @@
 The Payment Pages API provides a quick and secure way to collect payment for products.
 """
 
+import requests
 from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class PaymentPagesAPI(BaseClient):
@@ -12,8 +13,8 @@ class PaymentPagesAPI(BaseClient):
     The Payment Pages API provides a quick and secure way to collect payment for products.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_payment_page(
         self,

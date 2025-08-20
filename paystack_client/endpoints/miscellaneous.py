@@ -1,14 +1,15 @@
 # miscellaneous.py
+import requests
 from typing import Optional, Union, Dict, Any, Tuple
-from .core import BaseClient
-from .exceptions import APIError
+from ..core import BaseClient
+from ..exceptions import APIError
 
 
 class MiscellaneousAPI(BaseClient):
     """Miscellaneous API client for supporting APIs that provide additional details to other APIs."""
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def list_banks(
         self,

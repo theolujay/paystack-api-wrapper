@@ -2,9 +2,10 @@
 The Payment Requests API allows you manage requests for payment of goods and services.
 """
 
+import requests
 from typing import Optional, List, Dict, Any, Tuple
 
-from .core import BaseClient
+from ..core import BaseClient
 
 
 class PaymentRequestsAPI(BaseClient):
@@ -12,8 +13,8 @@ class PaymentRequestsAPI(BaseClient):
     The Payment Requests API allows you manage requests for payment of goods and services.
     """
 
-    def __init__(self, secret_key: Optional[str] = None):
-        super().__init__(secret_key)
+    def __init__(self, secret_key: str, session: requests.Session = None, base_url: str = None):
+        super().__init__(secret_key, session=session, base_url=base_url)
 
     def create_payment_request(
         self,
