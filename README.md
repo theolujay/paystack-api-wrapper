@@ -1,4 +1,4 @@
-# Paystack Python Client
+# Paystack API Wrapper
 
 [![PyPI Version](https://img.shields.io/pypi/v/paystack-api-wrapper.svg)](https://pypi.org/project/paystack-api-wrapper/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/paystack-api-wrapper.svg)](https://pypi.org/project/paystack-api-wrapper/)
