@@ -1,15 +1,10 @@
 import pytest
 import os
-from dotenv import load_dotenv
 
 from paystack_client.core import BaseClient
 from paystack_client.client import PaystackClient
 from paystack_client.endpoints import *
 
-@pytest.fixture(autouse=True)
-def load_test_env():
-    """Automatically load test environment for all tests"""
-    load_dotenv(".env.test")
 
 
 @pytest.fixture(scope="module")

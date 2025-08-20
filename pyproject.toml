@@ -32,7 +32,6 @@ keywords = ["paystack", "payment", "api", "django", "python", "fintech", "nigeri
 
 dependencies = [
     "requests>=2.25.0",
-    "python-dotenv>=1.0.0",
     "pytest>=8.4.1",
 ]
 
@@ -46,6 +45,7 @@ dev = [
     "mypy>=1.0.0",
     "build>=1.0.0",
     "twine>=4.0.0",
+    "pytest-mock>=3.14.1",
 ]
 test = [
     "pytest>=8.4.1", 
