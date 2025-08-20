@@ -1,5 +1,5 @@
 
-# Contributing to Paystack Python Client
+# Contributing to Paystack API Wrapper
 
 Thanks for your interest in contributing. Contributions, issues, and feature requests are welcome!
 
@@ -9,7 +9,7 @@ Thanks for your interest in contributing. Contributions, issues, and feature req
 
    ```bash
    git clone https://github.com/theolujay/paystack-api-wrapper.git
-   cd paystack_client
+   cd paystack-api-wrapper
    ```
 
 2. **Set up a virtual environment** (recommended):
@@ -65,7 +65,7 @@ Thanks for your interest in contributing. Contributions, issues, and feature req
 * **Tests:**
 
   ```bash
-  pytest --cov=paystack_client
+  pytest --cov=paystack-api-wrapper
   ```
 * **Lint & formatting (black + flake8):**
 
@@ -80,7 +80,7 @@ Thanks for your interest in contributing. Contributions, issues, and feature req
 
 If you find a bug or have a feature request:
 
-* Check the [issue tracker](https://github.com/theolujay/paystack_client/issues) first.
+* Check the [issue tracker](https://github.com/theolujay/paystack-api-wrapper/issues) first.
 * If it’s new, open an issue with:
 
   * Steps to reproduce
@@ -88,11 +88,11 @@ If you find a bug or have a feature request:
   * Actual behavior
   * Any relevant logs or screenshots
 
----
+<!-- ---
 
 ## Code of Conduct
 
-Please note that this project follows a [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you agree to uphold it.
+Please note that this project follows a [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you agree to uphold it. -->
 
 ---
 
