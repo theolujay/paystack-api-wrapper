@@ -31,6 +31,40 @@ def test_create_dedicated_virtual_account(dedicated_virtual_accounts_client):
 
 
 @responses.activate
+def test_create_dedicated_virtual_account_with_all_optional_params(
+    dedicated_virtual_accounts_client,
+):
+    payload = {
+        "customer": "CUS_test_optional",
+        "preferred_bank": "wema-bank",
+        "subaccount": "SUB_test",
+        "split_code": "SPL_test",
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "phone": "09012345678",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Dedicated account created",
+        "data": {"customer": payload["customer"], "account_number": "0123456789"},
+    }
+    responses.add(
+        responses.POST,
+        f"{dedicated_virtual_accounts_client.base_url}/dedicated_account",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = dedicated_virtual_accounts_client.create_dedicated_virtual_account(
+        **payload
+    )
+
+    assert data["customer"] == payload["customer"]
+    assert data["account_number"] == "0123456789"
+    assert meta == {}
+
+
+@responses.activate
 def test_create_dedicated_virtual_account_invalid_key(
     dedicated_virtual_accounts_client,
 ):
@@ -84,6 +118,44 @@ def test_assign_dedicated_virtual_account(dedicated_virtual_accounts_client):
 
 
 @responses.activate
+def test_assign_dedicated_virtual_account_with_all_optional_params(
+    dedicated_virtual_accounts_client,
+):
+    payload = {
+        "email": "customer2@example.com",
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "phone": "09012345678",
+        "preferred_bank": "wema-bank",
+        "country": "NG",
+        "account_number": "0987654321",
+        "bvn": "12345678901",
+        "bank_code": "035",
+        "subaccount": "SUB_test_assign",
+        "split_code": "SPL_test_assign",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Dedicated account assigned",
+        "data": {"customer": payload["email"], "account_number": "0987654321"},
+    }
+    responses.add(
+        responses.POST,
+        f"{dedicated_virtual_accounts_client.base_url}/dedicated_account/assign",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = dedicated_virtual_accounts_client.assign_dedicated_virtual_account(
+        **payload
+    )
+
+    assert data["customer"] == payload["email"]
+    assert data["account_number"] == "0987654321"
+    assert meta == {}
+
+
+@responses.activate
 def test_assign_dedicated_virtual_account_invalid_key(
     dedicated_virtual_accounts_client,
 ):
@@ -132,7 +204,9 @@ def test_list_dedicated_virtual_accounts(dedicated_virtual_accounts_client):
 
 
 @responses.activate
-def test_list_dedicated_virtual_accounts_with_params(dedicated_virtual_accounts_client):
+def test_list_dedicated_virtual_accounts_with_all_optional_params(
+    dedicated_virtual_accounts_client,
+):
     mock_response = {
         "status": True,
         "message": "Dedicated accounts retrieved",
@@ -140,13 +214,17 @@ def test_list_dedicated_virtual_accounts_with_params(dedicated_virtual_accounts_
     }
     responses.add(
         responses.GET,
-        f"{dedicated_virtual_accounts_client.base_url}/dedicated_account?active=True&currency=NGN",
+        f"{dedicated_virtual_accounts_client.base_url}/dedicated_account?active=True&currency=NGN&provider_slug=wema-bank&bank_id=035&customer=CUS_test",
         json=mock_response,
         status=200,
     )
 
     data, meta = dedicated_virtual_accounts_client.list_dedicated_virtual_accounts(
-        active=True, currency="NGN"
+        active=True,
+        currency="NGN",
+        provider_slug="wema-bank",
+        bank_id="035",
+        customer="CUS_test",
     )
 
     assert isinstance(data, list)
@@ -204,6 +282,31 @@ def test_requery_dedicated_account(dedicated_virtual_accounts_client):
 
 
 @responses.activate
+def test_requery_dedicated_account_with_date(dedicated_virtual_accounts_client):
+    payload = {
+        "account_number": "0123456789",
+        "provider_slug": "wema-bank",
+        "date": "2023-01-01",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Dedicated account requery successful",
+        "data": {"account_number": payload["account_number"]},
+    }
+    responses.add(
+        responses.GET,
+        f"{dedicated_virtual_accounts_client.base_url}/dedicated_account/requery?account_number=0123456789&provider_slug=wema-bank&date=2023-01-01",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = dedicated_virtual_accounts_client.requery_dedicated_account(**payload)
+
+    assert data["account_number"] == payload["account_number"]
+    assert meta == {}
+
+
+@responses.activate
 def test_deactivate_dedicated_account(dedicated_virtual_accounts_client):
     dedicated_account_id = 123
     mock_response = {
@@ -231,6 +334,36 @@ def test_split_dedicated_account_transaction(dedicated_virtual_accounts_client):
     payload = {
         "customer": "CUS_test",
         "split_code": "SPL_test",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Dedicated account split successful",
+        "data": {"customer": payload["customer"]},
+    }
+    responses.add(
+        responses.POST,
+        f"{dedicated_virtual_accounts_client.base_url}/dedicated_account/split",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = dedicated_virtual_accounts_client.split_dedicated_account_transaction(
+        **payload
+    )
+
+    assert data["customer"] == payload["customer"]
+    assert meta == {}
+
+
+@responses.activate
+def test_split_dedicated_account_transaction_with_all_optional_params(
+    dedicated_virtual_accounts_client,
+):
+    payload = {
+        "customer": "CUS_test_split_optional",
+        "subaccount": "SUB_test_split",
+        "split_code": "SPL_test_split",
+        "preferred_bank": "wema-bank",
     }
     mock_response = {
         "status": True,

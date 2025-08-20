@@ -1,7 +1,7 @@
 """Validation helpers for Paystack API calls."""
 
 from typing import Union
-from ..exceptions import APIError
+from ..exceptions import APIError, ValidationError
 from .helpers import validate_email
 
 
@@ -17,10 +17,10 @@ def _validate_amount_and_email(email: str, amount: Union[int, str]):
     """
     if not email:
         raise ValidationError("Email is required")
-    if not amount:
+    if amount is None:
         raise ValidationError("Amount is required")
-    if not validate_email(email):
-        raise ValidationError("Invalid email format")
+
+    validate_email(email)
 
     try:
         amount_int = int(amount)

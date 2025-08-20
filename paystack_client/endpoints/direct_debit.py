@@ -54,6 +54,6 @@ class DirectDebitAPI(BaseClient):
         if status:
             params["status"] = status
         if per_page:
-            params["per_page"] = per_page
+            params["perPage"] = per_page
 
         return self.request("GET", "directdebit/mandate-authorizations", params=params)

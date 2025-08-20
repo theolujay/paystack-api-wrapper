@@ -8,7 +8,11 @@ secret_key = os.getenv("PAYSTACK_SECRET_KEY")
 if not secret_key:
     raise ValueError("PAYSTACK_SECRET_KEY environment variable not set.")
 
-print("PAYSTACK_SECRET_KEY is set. Great job, Olujay!")
+elif secret_key:
+    print("PAYSTACK_SECRET_KEY is set. Great job, Olujay!")
+    
+print(secret_key)
+
 
 client = PaystackClient(secret_key=secret_key)
 
@@ -21,6 +25,7 @@ try:
     
     print("Transaction initialized successfully:")
     print(data)
+    print(meta)
     
 except APIError as e:
     print(f"An API error occurred: {e.message}")

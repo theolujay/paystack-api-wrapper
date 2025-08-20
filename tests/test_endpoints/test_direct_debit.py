@@ -74,7 +74,7 @@ def test_list_mandate_authorizations_with_params(direct_debit_client):
     }
     responses.add(
         responses.GET,
-        f"{direct_debit_client.base_url}/directdebit/mandate-authorizations?status=active&per_page=1",
+        f"{direct_debit_client.base_url}/directdebit/mandate-authorizations?status=active&perPage=1",
         json=mock_response,
         status=200,
     )
@@ -82,6 +82,28 @@ def test_list_mandate_authorizations_with_params(direct_debit_client):
     data, meta = direct_debit_client.list_mandate_authorizations(
         status="active", per_page=1
     )
+
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert data[0]["status"] == "active"
+    assert meta == {}
+
+
+@responses.activate
+def test_list_mandate_authorizations_with_per_page(direct_debit_client):
+    mock_response = {
+        "status": True,
+        "message": "Mandate authorizations retrieved",
+        "data": [{"id": 1, "status": "active"}],
+    }
+    responses.add(
+        responses.GET,
+        f"{direct_debit_client.base_url}/directdebit/mandate-authorizations?perPage=5",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = direct_debit_client.list_mandate_authorizations(per_page=5)
 
     assert isinstance(data, list)
     assert len(data) == 1

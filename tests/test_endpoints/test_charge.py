@@ -30,17 +30,30 @@ def test_create_charge(charge_client):
 
 
 @responses.activate
-def test_create_charge_with_optional_params(charge_client):
+def test_create_charge_with_all_optional_params(charge_client):
     payload = {
-        "email": "customer@example.com",
-        "amount": "10000",
-        "split_code": "SPL_test",
-        "metadata": {"custom_fields": "value"},
+        "email": "customer_all@example.com",
+        "amount": "20000",
+        "split_code": "SPL_all",
+        "subaccount": "ACCT_all",
+        "transaction_charge": 500,
+        "bearer": "account",
+        "bank": {"code": "044", "account_number": "0123456789"},
+        "bank_transfer": {"account_number": "0987654321"},
+        "ussd": {"type": "737"},
+        "mobile_money": {"phone": "08012345678", "provider": "mtn"},
+        "qr": {"provider": "visa"},
+        "authorization_code": "AUTH_all",
+        "pin": "1234",
+        "metadata": {"custom_fields": "value_all"},
+        "reference": "test_ref_all",
+        "device_id": "device_all",
+        "birthday": "1990-01-01",
     }
     mock_response = {
         "status": True,
         "message": "Charge initiated",
-        "data": {"reference": "test_ref_optional"},
+        "data": {"reference": "test_ref_all"},
     }
     responses.add(
         responses.POST,
@@ -51,8 +64,19 @@ def test_create_charge_with_optional_params(charge_client):
 
     data, meta = charge_client.create(**payload)
 
-    assert data["reference"] == "test_ref_optional"
+    assert data["reference"] == "test_ref_all"
     assert meta == {}
+
+
+@responses.activate
+def test_create_charge_invalid_bearer(charge_client):
+    payload = {
+        "email": "customer@example.com",
+        "amount": "10000",
+        "bearer": "invalid",
+    }
+    with pytest.raises(ValidationError, match="bearer must be either 'account' or 'subaccount'"):
+        charge_client.create(**payload)
 
 
 @responses.activate

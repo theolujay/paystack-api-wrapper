@@ -31,6 +31,37 @@ def test_create_transfer_recipient(transfer_recipients_client):
 
 
 @responses.activate
+def test_create_transfer_recipient_with_all_optional_params(transfer_recipients_client):
+    payload = {
+        "type": "nuban",
+        "name": "Test Recipient All Optional",
+        "account_number": "0987654321",
+        "bank_code": "044",
+        "description": "A test recipient with all optional fields",
+        "currency": "NGN",
+        "authorization_code": "AUTH_test",
+        "metadata": {"age": 30},
+    }
+    mock_response = {
+        "status": True,
+        "message": "Recipient created",
+        "data": {"name": payload["name"], "recipient_code": "RCP_test_all"},
+    }
+    responses.add(
+        responses.POST,
+        f"{transfer_recipients_client.base_url}/transferrecipient",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = transfer_recipients_client.create_transfer_recipient(**payload)
+
+    assert data["name"] == payload["name"]
+    assert data["recipient_code"] == "RCP_test_all"
+    assert meta == {}
+
+
+@responses.activate
 def test_create_transfer_recipient_invalid_key(transfer_recipients_client):
     payload = {
         "type": "nuban",
@@ -109,7 +140,7 @@ def test_list_transfer_recipients(transfer_recipients_client):
 
 
 @responses.activate
-def test_list_transfer_recipients_with_params(transfer_recipients_client):
+def test_list_transfer_recipients_with_all_params(transfer_recipients_client):
     mock_response = {
         "status": True,
         "message": "Recipients retrieved",
@@ -117,12 +148,14 @@ def test_list_transfer_recipients_with_params(transfer_recipients_client):
     }
     responses.add(
         responses.GET,
-        f"{transfer_recipients_client.base_url}/transferrecipient?perPage=1&page=1",
+        f"{transfer_recipients_client.base_url}/transferrecipient?perPage=1&page=1&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
-    data, meta = transfer_recipients_client.list_transfer_recipients(per_page=1, page=1)
+    data, meta = transfer_recipients_client.list_transfer_recipients(
+        per_page=1, page=1, from_date="2023-01-01", to_date="2023-01-31"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

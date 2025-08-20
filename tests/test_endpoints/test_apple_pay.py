@@ -86,6 +86,30 @@ def test_list_domains_with_cursor(apple_pay_client):
 
 
 @responses.activate
+def test_list_domains_with_previous_cursor(apple_pay_client):
+    mock_response = {
+        "status": True,
+        "message": "Domains retrieved",
+        "data": [{"domain_name": "example.com"}],
+        "meta": {"next": None, "previous": "cursor_previous"},
+    }
+    responses.add(
+        responses.GET,
+        f"{apple_pay_client.base_url}/apple-pay/domain?previous=cursor_previous",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = apple_pay_client.list_domains(
+        previous_cursor="cursor_previous"
+    )
+
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert meta["previous"] == "cursor_previous"
+
+
+@responses.activate
 def test_list_domains_invalid_key(apple_pay_client):
     mock_response = {"status": False, "message": "Invalid API key"}
     responses.add(

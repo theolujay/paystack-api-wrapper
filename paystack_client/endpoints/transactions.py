@@ -63,7 +63,7 @@ class TransactionsAPI(BaseClient):
             payload["plan"] = plan
         if invoice_limit is not None:
             payload["invoice_limit"] = invoice_limit
-        if metadata:
+        if metadata is not None:
             # Convert metadata dict to JSON string as per API requirements
             import json
 

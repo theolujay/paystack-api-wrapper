@@ -30,6 +30,34 @@ def test_create_virtual_terminal(virtual_terminal_client):
 
 
 @responses.activate
+def test_create_virtual_terminal_with_all_optional_params(virtual_terminal_client):
+    payload = {
+        "name": "Test Virtual Terminal All Optional",
+        "destinations": [{"target": "2348012345678", "name": "John Doe"}],
+        "metadata": [{"key": "value"}],
+        "currency": ["NGN"],
+        "custom_fields": [{"display_name": "Field", "variable_name": "field", "value": "test"}],
+    }
+    mock_response = {
+        "status": True,
+        "message": "Virtual Terminal created",
+        "data": {"name": payload["name"], "code": "VT_test_all"},
+    }
+    responses.add(
+        responses.POST,
+        f"{virtual_terminal_client.base_url}/virtual_terminal",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = virtual_terminal_client.create_virtual_terminal(**payload)
+
+    assert data["name"] == payload["name"]
+    assert data["code"] == "VT_test_all"
+    assert meta == {}
+
+
+@responses.activate
 def test_create_virtual_terminal_invalid_key(virtual_terminal_client):
     payload = {
         "name": "Test Virtual Terminal",
@@ -70,7 +98,7 @@ def test_list_virtual_terminals(virtual_terminal_client):
 
 
 @responses.activate
-def test_list_virtual_terminals_with_params(virtual_terminal_client):
+def test_list_virtual_terminals_with_all_params(virtual_terminal_client):
     mock_response = {
         "status": True,
         "message": "Virtual Terminals retrieved",
@@ -78,13 +106,17 @@ def test_list_virtual_terminals_with_params(virtual_terminal_client):
     }
     responses.add(
         responses.GET,
-        f"{virtual_terminal_client.base_url}/virtual_terminal?status=active&perPage=1",
+        f"{virtual_terminal_client.base_url}/virtual_terminal?status=active&perPage=1&search=test&next=next_cursor&previous=previous_cursor",
         json=mock_response,
         status=200,
     )
 
     data, meta = virtual_terminal_client.list_virtual_terminals(
-        status="active", per_page=1
+        status="active",
+        per_page=1,
+        search="test",
+        next_cursor="next_cursor",
+        previous_cursor="previous_cursor",
     )
 
     assert isinstance(data, list)

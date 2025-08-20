@@ -24,7 +24,7 @@ def test_list_settlements(settlements_client):
 
 
 @responses.activate
-def test_list_settlements_with_params(settlements_client):
+def test_list_settlements_with_all_params(settlements_client):
     mock_response = {
         "status": True,
         "message": "Settlements retrieved",
@@ -32,13 +32,18 @@ def test_list_settlements_with_params(settlements_client):
     }
     responses.add(
         responses.GET,
-        f"{settlements_client.base_url}/settlement?perPage=1&page=1&status=success",
+        f"{settlements_client.base_url}/settlement?perPage=1&page=1&status=success&subaccount=SUB_test&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
     data, meta = settlements_client.list_settlements(
-        per_page=1, page=1, status="success"
+        per_page=1,
+        page=1,
+        status="success",
+        subaccount="SUB_test",
+        from_date="2023-01-01",
+        to_date="2023-01-31",
     )
 
     assert isinstance(data, list)
@@ -73,7 +78,7 @@ def test_list_settlement_transactions(settlements_client):
 
 
 @responses.activate
-def test_list_settlement_transactions_with_params(settlements_client):
+def test_list_settlement_transactions_with_all_params(settlements_client):
     settlement_id = "SET_test"
     mock_response = {
         "status": True,
@@ -82,13 +87,17 @@ def test_list_settlement_transactions_with_params(settlements_client):
     }
     responses.add(
         responses.GET,
-        f"{settlements_client.base_url}/settlement/{settlement_id}/transactions?perPage=1&page=1",
+        f"{settlements_client.base_url}/settlement/{settlement_id}/transactions?perPage=1&page=1&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
     data, meta = settlements_client.list_settlement_transactions(
-        settlement_id=settlement_id, per_page=1, page=1
+        settlement_id=settlement_id,
+        per_page=1,
+        page=1,
+        from_date="2023-01-01",
+        to_date="2023-01-31",
     )
 
     assert isinstance(data, list)

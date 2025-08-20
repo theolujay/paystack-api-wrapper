@@ -33,6 +33,35 @@ def test_create_split(transaction_splits_client):
 
 
 @responses.activate
+def test_create_split_with_bearer_subaccount(transaction_splits_client):
+    payload = {
+        "name": "Test Split with Bearer Subaccount",
+        "type": "percentage",
+        "currency": "NGN",
+        "subaccounts": [{"subaccount": "ACT_test1", "share": 50}],
+        "bearer_type": "subaccount",
+        "bearer_subaccount": "ACT_bearer",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Split created",
+        "data": {"name": payload["name"], "split_code": "SPL_test_bearer"},
+    }
+    responses.add(
+        responses.POST,
+        f"{transaction_splits_client.base_url}/split",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = transaction_splits_client.create_split(**payload)
+
+    assert data["name"] == payload["name"]
+    assert data["split_code"] == "SPL_test_bearer"
+    assert meta == {}
+
+
+@responses.activate
 def test_create_split_invalid_key(transaction_splits_client):
     payload = {
         "name": "Test Split",
@@ -76,7 +105,7 @@ def test_list_splits(transaction_splits_client):
 
 
 @responses.activate
-def test_list_splits_with_params(transaction_splits_client):
+def test_list_splits_with_all_params(transaction_splits_client):
     mock_response = {
         "status": True,
         "message": "Splits retrieved",
@@ -84,12 +113,20 @@ def test_list_splits_with_params(transaction_splits_client):
     }
     responses.add(
         responses.GET,
-        f"{transaction_splits_client.base_url}/split?name=Split 1&active=True",
+        f"{transaction_splits_client.base_url}/split?name=Test&active=True&sort_by=createdAt&perPage=10&page=1&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
-    data, meta = transaction_splits_client.list_splits(name="Split 1", active=True)
+    data, meta = transaction_splits_client.list_splits(
+        name="Test",
+        active=True,
+        sort_by="createdAt",
+        per_page=10,
+        page=1,
+        from_date="2023-01-01",
+        to_date="2023-01-31",
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -125,6 +162,34 @@ def test_update_split(transaction_splits_client):
     payload = {
         "name": "Updated Split Name",
         "active": False,
+    }
+    mock_response = {
+        "status": True,
+        "message": "Split updated",
+        "data": {"name": payload["name"], "id": split_id},
+    }
+    responses.add(
+        responses.PUT,
+        f"{transaction_splits_client.base_url}/split/{split_id}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = transaction_splits_client.update_split(split_id=split_id, **payload)
+
+    assert data["name"] == payload["name"]
+    assert data["id"] == split_id
+    assert meta == {}
+
+
+@responses.activate
+def test_update_split_with_optional_params(transaction_splits_client):
+    split_id = "SPL_test_optional"
+    payload = {
+        "name": "Updated Split Name Optional",
+        "active": True,
+        "bearer_type": "subaccount",
+        "bearer_subaccount": "ACT_bearer_update",
     }
     mock_response = {
         "status": True,

@@ -31,12 +31,40 @@ def test_create_refund(refunds_client):
 
 
 @responses.activate
+def test_create_refund_with_all_optional_params(refunds_client):
+    payload = {
+        "transaction": "TRN_test_optional",
+        "amount": 5000,
+        "currency": "USD",
+        "customer_note": "Customer changed mind",
+        "merchant_note": "Item returned",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Refund created",
+        "data": {"transaction": payload["transaction"], "amount": payload["amount"]},
+    }
+    responses.add(
+        responses.POST,
+        f"{refunds_client.base_url}/refund",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = refunds_client.create(**payload)
+
+    assert data["transaction"] == payload["transaction"]
+    assert data["amount"] == payload["amount"]
+    assert meta == {}
+
+
+@responses.activate
 def test_create_refund_invalid_amount(refunds_client):
     payload = {
         "transaction": "TRN_test",
         "amount": 0,
     }
-    with pytest.raises(APIError):
+    with pytest.raises(APIError, match="amount must be greater than 0"):
         refunds_client.create(**payload)
 
 
@@ -81,12 +109,68 @@ def test_list_refunds(refunds_client):
 
 
 @responses.activate
+def test_list_refunds_with_date_params(refunds_client):
+    transaction = "TRN_test_date"
+    currency = "NGN"
+    mock_response = {
+        "status": True,
+        "message": "Refunds retrieved",
+        "data": [{"id": 2, "transaction": transaction}],
+    }
+    responses.add(
+        responses.GET,
+        f"{refunds_client.base_url}/refund?transaction={transaction}&currency={currency}&from=2023-01-01&to=2023-01-31",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = refunds_client.list_refunds(
+        transaction=transaction, currency=currency, from_date="2023-01-01", to_date="2023-01-31"
+    )
+
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert data[0]["transaction"] == transaction
+    assert meta == {}
+
+
+@responses.activate
 def test_list_refunds_invalid_per_page(refunds_client):
     transaction = "TRN_test"
     currency = "NGN"
-    with pytest.raises(APIError):
+    with pytest.raises(APIError, match="per_page must be greater than 0"):
         refunds_client.list_refunds(
             transaction=transaction, currency=currency, per_page=0
+        )
+
+
+@responses.activate
+def test_list_refunds_invalid_per_page_negative(refunds_client):
+    transaction = "TRN_test"
+    currency = "NGN"
+    with pytest.raises(APIError, match="per_page must be greater than 0"):
+        refunds_client.list_refunds(
+            transaction=transaction, currency=currency, per_page=-1
+        )
+
+
+@responses.activate
+def test_list_refunds_invalid_page(refunds_client):
+    transaction = "TRN_test"
+    currency = "NGN"
+    with pytest.raises(APIError, match="page must be greater than 0"):
+        refunds_client.list_refunds(
+            transaction=transaction, currency=currency, page=0
+        )
+
+
+@responses.activate
+def test_list_refunds_invalid_page_negative(refunds_client):
+    transaction = "TRN_test"
+    currency = "NGN"
+    with pytest.raises(APIError, match="page must be greater than 0"):
+        refunds_client.list_refunds(
+            transaction=transaction, currency=currency, page=-1
         )
 
 

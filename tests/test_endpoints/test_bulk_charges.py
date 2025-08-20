@@ -67,7 +67,7 @@ def test_list_bulk_charge_batches(bulk_charges_client):
 
 
 @responses.activate
-def test_list_bulk_charge_batches_with_params(bulk_charges_client):
+def test_list_bulk_charge_batches_with_all_params(bulk_charges_client):
     mock_response = {
         "status": True,
         "message": "Bulk charge batches retrieved",
@@ -75,12 +75,14 @@ def test_list_bulk_charge_batches_with_params(bulk_charges_client):
     }
     responses.add(
         responses.GET,
-        f"{bulk_charges_client.base_url}/bulkcharge?perPage=1&page=1",
+        f"{bulk_charges_client.base_url}/bulkcharge?perPage=1&page=1&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
-    data, meta = bulk_charges_client.list_bulk_charge_batches(per_page=1, page=1)
+    data, meta = bulk_charges_client.list_bulk_charge_batches(
+        per_page=1, page=1, from_date="2023-01-01", to_date="2023-01-31"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -165,8 +167,8 @@ def test_fetch_charges_in_batch(bulk_charges_client):
 
 
 @responses.activate
-def test_fetch_charges_in_batch_with_params(bulk_charges_client):
-    id_or_code = "BULK_test"
+def test_fetch_charges_in_batch_with_all_params(bulk_charges_client):
+    id_or_code = "BULK_test_all"
     mock_response = {
         "status": True,
         "message": "Charges in batch retrieved",
@@ -174,13 +176,18 @@ def test_fetch_charges_in_batch_with_params(bulk_charges_client):
     }
     responses.add(
         responses.GET,
-        f"{bulk_charges_client.base_url}/bulkcharge/{id_or_code}/charges?status=success&perPage=1",
+        f"{bulk_charges_client.base_url}/bulkcharge/{id_or_code}/charges?status=success&perPage=1&page=1&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
     data, meta = bulk_charges_client.fetch_charges_in_batch(
-        id_or_code=id_or_code, status="success", per_page=1
+        id_or_code=id_or_code,
+        status="success",
+        per_page=1,
+        page=1,
+        from_date="2023-01-01",
+        to_date="2023-01-31",
     )
 
     assert isinstance(data, list)

@@ -1,6 +1,7 @@
 import pytest
 import responses
 from paystack_client import ValidationError
+from paystack_client.exceptions import APIError
 
 
 @responses.activate
@@ -30,6 +31,31 @@ def test_create_customer(customers_client):
 
 
 @responses.activate
+def test_create_customer_with_metadata(customers_client):
+    payload = {
+        "email": "customer_meta@example.com",
+        "metadata": {"age": 30, "city": "Lagos"},
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer created",
+        "data": {"email": payload["email"], "customer_code": "CUS_meta"},
+    }
+    responses.add(
+        responses.POST,
+        f"{customers_client.base_url}/customer",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.create(**payload)
+
+    assert data["email"] == payload["email"]
+    assert data["customer_code"] == "CUS_meta"
+    assert meta == {}
+
+
+@responses.activate
 def test_create_customer_with_required_fields_validation(customers_client):
     payload = {
         "email": "customer@example.com",
@@ -54,6 +80,17 @@ def test_create_customer_with_required_fields_validation(customers_client):
     assert data["email"] == payload["email"]
     assert data["customer_code"] == "CUS_test"
     assert meta == {}
+
+
+@responses.activate
+def test_create_customer_with_required_fields_validation_missing_fields(customers_client):
+    payload = {
+        "email": "customer@example.com",
+        "first_name": "John",
+        # Missing last_name and phone
+    }
+    with pytest.raises(ValidationError, match="Missing required parameters: last_name, phone"):
+        customers_client.create(**payload, validate_required_fields=True)
 
 
 @responses.activate
@@ -93,7 +130,7 @@ def test_list_customers(customers_client):
 
 
 @responses.activate
-def test_list_customers_with_params(customers_client):
+def test_list_customers_with_all_params(customers_client):
     mock_response = {
         "status": True,
         "message": "Customers retrieved",
@@ -101,12 +138,14 @@ def test_list_customers_with_params(customers_client):
     }
     responses.add(
         responses.GET,
-        f"{customers_client.base_url}/customer?perPage=1&page=1",
+        f"{customers_client.base_url}/customer?perPage=1&page=1&from=2023-01-01&to=2023-01-31",
         json=mock_response,
         status=200,
     )
 
-    data, meta = customers_client.list_customers(per_page=1, page=1)
+    data, meta = customers_client.list_customers(
+        per_page=1, page=1, from_date="2023-01-01", to_date="2023-01-31"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1
@@ -158,6 +197,159 @@ def test_update_customer(customers_client):
 
     assert data["customer_code"] == code
     assert data["first_name"] == "Jane"
+    assert meta == {}
+
+
+@responses.activate
+def test_update_customer_with_all_optional_params(customers_client):
+    code = "CUS_test_all"
+    payload = {
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "phone": "09012345678",
+        "metadata": {"age": 35},
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer updated",
+        "data": {"customer_code": code, "first_name": "Jane"},
+    }
+    responses.add(
+        responses.PUT,
+        f"{customers_client.base_url}/customer/{code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.update(code=code, **payload)
+
+    assert data["customer_code"] == code
+    assert data["first_name"] == "Jane"
+    assert meta == {}
+
+
+@responses.activate
+def test_update_customer_with_last_name(customers_client):
+    code = "CUS_test_last_name"
+    payload = {
+        "last_name": "Doe",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer updated",
+        "data": {"customer_code": code, "last_name": "Doe"},
+    }
+    responses.add(
+        responses.PUT,
+        f"{customers_client.base_url}/customer/{code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.update(code=code, **payload)
+
+    assert data["customer_code"] == code
+    assert data["last_name"] == "Doe"
+    assert meta == {}
+
+
+@responses.activate
+def test_update_customer_with_phone(customers_client):
+    code = "CUS_test_phone"
+    payload = {
+        "phone": "09012345678",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer updated",
+        "data": {"customer_code": code, "phone": "09012345678"},
+    }
+    responses.add(
+        responses.PUT,
+        f"{customers_client.base_url}/customer/{code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.update(code=code, **payload)
+
+    assert data["customer_code"] == code
+    assert data["phone"] == "09012345678"
+    assert meta == {}
+
+
+@responses.activate
+def test_update_customer_only_first_name(customers_client):
+    code = "CUS_test_only_first_name"
+    payload = {
+        "first_name": "OnlyFirst",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer updated",
+        "data": {"customer_code": code, "first_name": "OnlyFirst"},
+    }
+    responses.add(
+        responses.PUT,
+        f"{customers_client.base_url}/customer/{code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.update(code=code, **payload)
+
+    assert data["customer_code"] == code
+    assert data["first_name"] == "OnlyFirst"
+    assert meta == {}
+
+
+@responses.activate
+def test_update_customer_only_last_name(customers_client):
+    code = "CUS_test_only_last_name"
+    payload = {
+        "last_name": "OnlyLast",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer updated",
+        "data": {"customer_code": code, "last_name": "OnlyLast"},
+    }
+    responses.add(
+        responses.PUT,
+        f"{customers_client.base_url}/customer/{code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.update(code=code, **payload)
+
+    assert data["customer_code"] == code
+    assert data["last_name"] == "OnlyLast"
+    assert meta == {}
+
+
+@responses.activate
+def test_update_customer_only_phone(customers_client):
+    code = "CUS_test_only_phone"
+    payload = {
+        "phone": "09011112222",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Customer updated",
+        "data": {"customer_code": code, "phone": "09011112222"},
+    }
+    responses.add(
+        responses.PUT,
+        f"{customers_client.base_url}/customer/{code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = customers_client.update(code=code, **payload)
+
+    assert data["customer_code"] == code
+    assert data["phone"] == "09011112222"
     assert meta == {}
 
 
@@ -326,6 +518,61 @@ def test_initialize_direct_debit_invalid_account(customers_client):
         "address": {"street": "123 Main St", "city": "Lagos", "state": "Lagos"},
     }
     with pytest.raises(ValidationError):
+        customers_client.initialize_direct_debit(**payload)
+
+
+@responses.activate
+def test_initialize_direct_debit_invalid_account_missing_bank_code(customers_client):
+    payload = {
+        "customer_id": "CUS_test",
+        "account": {"number": "0123456789"},  # Missing bank_code
+        "address": {"street": "123 Main St", "city": "Lagos", "state": "Lagos"},
+    }
+    with pytest.raises(ValidationError, match="account must contain 'number' and 'bank_code'"):
+        customers_client.initialize_direct_debit(**payload)
+
+
+@responses.activate
+def test_initialize_direct_debit_invalid_account_missing_number(customers_client):
+    payload = {
+        "customer_id": "CUS_test",
+        "account": {"bank_code": "044"},  # Missing number
+        "address": {"street": "123 Main St", "city": "Lagos", "state": "Lagos"},
+    }
+    with pytest.raises(ValidationError, match="account must contain 'number' and 'bank_code'"):
+        customers_client.initialize_direct_debit(**payload)
+
+
+@responses.activate
+def test_initialize_direct_debit_invalid_address_missing_street(customers_client):
+    payload = {
+        "customer_id": "CUS_test",
+        "account": {"number": "0123456789", "bank_code": "044"},
+        "address": {"city": "Lagos", "state": "Lagos"},  # Missing street
+    }
+    with pytest.raises(ValidationError, match="address must contain 'street', 'city', and 'state'"):
+        customers_client.initialize_direct_debit(**payload)
+
+
+@responses.activate
+def test_initialize_direct_debit_invalid_address_missing_city(customers_client):
+    payload = {
+        "customer_id": "CUS_test",
+        "account": {"number": "0123456789", "bank_code": "044"},
+        "address": {"street": "123 Main St", "state": "Lagos"},  # Missing city
+    }
+    with pytest.raises(ValidationError, match="address must contain 'street', 'city', and 'state'"):
+        customers_client.initialize_direct_debit(**payload)
+
+
+@responses.activate
+def test_initialize_direct_debit_invalid_address_missing_state(customers_client):
+    payload = {
+        "customer_id": "CUS_test",
+        "account": {"number": "0123456789", "bank_code": "044"},
+        "address": {"street": "123 Main St", "city": "Lagos"},  # Missing state
+    }
+    with pytest.raises(ValidationError, match="address must contain 'street', 'city', and 'state'"):
         customers_client.initialize_direct_debit(**payload)
 
 

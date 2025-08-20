@@ -170,6 +170,18 @@ class TestCreateErrorFromResponse:
         assert error.message == "Too many requests"
         assert error.retry_after == 120
 
+    def test_429_rate_limit_error_no_headers_attribute(self):
+        mock_response = Mock()
+        del mock_response.headers # Remove the headers attribute
+        mock_response.json.return_value = {
+            "status": False,
+            "message": "Too many requests",
+        }
+        error = create_error_from_response(mock_response, 429)
+        assert isinstance(error, RateLimitError)
+        assert error.message == "Too many requests"
+        assert error.retry_after is None
+
     def test_500_server_error(self):
         response_data = {"status": False, "message": "Internal server error"}
         error = create_error_from_response(response_data, 500)

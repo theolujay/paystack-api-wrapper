@@ -109,11 +109,19 @@ class BaseClient:
                 )
             else:
                 # Use the factory function to create appropriate exception
-                raise create_error_from_response(
-                    response=resp_json,
-                    status_code=response.status_code,
-                    request_id=request_id,
-                )
+                # For RateLimitError, pass the original response object to access headers
+                if response.status_code == 429:
+                    raise create_error_from_response(
+                        response=response, # Pass the original response object
+                        status_code=response.status_code,
+                        request_id=request_id,
+                    )
+                else:
+                    raise create_error_from_response(
+                        response=resp_json,
+                        status_code=response.status_code,
+                        request_id=request_id,
+                    )
         except requests.exceptions.ConnectTimeout:
             raise NetworkError("Connection timed out - check your internet connection")
         except requests.exceptions.ReadTimeout:

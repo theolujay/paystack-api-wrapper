@@ -30,6 +30,33 @@ def test_create_subscription(subscriptions_client):
 
 
 @responses.activate
+def test_create_subscription_with_optional_params(subscriptions_client):
+    payload = {
+        "customer": "customer_opt@example.com",
+        "plan": "PLN_test_opt",
+        "authorization": "AUTH_test",
+        "start_date": "2023-01-01",
+    }
+    mock_response = {
+        "status": True,
+        "message": "Subscription created",
+        "data": {"customer": payload["customer"], "plan": payload["plan"]},
+    }
+    responses.add(
+        responses.POST,
+        f"{subscriptions_client.base_url}/subscription",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = subscriptions_client.create_subscription(**payload)
+
+    assert data["customer"] == payload["customer"]
+    assert data["plan"] == payload["plan"]
+    assert meta == {}
+
+
+@responses.activate
 def test_create_subscription_invalid_key(subscriptions_client):
     payload = {
         "customer": "customer@example.com",
@@ -70,7 +97,7 @@ def test_list_subscriptions(subscriptions_client):
 
 
 @responses.activate
-def test_list_subscriptions_with_params(subscriptions_client):
+def test_list_subscriptions_with_all_params(subscriptions_client):
     mock_response = {
         "status": True,
         "message": "Subscriptions retrieved",
@@ -78,12 +105,14 @@ def test_list_subscriptions_with_params(subscriptions_client):
     }
     responses.add(
         responses.GET,
-        f"{subscriptions_client.base_url}/subscription?perPage=1&page=1",
+        f"{subscriptions_client.base_url}/subscription?perPage=1&page=1&customer=CUS_test&plan=PLN_test",
         json=mock_response,
         status=200,
     )
 
-    data, meta = subscriptions_client.list_subscriptions(per_page=1, page=1)
+    data, meta = subscriptions_client.list_subscriptions(
+        per_page=1, page=1, customer="CUS_test", plan="PLN_test"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

@@ -98,7 +98,7 @@ class RefundsAPI(BaseClient):
                 raise APIError("page must be greater than 0")
             payload["page"] = page
 
-        return self.request("GET", "refund", json_data=payload)
+        return self.request("GET", "refund", params=payload)
 
     def fetch(
         self, refund_id: Union[str, int]

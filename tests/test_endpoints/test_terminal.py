@@ -121,7 +121,7 @@ def test_list_terminals(terminal_client):
 
 
 @responses.activate
-def test_list_terminals_with_params(terminal_client):
+def test_list_terminals_with_all_params(terminal_client):
     mock_response = {
         "status": True,
         "message": "Terminals retrieved",
@@ -129,12 +129,14 @@ def test_list_terminals_with_params(terminal_client):
     }
     responses.add(
         responses.GET,
-        f"{terminal_client.base_url}/terminal?perPage=1",
+        f"{terminal_client.base_url}/terminal?perPage=1&next=next_cursor&previous=previous_cursor",
         json=mock_response,
         status=200,
     )
 
-    data, meta = terminal_client.list_terminals(per_page=1)
+    data, meta = terminal_client.list_terminals(
+        per_page=1, next_cursor="next_cursor", previous_cursor="previous_cursor"
+    )
 
     assert isinstance(data, list)
     assert len(data) == 1

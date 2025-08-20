@@ -441,6 +441,34 @@ def test_initialize_transaction_with_all_params(transaction_client):
     assert request_payload["bearer"] == payload["bearer"]
 
 
+@responses.activate
+def test_initialize_transaction_with_empty_metadata(transaction_client):
+    mock_response = {
+        "status": True,
+        "message": "Authorization URL created",
+        "data": {
+            "authorization_url": "https://checkout.paystack.com/3ni8kdavz62431k",
+            "access_code": "3ni8kdavz62431k",
+            "reference": "re4lyvq3s3",
+        },
+    }
+    setup_mock_initialize_response(transaction_client, mock_response)
+    payload = {
+        "email": "customer@email.com",
+        "amount": "20000",
+        "currency": "NGN",
+        "metadata": {},
+    }
+
+    response_data, response_meta = transaction_client.initialize(**payload)
+    request = responses.calls[0].request
+    request_payload = json.loads(request.body)
+
+    # The metadata field is expected to be a JSON string in the request payload
+    print(f"request_payload: {request_payload}") # Debug print
+    assert "metadata" in request_payload
+    assert request_payload["metadata"] == json.dumps(payload["metadata"])
+
 
 @pytest.mark.parametrize(
     "test_kwargs",
@@ -480,7 +508,7 @@ def test_initialize_transaction_timeout(transaction_client):
     with pytest.raises(NetworkError) as excinfo:
         transaction_client.initialize(email="customer@email.com", amount=20000)
         expected_keyword = "Request failed:"
-        assert str(expected_keyword).lower() in str(excinfo.value).lower
+        assert str(expected_keyword).lower() in str(excinfo.value).lower()
 
 
 # === Invalid Email Tests ===
@@ -567,7 +595,7 @@ def test_list_transactions_invalid_key(transaction_client):
     setup_mock_list_transactions_response(
         transaction_client, mock_response, status_code=401
     )
-    assert_api_error_contains(transaction_client.list_transactions, "invalid api key")
+    assert_api_error_contains(transaction_client.list_transactions, "Invalid API key")
 
 
 @responses.activate
@@ -601,12 +629,10 @@ def test_list_transactions_with_all_params(transaction_client):
     assert "amount=10000" in request.url
 
 
+@responses.activate
 def test_list_transactions_invalid_status(transaction_client):
-    with pytest.raises(APIError) as excinfo:
+    with pytest.raises(APIError, match="status must be one of: 'failed', 'success', 'abandoned'"):
         transaction_client.list_transactions(status="invalid_status")
-    assert "status must be one of: 'failed', 'success', 'abandoned'" in str(
-        excinfo.value
-    )
 
 
 # --- test_partial_debit.py ---
@@ -698,131 +724,15 @@ def test_partial_debit_invalid_key(transaction_client):
     )
 
 
+@responses.activate
 def test_partial_debit_invalid_currency(transaction_client):
-    with pytest.raises(ValidationError) as excinfo:
+    with pytest.raises(ValidationError, match="currency must be 'NGN' or 'GHS' for partial debit"):
         transaction_client.partial_debit(
             authorization_code="AUTH_test",
             currency="USD",
             amount="20000",
-            email="customer@email.com",
+            email="customer@example.com",
         )
-    assert "currency must be 'NGN' or 'GHS' for partial debit" in str(excinfo.value)
-
-
-# --- test_verify.py ---
-def setup_mock_verify_response(
-    transaction_client, reference, response_data=None, status_code=200
-):
-    """Helper to set up a mock GET response for transaction verification"""
-    if response_data is None:
-        response_data = {
-            "status": True,
-            "message": "Success",
-            "data": {"reference": reference},
-        }
-
-    responses.add(
-        responses.GET,
-        f"{transaction_client.base_url}/transaction/verify/{reference}",
-        json=response_data,
-        status=status_code,
-    )
-
-
-@responses.activate
-def test_verify_transaction(transaction_client):
-    reference = "adhvousgtsnsl"
-    mock_response = {
-        "status": True,
-        "message": "Verification successful",
-        "data": {
-            "reference": reference,
-            "status": "success",
-            "amount": 40333,
-            "gateway_response": "Successful",
-        },
-    }
-    setup_mock_verify_response(transaction_client, reference, mock_response)
-
-    data, meta = transaction_client.verify(reference)
-
-    assert data["reference"] == reference
-    assert data["status"] == "success"
-
-
-@responses.activate
-def test_verify_transaction_invalid_key(transaction_client):
-    reference = "adhvousgtsnsl"
-    mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_verify_response(
-        transaction_client, reference, mock_response, status_code=401
-    )
-
-    assert_api_error_contains(transaction_client.verify, "invalid api key", reference)
-
-
-# --- test_view_timeline.py ---
-def setup_mock_view_timeline_response(
-    transaction_client, id_or_reference, response_data=None, status_code=200
-):
-    if response_data is None:
-        response_data = {
-            "status": True,
-            "message": "Timeline retrieved",
-            "data": {
-                "start_time": 1724318098,
-                "time_spent": 4,
-                "attempts": 1,
-                "errors": 0,
-                "success": True,
-                "mobile": False,
-                "input": [],
-                "history": [
-                    {
-                        "type": "action",
-                        "message": "Attempted to pay with card",
-                        "time": 3,
-                    },
-                    {
-                        "type": "success",
-                        "message": "Successfully paid with card",
-                        "time": 4,
-                    },
-                ],
-            },
-        }
-
-    responses.add(
-        responses.GET,
-        f"{transaction_client.base_url}/transaction/timeline/{id_or_reference}",
-        json=response_data,
-        status=status_code,
-    )
-
-
-@responses.activate
-def test_view_timeline(transaction_client):
-    id_or_reference = "0m7frfnr47ezyxl"
-    setup_mock_view_timeline_response(transaction_client, id_or_reference)
-
-    data, meta = transaction_client.view_timeline(id_or_reference)
-
-    assert data["success"] is True
-    assert isinstance(data["history"], list)
-    assert data["history"][0]["message"] == "Attempted to pay with card"
-
-
-@responses.activate
-def test_view_timeline_invalid_key(transaction_client):
-    id_or_reference = "0m7frfnr47ezyxl"
-    mock_response = {"status": False, "message": "Invalid API key"}
-    setup_mock_view_timeline_response(
-        transaction_client, id_or_reference, mock_response, status_code=401
-    )
-    assert_api_error_contains(
-        transaction_client.view_timeline, "invalid api key", id_or_reference
-    )
-
 
 
 # --- test_verify.py ---

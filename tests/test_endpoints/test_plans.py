@@ -30,6 +30,37 @@ def test_create_plan(plans_client):
 
 
 @responses.activate
+def test_create_plan_with_all_optional_params(plans_client):
+    payload = {
+        "name": "Yearly Plan with Options",
+        "amount": 120000,
+        "interval": "annually",
+        "description": "A comprehensive yearly plan",
+        "send_invoices": False,
+        "send_sms": False,
+        "currency": "NGN",
+        "invoice_limit": 12,
+    }
+    mock_response = {
+        "status": True,
+        "message": "Plan created",
+        "data": {"name": payload["name"], "plan_code": "PLN_test_optional"},
+    }
+    responses.add(
+        responses.POST,
+        f"{plans_client.base_url}/plan",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = plans_client.create_plan(**payload)
+
+    assert data["name"] == payload["name"]
+    assert data["plan_code"] == "PLN_test_optional"
+    assert meta == {}
+
+
+@responses.activate
 def test_create_plan_invalid_key(plans_client):
     payload = {
         "name": "Monthly Plan",
@@ -91,6 +122,28 @@ def test_list_plans_with_params(plans_client):
 
 
 @responses.activate
+def test_list_plans_with_filter_params(plans_client):
+    mock_response = {
+        "status": True,
+        "message": "Plans retrieved",
+        "data": [{"name": "Filtered Plan"}],
+    }
+    responses.add(
+        responses.GET,
+        f"{plans_client.base_url}/plan?status=active&interval=monthly&amount=10000",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = plans_client.list_plans(status="active", interval="monthly", amount=10000)
+
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert data[0]["name"] == "Filtered Plan"
+    assert meta == {}
+
+
+@responses.activate
 def test_fetch_plan(plans_client):
     id_or_code = "PLN_test"
     mock_response = {
@@ -118,6 +171,39 @@ def test_update_plan(plans_client):
     payload = {
         "name": "Updated Plan Name",
         "amount": 15000,
+    }
+    mock_response = {
+        "status": True,
+        "message": "Plan updated",
+        "data": {"name": payload["name"], "plan_code": id_or_code},
+    }
+    responses.add(
+        responses.PUT,
+        f"{plans_client.base_url}/plan/{id_or_code}",
+        json=mock_response,
+        status=200,
+    )
+
+    data, meta = plans_client.update_plan(id_or_code=id_or_code, **payload)
+
+    assert data["name"] == payload["name"]
+    assert data["plan_code"] == id_or_code
+    assert meta == {}
+
+
+@responses.activate
+def test_update_plan_with_all_optional_params(plans_client):
+    id_or_code = "PLN_test_update"
+    payload = {
+        "name": "Fully Updated Plan Name",
+        "amount": 20000,
+        "interval": "weekly",
+        "description": "Fully updated description",
+        "send_invoices": True,
+        "send_sms": True,
+        "currency": "USD",
+        "invoice_limit": 5,
+        "update_existing_subscriptions": False,
     }
     mock_response = {
         "status": True,

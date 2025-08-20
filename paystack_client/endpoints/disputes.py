@@ -57,7 +57,7 @@ class DisputesAPI(BaseClient):
         if status:
             payload["status"] = status
 
-        return self.request("GET", "dispute", json_data=payload)
+        return self.request("GET", "dispute", params=payload)
 
     def fetch_dispute(self, dispute_id: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
@@ -240,4 +240,4 @@ class DisputesAPI(BaseClient):
         if status:
             payload["status"] = status
 
-        return self.request("GET", "dispute/export", json_data=payload)
+        return self.request("GET", "dispute/export", params=payload)
