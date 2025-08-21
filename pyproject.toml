@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "paystack-api-wrapper"
-version = "1.0.0"
-description = "A Python wrapper for the Paystack API"
+version = "1.0.1"
+description = "Modern, test-driven Python client for the Paystack API — built to save you time integrating into Python projects."
 authors = [
     {name = "Joseph Ezekiel", email = "theolujay@gmail.com"},
 ]
@@ -14,7 +14,7 @@ maintainers = [
 ]
 readme = {file = "README.md", content-type = "text/markdown"}
 license = {text = "MIT"}
-requires-python = ">=3.9"  # Changed from >=3.8
+requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -24,15 +24,14 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Internet :: WWW/HTTP",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Framework :: Django",
 ]
-keywords = ["paystack", "payment", "api", "django", "python", "fintech", "nigeria"]
+keywords = ["paystack", "payment", "api", "python", "fintech", "nigeria"]
 
 dependencies = [
     "requests>=2.25.0",
-    "pytest>=8.4.1",
 ]
 
 [project.optional-dependencies]
@@ -51,13 +50,14 @@ test = [
     "pytest>=8.4.1", 
     "responses>=0.25.8",
     "pytest-cov>=4.0.0",
+    "pytest-mock>=3.14.1",
 ]
 
 [project.urls]
-Homepage = "https://github.com/theolujay/paystack"
-Repository = "https://github.com/theolujay/paystack"
-Documentation = "https://paystack.readthedocs.io"
-"Bug Tracker" = "https://github.com/theolujay/paystack/issues"
+Homepage = "https://github.com/theolujay/paystack-api-wrapper/blob/main/README.md"
+Repository = "https://github.com/theolujay/paystack-api-wrapper"
+Documentation = "https://github.com/theolujay/paystack-api-wrapper/blob/main/docs/USAGE.md"
+"Bug Tracker" = "https://github.com/theolujay/paystack-api-wrapper/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["paystack"]
