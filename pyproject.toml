@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "paystack-api-wrapper"
-version = "1.0.1"
+version = "0.1.1"
 description = "Modern, test-driven Python client for the Paystack API — built to save you time integrating into Python projects."
 authors = [
     {name = "Joseph Ezekiel", email = "theolujay@gmail.com"},

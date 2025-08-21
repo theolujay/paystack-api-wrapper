@@ -132,4 +132,7 @@ models_erd.png
 *.dot
 *.png
 .coverage
-test_library.py
+test_library.pytest_env/
+.venv/
+__pycache__/
+*.egg-info/

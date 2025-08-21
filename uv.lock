@@ -666,10 +666,9 @@ wheels = [
 
 [[package]]
 name = "paystack-api-wrapper"
-version = "1.0.0"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "pytest" },
     { name = "requests" },
 ]
 
@@ -688,6 +687,7 @@ dev = [
 test = [
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-mock" },
     { name = "responses" },
 ]
 
@@ -702,12 +702,12 @@ requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=22.0.0" },
     { name = "build", marker = "extra == 'dev'", specifier = ">=1.0.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-    { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.4.1" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.4.1" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0.0" },
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=4.0.0" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.1" },
+    { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.14.1" },
     { name = "requests", specifier = ">=2.25.0" },
     { name = "responses", marker = "extra == 'dev'", specifier = ">=0.25.8" },
     { name = "responses", marker = "extra == 'test'", specifier = ">=0.25.8" },
