@@ -666,7 +666,7 @@ wheels = [
 
 [[package]]
 name = "paystack-api-wrapper"
-version = "0.1.1"
+version = "2"
 source = { editable = "." }
 dependencies = [
     { name = "requests" },

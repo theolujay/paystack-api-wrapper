@@ -19,7 +19,7 @@ from .exceptions import (
 )
 from .webhook import Webhook, WebhookEvent, Event, WHITELISTED_IPS
 
-__version__ = "1.0.0"
+__version__ = "2"
 __author__ = "Joseph Ezekiel"
 __email__ = "theolujay@gmail.com"
 __description__ = "A modern Python client for Paystack API"

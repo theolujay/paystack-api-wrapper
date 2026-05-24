@@ -41,7 +41,7 @@ class BaseClient:
             {
                 "Authorization": f"Bearer {self.secret_key}",
                 "Content-Type": "application/json",
-                "User-Agent": "paystack-client/1.0.0",
+                "User-Agent": "paystack-client/2",
             }
         )
 
