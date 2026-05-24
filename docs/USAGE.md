@@ -2,6 +2,11 @@
 
 This guide provides a detailed walkthrough of the `paystack-api-wrapper` library, covering initialization, making API calls, handling responses, robust error management, and other advanced topics.
 
+**Resources:**
+- [API Reference](./API_REFERENCE.md) - List of all available endpoints and methods.
+- [Webhooks Guide](./WEBHOOKS.md) - How to securely handle Paystack webhooks.
+- [GitHub Repository](https://github.com/theolujay/paystack-api-wrapper)
+
 For a brief overview, see the main [README.md](../README.md).
 
 ## 1. Client Initialization

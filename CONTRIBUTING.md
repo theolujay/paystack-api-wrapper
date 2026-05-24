@@ -62,16 +62,26 @@ Thanks for your interest in contributing. Contributions, issues, and feature req
 
 ## Running Tests and Linting
 
+We use a `Makefile` to simplify common development tasks.
+
+*   **Install dependencies:** `make install`
+*   **Run tests:** `make test`
+*   **Run tests with coverage:** `make test/coverage`
+*   **Lint code:** `make lint`
+*   **Format code:** `make format`
+
+Alternatively, you can run tools directly:
+
 * **Tests:**
 
   ```bash
-  pytest --cov=paystack-api-wrapper
+  pytest
   ```
-* **Lint & formatting (black + flake8):**
+* **Lint & formatting:**
 
   ```bash
-  black .
-  flake8 .
+  ruff check .
+  ruff format .
   ```
 
 ---
