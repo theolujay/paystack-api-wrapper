@@ -1,18 +1,17 @@
-import json
-import hmac
 import hashlib
+import hmac
+import json
 
 import pytest
 
 from paystack import (
-    Webhook,
-    WebhookEvent,
-    Event,
     WHITELISTED_IPS,
     AuthenticationError,
+    Event,
     ValidationError,
+    Webhook,
+    WebhookEvent,
 )
-
 
 SECRET_KEY = "sk_test_abcdefghijklmnopqrstuvwxyz1234567890"
 
@@ -93,10 +92,7 @@ def test_verify_signature_key_from_instance():
 def test_verify_signature_key_from_parameter():
     w = Webhook()
     signature = _sign(SAMPLE_PAYLOAD)
-    assert (
-        w.verify_signature(SAMPLE_PAYLOAD, signature, secret_key=SECRET_KEY)
-        is True
-    )
+    assert w.verify_signature(SAMPLE_PAYLOAD, signature, secret_key=SECRET_KEY) is True
 
 
 def test_verify_signature_missing_key():
@@ -109,10 +105,7 @@ def test_verify_signature_raises_on_missing_key_with_secret_key_in_param():
     """No error -> the secret_key kwarg shadows the missing instance key."""
     w = Webhook()
     signature = _sign(SAMPLE_PAYLOAD)
-    assert (
-        w.verify_signature(SAMPLE_PAYLOAD, signature, secret_key=SECRET_KEY)
-        is True
-    )
+    assert w.verify_signature(SAMPLE_PAYLOAD, signature, secret_key=SECRET_KEY) is True
 
 
 # ── IP whitelist ───────────────────────────────────────────────────
@@ -168,17 +161,13 @@ def test_parse_event_from_bytes():
 
 def test_parse_event_missing_event_field():
     w = Webhook()
-    with pytest.raises(
-        ValidationError, match="missing 'event' field"
-    ):
+    with pytest.raises(ValidationError, match="missing 'event' field"):
         w.parse_event({"data": {"key": "val"}})
 
 
 def test_parse_event_missing_data_field():
     w = Webhook()
-    with pytest.raises(
-        ValidationError, match="missing 'data' field"
-    ):
+    with pytest.raises(ValidationError, match="missing 'data' field"):
         w.parse_event({"event": "charge.success"})
 
 
@@ -190,17 +179,13 @@ def test_parse_event_invalid_json():
 
 def test_parse_event_non_dict():
     w = Webhook()
-    with pytest.raises(
-        ValidationError, match="must be a JSON object"
-    ):
+    with pytest.raises(ValidationError, match="must be a JSON object"):
         w.parse_event(["a", "b"])
 
 
 def test_parse_event_empty_event_field():
     w = Webhook()
-    with pytest.raises(
-        ValidationError, match="missing 'event' field"
-    ):
+    with pytest.raises(ValidationError, match="missing 'event' field"):
         w.parse_event({"event": "", "data": {}})
 
 
@@ -210,17 +195,13 @@ def test_parse_event_empty_event_field():
 def test_verify_payload_valid():
     w = Webhook(secret_key=SECRET_KEY)
     signature = _sign(SAMPLE_PAYLOAD)
-    event = w.verify_payload(
-        SAMPLE_PAYLOAD, signature=signature
-    )
+    event = w.verify_payload(SAMPLE_PAYLOAD, signature=signature)
     assert event.event == "charge.success"
 
 
 def test_verify_payload_invalid_signature():
     w = Webhook(secret_key=SECRET_KEY)
-    with pytest.raises(
-        AuthenticationError, match="Invalid webhook signature"
-    ):
+    with pytest.raises(AuthenticationError, match="Invalid webhook signature"):
         w.verify_payload(SAMPLE_PAYLOAD, signature="bad_sig")
 
 
@@ -241,9 +222,7 @@ def test_verify_payload_missing_key():
 def test_verify_payload_key_from_parameter():
     w = Webhook()
     signature = _sign(SAMPLE_PAYLOAD)
-    event = w.verify_payload(
-        SAMPLE_PAYLOAD, signature=signature, secret_key=SECRET_KEY
-    )
+    event = w.verify_payload(SAMPLE_PAYLOAD, signature=signature, secret_key=SECRET_KEY)
     assert event.event == "charge.success"
 
 
@@ -276,11 +255,7 @@ class TestEventConstants:
         assert Event.SUBSCRIPTION_DISABLE == "subscription.disable"
 
     def test_all_events_are_strings(self):
-        attrs = [
-            v
-            for k, v in Event.__dict__.items()
-            if not k.startswith("_")
-        ]
+        attrs = [v for k, v in Event.__dict__.items() if not k.startswith("_")]
         assert all(isinstance(a, str) for a in attrs)
         assert len(attrs) > 20
 

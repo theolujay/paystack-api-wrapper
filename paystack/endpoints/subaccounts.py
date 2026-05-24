@@ -2,8 +2,9 @@
 The Subaccounts API allows you create and manage subaccounts on your integration.
 """
 
+from typing import Any, Dict, Optional, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 

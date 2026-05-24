@@ -1,12 +1,10 @@
 # charge.py
+from typing import Any, Dict, Optional, Tuple, Union
+
 import requests
-from typing import Optional, Dict, Any, Union, Tuple
+
 from ..core import BaseClient
 from ..exceptions import ValidationError
-from ..utils.validators import (
-    _validate_amount_and_email,
-    _validate_charge_authorization,
-)
 
 
 class ChargeAPI(BaseClient):

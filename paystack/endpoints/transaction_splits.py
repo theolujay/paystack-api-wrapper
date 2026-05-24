@@ -2,8 +2,9 @@
 The Transaction Splits API enables merchants split the settlement for a transaction across their payout account, and one or more subaccounts.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

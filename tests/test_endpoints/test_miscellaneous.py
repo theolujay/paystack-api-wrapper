@@ -1,9 +1,7 @@
 import pytest
 import responses
+
 from paystack import APIError
-
-
-from tests.utils import assert_api_error_contains
 
 
 @responses.activate

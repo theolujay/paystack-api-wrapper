@@ -2,8 +2,9 @@
 The Subscriptions API allows you create and manage recurring payment on your integration.
 """
 
+from typing import Any, Dict, Optional, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 

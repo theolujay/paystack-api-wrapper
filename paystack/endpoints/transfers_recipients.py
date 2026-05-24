@@ -2,8 +2,9 @@
 The Transfer Recipients API allows you create and manage beneficiaries that you send money to.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

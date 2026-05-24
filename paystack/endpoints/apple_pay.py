@@ -2,8 +2,9 @@
 The Apple Pay API allows you register your application's top-level domain or subdomain.
 """
 
+from typing import Any, Dict, Optional, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 

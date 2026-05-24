@@ -2,8 +2,9 @@
 The Terminal API allows you to build delightful in-person payment experiences.
 """
 
+from typing import Any, Dict, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

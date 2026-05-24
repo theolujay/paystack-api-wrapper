@@ -6,14 +6,13 @@ events from Paystack via HMAC-SHA512 signature validation, IP whitelist
 checking, and structured event parsing.
 """
 
-import hmac
 import hashlib
+import hmac
 import json
-from typing import Optional, Dict, Any, Union, List
 from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Union
 
 from .exceptions import AuthenticationError, ValidationError
-
 
 WHITELISTED_IPS: List[str] = [
     "52.31.139.75",
@@ -126,9 +125,7 @@ class Webhook:
         if isinstance(payload, str):
             payload = payload.encode("utf-8")
 
-        expected = hmac.new(
-            key.encode("utf-8"), payload, hashlib.sha512
-        ).hexdigest()
+        expected = hmac.new(key.encode("utf-8"), payload, hashlib.sha512).hexdigest()
 
         return hmac.compare_digest(expected, signature)
 
@@ -229,7 +226,7 @@ class Webhook:
             if not self.verify_signature(payload, signature, secret_key):
                 raise AuthenticationError(
                     message="Invalid webhook signature — payload may not "
-                            "originate from Paystack",
+                    "originate from Paystack",
                 )
 
         return self.parse_event(payload)

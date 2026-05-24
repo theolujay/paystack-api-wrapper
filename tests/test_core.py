@@ -1,20 +1,19 @@
 import pytest
 import responses
-from requests.exceptions import Timeout, ConnectTimeout, ReadTimeout
+from requests.exceptions import ConnectTimeout, ReadTimeout
 
 from paystack import (
     APIError,
-    NetworkError,
-    InvalidResponseError,
-    ValidationError,
     AuthenticationError,
+    InvalidResponseError,
+    NetworkError,
     TransactionFailureError,
+    ValidationError,
 )
 
 
 @responses.activate
 def test_baseclient_sets_authorization_header(base_client, secret_key):
-
     responses.add(
         responses.GET,
         f"{base_client.base_url}/test",
@@ -80,7 +79,6 @@ def test_baseclient_sets_idempotency_key(base_client):
 
 @responses.activate
 def test_request_connect_timeout(base_client):
-
     def request_callback(request):
         raise ConnectTimeout("Connection timed out")
 
@@ -97,7 +95,6 @@ def test_request_connect_timeout(base_client):
 
 @responses.activate
 def test_request_read_timeout(base_client):
-
     def request_callback(request):
         raise ReadTimeout("Request timed out")
 
@@ -116,7 +113,6 @@ def test_request_read_timeout(base_client):
 
 @responses.activate
 def test_false_status_response(base_client):
-
     responses.add(
         responses.POST,
         f"{base_client.base_url}/initiate_payment",
@@ -133,7 +129,6 @@ def test_false_status_response(base_client):
 
 @responses.activate
 def test_invalid_response_structure(base_client):
-
     responses.add(
         responses.POST,
         f"{base_client.base_url}/initiate_payment",
@@ -165,7 +160,6 @@ def test_invalid_response_not_dict(base_client):
 
 @responses.activate
 def test_error_status_code(base_client):
-
     responses.add(
         responses.POST,
         f"{base_client.base_url}/initiate_payment",
@@ -182,7 +176,6 @@ def test_error_status_code(base_client):
 
 @responses.activate
 def test_invalid_json(base_client):
-
     responses.add(
         responses.GET,
         f"{base_client.base_url}/test",

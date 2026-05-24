@@ -5,19 +5,19 @@ Paystack Client - A Python wrapper for the Paystack API
 from .client import PaystackClient
 from .core import BaseClient
 from .exceptions import (
-    PaystackError,
     APIError,
     AuthenticationError,
-    ValidationError,
+    InvalidResponseError,
+    NetworkError,
     NotFoundError,
+    PaystackError,
     RateLimitError,
     ServerError,
-    NetworkError,
-    InvalidResponseError,
     TransactionFailureError,
+    ValidationError,
     create_error_from_response,
 )
-from .webhook import Webhook, WebhookEvent, Event, WHITELISTED_IPS
+from .webhook import WHITELISTED_IPS, Event, Webhook, WebhookEvent
 
 __version__ = "2"
 __author__ = "Joseph Ezekiel"

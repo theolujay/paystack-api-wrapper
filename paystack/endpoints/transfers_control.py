@@ -2,8 +2,9 @@
 The Transfers Control API allows you manage settings of your transfers.
 """
 
+from typing import Any, Dict, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 

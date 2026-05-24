@@ -2,8 +2,9 @@
 The Integration API allows you manage some settings on your integration.
 """
 
+from typing import Any, Dict, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 

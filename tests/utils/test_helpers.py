@@ -1,5 +1,5 @@
 import pytest
-import re
+
 from paystack.exceptions import ValidationError
 from paystack.utils.helpers import validate_email
 

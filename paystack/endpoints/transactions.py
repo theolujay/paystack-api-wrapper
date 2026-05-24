@@ -1,12 +1,9 @@
-from typing import Optional, Dict, Any, Union, Tuple
+from typing import Any, Dict, Optional, Tuple, Union
 
 import requests
+
 from ..core import BaseClient
 from ..exceptions import APIError, ValidationError
-from ..utils.validators import (
-    _validate_amount_and_email,
-    _validate_charge_authorization,
-)
 
 
 class TransactionsAPI(BaseClient):

@@ -2,8 +2,9 @@
 The Bulk Charges API allows you create and manage multiple recurring payments from your customers.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

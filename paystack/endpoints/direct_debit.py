@@ -2,8 +2,9 @@
 The Direct Debit API allows you manage the authorization on your customer's bank accounts.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

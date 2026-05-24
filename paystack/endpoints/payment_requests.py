@@ -2,8 +2,9 @@
 The Payment Requests API allows you manage requests for payment of goods and services.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

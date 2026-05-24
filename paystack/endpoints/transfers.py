@@ -2,8 +2,9 @@
 The Transfers API allows you automate sending money to your customers.
 """
 
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple, Union
 
 from ..core import BaseClient
 

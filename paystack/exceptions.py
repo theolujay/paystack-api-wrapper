@@ -5,8 +5,8 @@ This module provides a hierarchy of exceptions that make it easier for developer
 to handle different types of errors when using the Paystack API.
 """
 
-from typing import Optional, Dict, Any, Union
 import json
+from typing import Any, Dict, Optional
 
 
 class PaystackError(Exception):

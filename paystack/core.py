@@ -1,16 +1,16 @@
-import os
 import re
+from typing import Any, Dict, Optional, Tuple, Union
+
 import requests
-from typing import Optional, Dict, Any, Tuple, Union
 from requests.exceptions import JSONDecodeError
 
 from .exceptions import (
     APIError,
-    ValidationError,
     AuthenticationError,
-    NetworkError,
     InvalidResponseError,
+    NetworkError,
     TransactionFailureError,
+    ValidationError,
     create_error_from_response,
 )
 

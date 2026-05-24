@@ -2,8 +2,9 @@
 The Payment Pages API provides a quick and secure way to collect payment for products.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

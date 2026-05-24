@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch
+
 from paystack.exceptions import APIError, ValidationError
 from paystack.utils.validators import (
     _validate_amount_and_email,

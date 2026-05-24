@@ -2,8 +2,9 @@
 The Plans API allows you create and manage installment payment options on your integration.
 """
 
+from typing import Any, Dict, Optional, Tuple, Union
+
 import requests
-from typing import Optional, Dict, Any, Tuple, Union
 
 from ..core import BaseClient
 

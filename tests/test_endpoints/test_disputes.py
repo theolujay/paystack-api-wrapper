@@ -1,9 +1,6 @@
 import responses
 
 
-from tests.utils import assert_api_error_contains
-
-
 @responses.activate
 def test_list_disputes(disputes_client):
     from_date = "2023-01-01"

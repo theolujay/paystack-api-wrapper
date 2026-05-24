@@ -1,5 +1,6 @@
-import responses
 import json
+
+import responses
 
 from tests.utils import assert_api_error_contains
 

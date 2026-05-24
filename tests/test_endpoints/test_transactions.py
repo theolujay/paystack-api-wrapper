@@ -1,11 +1,11 @@
-import pytest
-import responses
 import json
+
+import pytest
 import requests
+import responses
+
 from paystack import NetworkError
 from paystack.exceptions import APIError, ValidationError
-
-
 from tests.utils import assert_api_error_contains
 
 

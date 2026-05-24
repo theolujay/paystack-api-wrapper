@@ -1,7 +1,8 @@
 """The Customers API to create and manage customers."""
 
+from typing import Any, Dict, Optional, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 from ..exceptions import ValidationError

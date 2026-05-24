@@ -2,8 +2,9 @@
 The Settlements API allows you gain insights into payouts made by Paystack to your bank account.
 """
 
+from typing import Any, Dict, Optional, Tuple
+
 import requests
-from typing import Optional, Dict, Any, Tuple
 
 from ..core import BaseClient
 

@@ -2,8 +2,9 @@
 The Virtual Terminal API allows you to accept in-person payments without a POS device.
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import requests
-from typing import Optional, List, Dict, Any, Tuple
 
 from ..core import BaseClient
 

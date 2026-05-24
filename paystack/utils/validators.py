@@ -1,6 +1,7 @@
 """Validation helpers for Paystack API calls."""
 
 from typing import Union
+
 from ..exceptions import APIError, ValidationError
 from .helpers import validate_email
 
