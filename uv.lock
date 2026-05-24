@@ -666,7 +666,7 @@ wheels = [
 
 [[package]]
 name = "paystack-api-wrapper"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "requests" },
@@ -694,6 +694,10 @@ test = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-mock" },
+    { name = "responses" },
     { name = "twine" },
 ]
 
@@ -719,6 +723,10 @@ provides-extras = ["dev", "test"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = ">=1.3.0" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-cov", specifier = ">=6.2.1" },
+    { name = "pytest-mock", specifier = ">=3.14.1" },
+    { name = "responses", specifier = ">=0.25.8" },
     { name = "twine", specifier = ">=6.1.0" },
 ]
 

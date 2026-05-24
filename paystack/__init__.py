@@ -17,6 +17,7 @@ from .exceptions import (
     TransactionFailureError,
     create_error_from_response,
 )
+from .webhook import Webhook, WebhookEvent, Event, WHITELISTED_IPS
 
 __version__ = "1.0.0"
 __author__ = "Joseph Ezekiel"
@@ -26,6 +27,10 @@ __description__ = "A modern Python client for Paystack API"
 __all__ = [
     "PaystackClient",
     "BaseClient",
+    "Webhook",
+    "WebhookEvent",
+    "Event",
+    "WHITELISTED_IPS",
     "PaystackError",
     "APIError",
     "AuthenticationError",
